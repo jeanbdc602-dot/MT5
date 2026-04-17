@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Journal - JSON Version</title>
+    
+    <link rel="icon" href="https://res.cloudinary.com/dlo3r0you/image/upload/v1754687755/logo_oyr4yr.png" type="image/png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
+    <style>
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .truncate-text {
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        /* SCROLLBARS PERSONALIZADAS */
+        .cell-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .cell-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .cell-scrollbar::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.3); border-radius: 6px; }
+        .cell-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(156, 163, 175, 0.6); }
+        
+        .nav-link.active { border-bottom: 2px solid #3b82f6; color: #60a5fa; }
+        .custom-checkbox { accent-color: #3b82f6; width: 1.1rem; height: 1.1rem; cursor: pointer; }
+
+        .filter-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+        .filter-scrollbar::-webkit-scrollbar-track { background: rgba(31, 41, 55, 0.8); border-radius: 8px; }
+        .filter-scrollbar::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.6); border-radius: 8px; border: 2px solid rgba(31, 41, 55, 0.8); }
+        .filter-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.9); }
+    </style>
+</head>
+<body class="bg-gray-900 text-white font-sans min-h-screen">
+
+    <!-- Loader -->
+    <div id="globalLoader" class="fixed inset-0 z-[9999] bg-gray-900/90 backdrop-blur-sm flex flex-col items-center justify-center transition-opacity">
+        <svg class="animate-spin h-16 w-16 text-blue-500 mb-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <h2 class="text-2xl font-bold text-white tracking-wide">Cargando Datos JSON...</h2>
+        <p class="text-gray-400 text-sm mt-2 font-medium">Leyendo datos_trading.json</p>
+    </div>
+
+    <!-- Navegación -->
+    <nav class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-2">
+                    <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012-2h2a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    <span class="text-xl font-bold tracking-wide">Trading<span class="text-blue-500">Analytics</span></span>
+                </div>
+                <div class="flex gap-4 md:gap-8 items-center">
+                    <button class="nav-link active font-semibold text-gray-300 hover:text-white pb-1 transition-colors cursor-default">Dashboard</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <div class="p-4 md:p-8">
+        <div id="dashboardContent" class="hidden fade-in flex flex-col lg:flex-row gap-4 items-stretch">
+            
+            <!-- Barra Lateral: Leaderboard -->
+            <div class="w-full lg:w-64 xl:w-80 shrink-0 flex flex-col gap-4">
+                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-lg flex flex-col flex-1 min-h-[350px]">
+                    <h2 class="text-base font-semibold text-gray-300 mb-3 border-b border-gray-700 pb-2 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                        Top Rendimiento
+                    </h2>
+                    <div id="leaderboardContainer" class="mt-1 flex-1 overflow-y-auto cell-scrollbar pr-1 flex flex-col gap-1"></div>
+                </div>
+            </div>
+
+            <!-- Columna Central: Contenido y KPIs -->
+            <div class="flex-1 min-w-0 flex flex-col gap-4">
+                
+                <!-- Filtros -->
+                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-lg flex flex-col md:flex-row items-center gap-4 justify-between relative z-40">
+                    <div class="flex items-center gap-2 text-gray-300 font-semibold w-full md:w-auto">
+                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                        <span>Filtros Globales</span>
+                    </div>
+                    
+                    <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto flex-1 md:justify-end">
+                        <div class="custom-select-container relative flex flex-col md:flex-row items-start md:items-center gap-2">
+                            <label class="text-xs text-gray-400 uppercase tracking-wide whitespace-nowrap">Símbolos:</label>
+                            <button onclick="toggleDropdown('dropdownSymbols')" class="w-full md:w-44 bg-gray-700 text-white text-sm rounded py-1.5 px-3 border border-gray-600 focus:outline-none hover:border-blue-500 cursor-pointer flex justify-between items-center transition-colors">
+                                <span id="labelSymbols" class="truncate pr-2">Todos</span>
+                                <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="dropdownSymbols" class="custom-select-dropdown hidden absolute top-full left-0 md:left-auto right-0 mt-1 w-full md:w-56 bg-gray-800 border border-gray-600 rounded-md shadow-xl max-h-60 overflow-y-auto filter-scrollbar z-50 p-2"></div>
+                        </div>
+
+                        <div class="custom-select-container relative flex flex-col md:flex-row items-start md:items-center gap-2">
+                            <label class="text-xs text-gray-400 uppercase tracking-wide whitespace-nowrap">Años:</label>
+                            <button onclick="toggleDropdown('dropdownYears')" class="w-full md:w-36 bg-gray-700 text-white text-sm rounded py-1.5 px-3 border border-gray-600 focus:outline-none hover:border-blue-500 cursor-pointer flex justify-between items-center transition-colors">
+                                <span id="labelYears" class="truncate pr-2">Todos</span>
+                                <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="dropdownYears" class="custom-select-dropdown hidden absolute top-full left-0 md:left-auto right-0 mt-1 w-full md:w-40 bg-gray-800 border border-gray-600 rounded-md shadow-xl max-h-60 overflow-y-auto filter-scrollbar z-50 p-2"></div>
+                        </div>
+
+                        <div class="custom-select-container relative flex flex-col md:flex-row items-start md:items-center gap-2">
+                            <label class="text-xs text-gray-400 uppercase tracking-wide whitespace-nowrap">Meses:</label>
+                            <button onclick="toggleDropdown('dropdownMonths')" class="w-full md:w-36 bg-gray-700 text-white text-sm rounded py-1.5 px-3 border border-gray-600 focus:outline-none hover:border-blue-500 cursor-pointer flex justify-between items-center transition-colors">
+                                <span id="labelMonths" class="truncate pr-2">Todos</span>
+                                <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="dropdownMonths" class="custom-select-dropdown hidden absolute top-full left-0 md:left-auto right-0 mt-1 w-full md:w-40 bg-gray-800 border border-gray-600 rounded-md shadow-xl max-h-60 overflow-y-auto filter-scrollbar z-50 p-2"></div>
+                        </div>
+
+                        <button onclick="clearGlobalFilters()" class="bg-gray-700 hover:bg-red-600 hover:text-white text-gray-300 text-xs font-semibold py-1.5 px-3 rounded border border-gray-600 hover:border-red-500 transition-all flex items-center justify-center gap-1 mt-2 md:mt-0">
+                            Limpiar Filtros
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPIs Top -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 z-10">
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
+                        <span class="text-gray-400 text-xs uppercase tracking-wide">Grand Total (Neto)</span>
+                        <span id="kpiTotalProfit" class="text-2xl lg:text-3xl font-bold mt-1">$0.00</span>
+                        <div class="flex gap-4 mt-2 text-[10px] lg:text-xs font-semibold w-full justify-center">
+                            <span id="kpiGrossProfit" class="text-green-400 flex flex-col"><span>Ganancias</span><span class="mt-1">$0.00</span></span>
+                            <span id="kpiGrossLoss" class="text-red-400 flex flex-col"><span>Pérdidas</span><span class="mt-1">$0.00</span></span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
+                        <span class="text-gray-400 text-xs uppercase tracking-wide">Cantidad de Trades</span>
+                        <span id="kpiTotalTrades" class="text-2xl lg:text-3xl font-bold mt-1 text-white">0</span>
+                        <div class="flex flex-col items-center mt-2 gap-0.5 w-full">
+                            <span id="kpiSimultaneous" class="text-[10px] lg:text-xs text-purple-400 font-semibold" title="Máxima cantidad de trades abiertos al mismo tiempo">Simultáneos: -</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
+                        <span class="text-gray-400 text-xs uppercase tracking-wide">Win Rate</span>
+                        <span id="kpiWinRate" class="text-2xl lg:text-3xl font-bold mt-1 text-blue-400">0%</span>
+                        <span id="kpiWinRateSub" class="text-[10px] lg:text-xs text-gray-500 mt-2">0 / 0 Victorias</span>
+                    </div>
+                    
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
+                        <span class="text-gray-400 text-xs uppercase tracking-wide">Métricas por Trade</span>
+                        <div class="flex gap-4 mt-2 text-xs font-semibold w-full justify-center">
+                            <span class="flex flex-col items-center">
+                                <span class="text-gray-500 text-[9px] uppercase tracking-widest mb-0.5">Promedio ($)</span>
+                                <span id="kpiAvgTrade" class="text-xl lg:text-2xl font-bold leading-none">$0.00</span>
+                            </span>
+                            <span class="flex flex-col items-center border-l border-gray-700 pl-4">
+                                <span class="text-gray-500 text-[9px] uppercase tracking-widest mb-0.5">Trades / Mes</span>
+                                <span id="kpiTradesPerMonth" class="text-xl lg:text-2xl font-bold leading-none text-blue-400">0.0</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPIs Mid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow relative group">
+                        <span class="text-gray-400 text-xs uppercase tracking-wide">Profit Factor</span>
+                        <span id="kpiProfitFactor" class="text-2xl lg:text-3xl font-bold mt-1 text-white">0.00</span>
+                        <span class="text-[10px] lg:text-xs text-gray-500 mt-2">Ganado / Perdido Bruto</span>
+                    </div>
+
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
+                        <span class="text-gray-400 text-xs uppercase tracking-wide">Riesgo / Beneficio</span>
+                        <span id="kpiRiskReward" class="text-2xl lg:text-3xl font-bold mt-1 text-white">1:0.00</span>
+                        <span class="text-[10px] lg:text-xs text-gray-500 mt-2">Win Prom. vs Loss Prom.</span>
+                    </div>
+
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
+                        <span class="text-gray-400 text-xs uppercase tracking-wide">Análisis de Rachas</span>
+                        <div class="flex gap-4 mt-2 text-xs font-semibold w-full justify-center">
+                            <span class="text-green-400 flex flex-col items-center group cursor-help">
+                                <span class="text-gray-500 text-[9px] uppercase tracking-widest mb-0.5">Ganadoras</span>
+                                <span class="text-xl lg:text-2xl font-bold leading-none"><span id="kpiMaxWinStreak">0</span><span class="text-xs text-gray-500 ml-1">máx</span></span>
+                                <span class="text-[10px] text-gray-400 mt-1 font-mono tracking-tighter">Promedio: <span id="kpiAvgWinStreak">0</span></span>
+                            </span>
+                            <span class="text-red-400 flex flex-col items-center border-l border-gray-700 pl-4 group cursor-help">
+                                <span class="text-gray-500 text-[9px] uppercase tracking-widest mb-0.5">Perdedoras</span>
+                                <span class="text-xl lg:text-2xl font-bold leading-none"><span id="kpiMaxLossStreak">0</span><span class="text-xs text-gray-500 ml-1">máx</span></span>
+                                <span class="text-[10px] text-gray-400 mt-1 font-mono tracking-tighter">Promedio: <span id="kpiAvgLossStreak">0</span></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráficas de Equidad -->
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                    <!-- Real -->
+                    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 shadow-lg flex flex-col w-full relative">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-300">Curva de Capital Real</h2>
+                                <p class="text-[10px] text-gray-500">Balance final del set de datos</p>
+                            </div>
+                            <div class="text-right flex flex-col items-end gap-1">
+                                <div class="flex items-baseline gap-2">
+                                    <span id="kpiLinearPct" class="text-xs font-semibold block">+0.00%</span>
+                                    <span id="kpiLinearFinal" class="text-xl font-bold text-blue-400">$10,000</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="realDDContainer" class="hidden w-full mb-4 bg-gray-900/60 rounded-lg border border-gray-700/50 py-2 px-3 grid grid-cols-3 gap-2 divide-x divide-gray-700/60 shadow-inner">
+                            <div id="realDDHistDiv" class="flex flex-col justify-center px-1 md:px-2 group transition-colors rounded cursor-help">
+                                <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Max DD Histórico</span>
+                                <div class="flex items-baseline gap-1.5 flex-wrap">
+                                    <span id="kpiRealDDPct" class="text-sm md:text-base font-bold text-red-400">-0.00%</span>
+                                    <span id="kpiRealDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
+                                </div>
+                            </div>
+                            <div id="realDDDailyDiv" class="flex flex-col justify-center px-3 group transition-colors rounded cursor-help">
+                                <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Peor Día DD</span>
+                                <div class="flex items-baseline gap-1.5 flex-wrap">
+                                    <span id="kpiRealDailyDDPct" class="text-sm md:text-base font-bold text-orange-400">-0.00%</span>
+                                    <span id="kpiRealDailyDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col justify-center px-3 group cursor-help" title="Promedio de los drawdowns diarios en todo el historial">
+                                <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Promedio Diario DD</span>
+                                <div class="flex items-baseline gap-1.5 flex-wrap">
+                                    <span id="kpiRealAvgDailyDDPct" class="text-sm md:text-base font-bold text-yellow-400">-0.00%</span>
+                                    <span id="kpiRealAvgDailyDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative w-full h-[200px] md:h-[240px] lg:h-[280px] xl:h-[320px]">
+                            <canvas id="equityChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Compound -->
+                    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 shadow-lg flex flex-col w-full relative">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-300 text-purple-400">Proyección Compuesta</h2>
+                                <p class="text-[10px] text-gray-500">Asumiendo 1% de riesgo estricto por trade</p>
+                            </div>
+                            <div class="text-right flex flex-col items-end gap-1">
+                                <div class="flex items-baseline gap-2">
+                                    <span id="kpiCompPct" class="text-xs font-semibold text-gray-400 block">+0.00%</span>
+                                    <span id="kpiCompFinal" class="text-xl font-bold text-purple-400">$10,000</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="compoundDDContainer" class="hidden w-full mb-4 bg-gray-900/60 rounded-lg border border-gray-700/50 py-2 px-3 grid grid-cols-3 gap-2 divide-x divide-gray-700/60 shadow-inner">
+                            <div id="compDDHistDiv" class="flex flex-col justify-center px-1 md:px-2 group transition-colors rounded cursor-help">
+                                <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Max DD Histórico</span>
+                                <div class="flex items-baseline gap-1.5 flex-wrap">
+                                    <span id="kpiCompDDPct" class="text-sm md:text-base font-bold text-red-400">-0.00%</span>
+                                    <span id="kpiCompDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
+                                </div>
+                            </div>
+                            <div id="compDDDailyDiv" class="flex flex-col justify-center px-3 group transition-colors rounded cursor-help">
+                                <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Peor Día DD</span>
+                                <div class="flex items-baseline gap-1.5 flex-wrap">
+                                    <span id="kpiCompDailyDDPct" class="text-sm md:text-base font-bold text-orange-400">-0.00%</span>
+                                    <span id="kpiCompDailyDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col justify-center px-3 group cursor-help" title="Promedio de los drawdowns diarios en todo el historial">
+                                <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Promedio Diario DD</span>
+                                <div class="flex items-baseline gap-1.5 flex-wrap">
+                                    <span id="kpiCompAvgDailyDDPct" class="text-sm md:text-base font-bold text-yellow-400">-0.00%</span>
+                                    <span id="kpiCompAvgDailyDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative w-full h-[200px] md:h-[240px] lg:h-[280px] xl:h-[320px]">
+                            <canvas id="compoundChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calendario de Rendimiento -->
+                <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 shadow-lg mt-2">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                        <h2 class="text-lg font-semibold text-gray-300">Calendario de Desempeño</h2>
+                        <div class="flex items-center gap-1 md:gap-2">
+                            <button id="btnCalPrev" onclick="calNavigate(-1)" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded font-bold disabled:opacity-30 disabled:cursor-not-allowed transition-colors">◀</button>
+                            <span id="calendarModeIndicator" class="text-xs md:text-sm font-semibold bg-gray-900 border border-gray-600 px-3 py-1 rounded text-blue-400 min-w-[120px] md:min-w-[160px] text-center">Años</span>
+                            <button id="btnCalNext" onclick="calNavigate(1)" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded font-bold disabled:opacity-30 disabled:cursor-not-allowed transition-colors">▶</button>
+                            
+                            <button id="btnToggleCalendarDetail" onclick="toggleCalendarDetail()" class="ml-2 md:ml-4 px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded text-xs md:text-sm font-semibold transition-colors flex items-center gap-1 shadow-md disabled:opacity-30 disabled:cursor-not-allowed">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                                <span class="hidden md:inline">Ver Ruta de Trades</span>
+                            </button>
+
+                            <button id="btnCalZoomOut" onclick="calZoomOut()" class="ml-2 md:ml-4 px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs md:text-sm font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"></path></svg>
+                                <span class="hidden md:inline">Alejar</span>
+                            </button>
+                            <button id="btnCalZoomIn" onclick="calZoomIn()" class="ml-1 md:ml-2 px-3 py-1 bg-green-600 hover:bg-green-500 text-white rounded text-xs md:text-sm font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                                <span class="hidden md:inline">Acercar</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="calendarContainer" class="w-full"></div>
+                </div>
+
+                <!-- Gráficas de Análisis -->
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
+                        <h3 class="text-sm font-semibold text-gray-300 mb-1 text-center">Entradas por Hora</h3>
+                        <p class="text-[10px] text-gray-500 text-center mb-3">🟣 Asia (22-7) 🔵 Europa (8-12) 🟢 EEUU (13-21)</p>
+                        <div class="relative h-48 w-full"><canvas id="cTradesHour"></canvas></div>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
+                        <h3 class="text-sm font-semibold text-gray-300 mb-3 text-center">Entradas por Día de la Semana</h3>
+                        <div class="relative h-48 w-full"><canvas id="cTradesDay"></canvas></div>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
+                        <h3 class="text-sm font-semibold text-gray-300 mb-3 text-center">Entradas por Mes</h3>
+                        <div class="relative h-48 w-full"><canvas id="cTradesMonth"></canvas></div>
+                    </div>
+
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
+                        <h3 class="text-sm font-semibold text-gray-300 mb-1 text-center">Ganancias/Pérdidas por Hora</h3>
+                        <div class="relative h-48 w-full"><canvas id="cProfitHour"></canvas></div>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
+                        <h3 class="text-sm font-semibold text-gray-300 mb-1 text-center">Ganancias/Pérdidas por Día</h3>
+                        <div class="relative h-48 w-full"><canvas id="cProfitDay"></canvas></div>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
+                        <h3 class="text-sm font-semibold text-gray-300 mb-1 text-center">Ganancias/Pérdidas por Mes</h3>
+                        <div class="relative h-48 w-full"><canvas id="cProfitMonth"></canvas></div>
+                    </div>
+                </div>
+
+                <!-- Hold Time Analysis -->
+                <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 shadow-lg flex flex-col w-full">
+                    <h2 class="text-lg font-semibold text-gray-300 mb-4">Análisis de Retención de Posición (Hold Time)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-lg text-center flex justify-between px-6 items-center shadow-inner">
+                            <span class="text-gray-400 text-xs uppercase tracking-wide font-semibold">Tiempo Mínimo</span>
+                            <span id="statHoldMin" class="text-lg font-bold text-white">-</span>
+                        </div>
+                        <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-lg text-center flex justify-between px-6 items-center shadow-inner">
+                            <span class="text-gray-400 text-xs uppercase tracking-wide font-semibold">Tiempo Medio</span>
+                            <span id="statHoldAvg" class="text-lg font-bold text-blue-400">-</span>
+                        </div>
+                        <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-lg text-center flex justify-between px-6 items-center shadow-inner">
+                            <span class="text-gray-400 text-xs uppercase tracking-wide font-semibold">Tiempo Máximo</span>
+                            <span id="statHoldMax" class="text-lg font-bold text-purple-400">-</span>
+                        </div>
+                    </div>
+                    <div class="relative h-[500px] lg:h-[600px] xl:h-[700px] w-full flex-1">
+                        <canvas id="scatterChart"></canvas>
+                    </div>
+                </div>
+
+            </div> 
+        </div> 
+    </div>
+
+    <script>
+        // --- MANEJO DE DROPDOWNS MULTI-SELECT ---
+        document.addEventListener('click', (e) => {
+            if(!e.target.closest('.custom-select-container')) {
+                document.querySelectorAll('.custom-select-dropdown').forEach(el => el.classList.add('hidden'));
+            }
+        });
+
+        function toggleDropdown(id) {
+            const el = document.getElementById(id);
+            const isHidden = el.classList.contains('hidden');
+            document.querySelectorAll('.custom-select-dropdown').forEach(d => d.classList.add('hidden'));
+            if(isHidden) el.classList.remove('hidden');
+        }
+
+        let activeFilters = { symbols: [], years: [], months: [] };
+
+        function updateMultiSelect(type, val, checked) {
+            let arr = activeFilters[type];
+            if (val === 'ALL') {
+                arr.length = 0;
+                let cbs = document.querySelectorAll(`.cb-${type}`);
+                cbs.forEach(cb => { if(cb.value !== 'ALL') cb.checked = false; else cb.checked = true; });
+            } else {
+                document.querySelector(`.cb-${type}[value="ALL"]`).checked = false;
+                if (checked) { if (!arr.includes(val)) arr.push(val); } 
+                else { arr = arr.filter(v => v !== val); activeFilters[type] = arr; }
+                if (arr.length === 0) document.querySelector(`.cb-${type}[value="ALL"]`).checked = true;
+            }
+
+            let labelId = type === 'symbols' ? 'labelSymbols' : (type === 'years' ? 'labelYears' : 'labelMonths');
+            let elLabel = document.getElementById(labelId);
+            
+            if (activeFilters[type].length === 0) {
+                elLabel.innerText = `Todos`;
+                elLabel.classList.remove('text-blue-400', 'font-bold');
+            } else if (activeFilters[type].length === 1) {
+                let displayVal = activeFilters[type][0];
+                if (type === 'months') displayVal = monthNames[parseInt(displayVal)-1];
+                elLabel.innerText = displayVal;
+                elLabel.classList.add('text-blue-400', 'font-bold');
+            } else {
+                elLabel.innerText = `${activeFilters[type].length} selec.`;
+                elLabel.classList.add('text-blue-400', 'font-bold');
+            }
+            applyFilters();
+        }
+
+        // --- VARIABLES GLOBALES ---
+        let rawData = [];
+        let filteredData = [];
+        let compChartDataObj = []; 
+
+        let equityChartInstance = null;
+        let compoundChartInstance = null; 
+        let cTH = null, cTD = null, cTM = null; 
+        let cPH = null, cPD = null, cPM = null; 
+        let scatterChartInstance = null;
+
+        let calMode = 'YEARS';
+        let calYear = null;
+        let calMonth = null;
+        let isDetailedCalendar = false;
+
+        const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+        const daysArr = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+
+        // --- INICIALIZACIÓN Y CARGA DE JSON ---
+        window.onload = async () => {
+            await fetchJsonData();
+        };
+
+        function showLoader() { document.getElementById('globalLoader').classList.remove('hidden'); document.getElementById('globalLoader').classList.add('flex'); }
+        function hideLoader() { document.getElementById('globalLoader').classList.add('hidden'); document.getElementById('globalLoader').classList.remove('flex'); }
+
+        async function fetchJsonData() {
+            showLoader();
+            try {
+                // Intenta obtener el archivo
+                const response = await fetch('datos_trading.json');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const jsonData = await response.json();
+                processJSONData(jsonData);
+            } catch (err) {
+                console.warn("No se pudo cargar datos_trading.json via fetch. Usando datos de prueba por defecto.", err);
+                // Si falla (por CORS local o porque no existe), cargamos unos datos de prueba (Fallback)
+                const mockData = generateMockData();
+                processJSONData(mockData);
+            }
+        }
+
+        // --- DATOS DE PRUEBA (FALLBACK) ---
+        function generateMockData() {
+            const data = [];
+            const pairs = ['EURUSD', 'GBPUSD', 'XAUUSD', 'US30'];
+            let currentDate = new Date('2023-01-01T08:00:00Z');
+            
+            for(let i=0; i<300; i++) {
+                let dur = Math.random() * 8 + 0.1; // 0.1 a 8 horas
+                let entryTime = new Date(currentDate.getTime());
+                let exitTime = new Date(currentDate.getTime() + dur * 3600000);
+                let isWin = Math.random() > 0.45;
+                let profit = isWin ? (Math.random() * 200 + 10) : -(Math.random() * 150 + 10);
+                
+                data.push({
+                    Symbol: pairs[Math.floor(Math.random() * pairs.length)],
+                    EntryTime: entryTime.toISOString(),
+                    Time: exitTime.toISOString(),
+                    NetProfit: parseFloat(profit.toFixed(2))
+                });
+                
+                // Avanzar tiempo de 2 a 12 horas para el siguiente trade
+                currentDate = new Date(exitTime.getTime() + (Math.random() * 10 + 2) * 3600000);
+            }
+            return data;
+        }
+
+        // --- PROCESAMIENTO DEL JSON ---
+        function processJSONData(data) {
+            if (!Array.isArray(data) || data.length === 0) {
+                alert("El archivo JSON está vacío o tiene un formato incorrecto.");
+                hideLoader();
+                return;
+            }
+
+            rawData = data.map(d => {
+                let exitTime = new Date(d.Time);
+                let entryTime = d.EntryTime ? new Date(d.EntryTime) : exitTime;
+                
+                // Si la fecha es invalida saltamos
+                if (isNaN(exitTime.getTime())) return null;
+
+                let duration = d.DurationHours;
+                if(duration === undefined || duration === null) {
+                    duration = (exitTime - entryTime) / (1000 * 60 * 60);
+                }
+
+                return {
+                    Time: exitTime,
+                    EntryTime: entryTime,
+                    DurationHours: Math.max(0, duration),
+                    Symbol: d.Symbol || 'Desconocido',
+                    NetProfit: Number(d.NetProfit) || 0,
+                    Year: exitTime.getFullYear(),
+                    Month: exitTime.getMonth() + 1,
+                    ExitMonth: exitTime.getMonth(),
+                    DayOfWeek: entryTime.getDay(),
+                    EntryHour: entryTime.getHours(),
+                    DateOnly: exitTime.toISOString().split('T')[0]
+                };
+            }).filter(Boolean); // Remover nulos
+
+            rawData.sort((a, b) => a.Time - b.Time);
+
+            let currentBalance = 10000;
+            rawData.forEach(d => {
+                currentBalance += d.NetProfit;
+                d.BalanceAfter = currentBalance;
+            });
+
+            hideLoader();
+            initDashboard();
+        }
+
+        function initDashboard() {
+            if (rawData.length === 0) return; 
+
+            document.getElementById('dashboardContent').classList.remove('hidden');
+            activeFilters = { symbols: [], years: [], months: [] }; 
+            populateFilters();
+            applyFilters();
+        }
+
+        // --- HELPERS BÁSICOS Y DESTRUCTORES ---
+        const safeDestroy = (chart) => { if (chart) { try { chart.destroy(); } catch(e) {} } };
+
+        function fmtMoney(val, decimals = 2) {
+            return (val < 0 ? '-' : '') + '$' + Math.abs(parseFloat(val)).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+        }
+
+        function formatDurationText(hours) {
+            if(typeof hours !== 'number' || isNaN(hours) || !isFinite(hours)) return "-";
+            if(hours < 1) return (hours * 60).toFixed(0) + " min";
+            if(hours > 24) return (hours / 24).toFixed(1) + " días";
+            return hours.toFixed(1) + " h";
+        }
+        
+        function formatShortDate(d) {
+            if(!d) return '';
+            let date = new Date(d);
+            if(isNaN(date.getTime())) return '';
+            return date.toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'});
+        }
+
+        // --- FILTROS Y POBLACIÓN ---
+        function populateFilters() {
+            // Símbolos
+            const symbols = [...new Set(rawData.map(d => d.Symbol))].sort();
+            const symbolDropdown = document.getElementById('dropdownSymbols');
+            let symHtml = `<label class="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-700 rounded cursor-pointer text-sm text-gray-300 transition-colors"><input type="checkbox" class="cb-symbols custom-checkbox" value="ALL" checked onchange="updateMultiSelect('symbols', 'ALL', this.checked)"> Todos los pares</label>`;
+            symbols.forEach(sym => {
+                symHtml += `<label class="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-700 rounded cursor-pointer text-sm text-gray-300 transition-colors"><input type="checkbox" class="cb-symbols custom-checkbox" value="${sym}" onchange="updateMultiSelect('symbols', '${sym}', this.checked)"> ${sym}</label>`;
+            });
+            symbolDropdown.innerHTML = symHtml;
+
+            // Años
+            const years = [...new Set(rawData.map(d => d.Year))].sort((a,b) => b-a);
+            const yearDropdown = document.getElementById('dropdownYears');
+            let yrHtml = `<label class="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-700 rounded cursor-pointer text-sm text-gray-300 transition-colors"><input type="checkbox" class="cb-years custom-checkbox" value="ALL" checked onchange="updateMultiSelect('years', 'ALL', this.checked)"> Todos</label>`;
+            years.forEach(y => {
+                yrHtml += `<label class="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-700 rounded cursor-pointer text-sm text-gray-300 transition-colors"><input type="checkbox" class="cb-years custom-checkbox" value="${y}" onchange="updateMultiSelect('years', '${y}', this.checked)"> ${y}</label>`;
+            });
+            yearDropdown.innerHTML = yrHtml;
+
+            // Meses
+            const monthDropdown = document.getElementById('dropdownMonths');
+            let moHtml = `<label class="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-700 rounded cursor-pointer text-sm text-gray-300 transition-colors"><input type="checkbox" class="cb-months custom-checkbox" value="ALL" checked onchange="updateMultiSelect('months', 'ALL', this.checked)"> Todos</label>`;
+            monthNames.forEach((m, idx) => {
+                moHtml += `<label class="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-700 rounded cursor-pointer text-sm text-gray-300 transition-colors"><input type="checkbox" class="cb-months custom-checkbox" value="${idx + 1}" onchange="updateMultiSelect('months', '${idx + 1}', this.checked)"> ${m}</label>`;
+            });
+            monthDropdown.innerHTML = moHtml;
+
+            document.getElementById('labelSymbols').innerText = `Todos`;
+            document.getElementById('labelYears').innerText = `Todos`;
+            document.getElementById('labelMonths').innerText = `Todos`;
+        }
+
+        function clearGlobalFilters() {
+            activeFilters = { symbols: [], years: [], months: [] };
+            ['symbols', 'years', 'months'].forEach(type => {
+                document.querySelectorAll(`.cb-${type}`).forEach(cb => {
+                    if(cb.value === 'ALL') cb.checked = true; else cb.checked = false;
+                });
+                let elLabel = document.getElementById(type === 'symbols' ? 'labelSymbols' : (type === 'years' ? 'labelYears' : 'labelMonths'));
+                elLabel.innerText = `Todos`;
+                elLabel.classList.remove('text-blue-400', 'font-bold');
+            });
+            applyFilters();
+        }
+
+        function applyFilters() {
+            filteredData = rawData.filter(d => {
+                let matchSym = (activeFilters.symbols.length === 0) ? true : activeFilters.symbols.includes(d.Symbol);
+                let matchYear = (activeFilters.years.length === 0) ? true : (d.Year ? activeFilters.years.includes(d.Year.toString()) : false);
+                let matchMonth = (activeFilters.months.length === 0) ? true : (d.Month ? activeFilters.months.includes(d.Month.toString()) : false);
+                let isNotZero = Math.abs(d.NetProfit || 0) >= 0.00001; 
+                return matchSym && matchYear && matchMonth && isNotZero;
+            });
+
+            updateKPIs();
+            updateChart();
+            updateSmartCalendar();
+            updateAnalyticsCharts(); 
+            updateLeaderboard(); 
+        }
+
+        // --- CÁLCULO DE MÉTRICAS GLOBALES ---
+        function calculateMetrics(dataArr) {
+            let totalProfit = 0; let grossProfit = 0; let grossLoss = 0;
+            let winningTrades = 0; let losingTrades = 0;
+            let currentWinStreak = 0; let currentLossStreak = 0;
+            let maxWinStreak = 0; let maxLossStreak = 0;
+            let cumulative = 0; let peak = 0;
+
+            let winStreaks = [];
+            let lossStreaks = [];
+
+            let currentConsecutiveLoss = 0;
+            let maxConsecutiveLoss = 0;
+            let balanceAtStreakStart = 0;
+            let maxConsDrawdownPct = 0;
+            let maxConsDate = null;
+            
+            let maxSingleLoss = 0; 
+            let maxSingleLossPct = 0;
+            let maxSingleDate = null;
+
+            let dayProfits = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0};
+            let dayCounts = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0};
+
+            let totalTrades = dataArr.length;
+            let minDate = new Date(8640000000000000);
+            let maxDate = new Date(-8640000000000000);
+
+            // CALCULAR MAX TRADES SIMULTÁNEOS
+            let simEvents = [];
+            dataArr.forEach(d => {
+                if (d.EntryTime && typeof d.EntryTime.getTime === 'function') simEvents.push({ time: d.EntryTime.getTime(), type: 1 });
+                if (d.Time && typeof d.Time.getTime === 'function') simEvents.push({ time: d.Time.getTime(), type: -1 });
+            });
+            simEvents.sort((a, b) => a.time === b.time ? b.type - a.type : a.time - b.time);
+            
+            let currentSimultaneous = 0;
+            let maxSimultaneous = 0;
+            simEvents.forEach(e => {
+                currentSimultaneous += e.type;
+                if(currentSimultaneous > maxSimultaneous) maxSimultaneous = currentSimultaneous;
+            });
+
+            dataArr.forEach(d => {
+                if (d.Time && d.Time < minDate) minDate = d.Time;
+                if (d.Time && d.Time > maxDate) maxDate = d.Time;
+
+                totalProfit += d.NetProfit || 0;
+                cumulative += d.NetProfit || 0;
+                if (cumulative > peak) peak = cumulative;
+
+                if (d.DayOfWeek !== undefined) {
+                    dayProfits[d.DayOfWeek] += d.NetProfit || 0;
+                    dayCounts[d.DayOfWeek]++;
+                }
+
+                if (d.NetProfit > 0) {
+                    if (currentLossStreak > 0) { lossStreaks.push(currentLossStreak); currentLossStreak = 0; }
+                    winningTrades++;
+                    grossProfit += d.NetProfit; 
+                    currentWinStreak++;
+                    currentConsecutiveLoss = 0; 
+                    if(currentWinStreak > maxWinStreak) maxWinStreak = currentWinStreak;
+                } else if (d.NetProfit < 0) {
+                    if (currentWinStreak > 0) { winStreaks.push(currentWinStreak); currentWinStreak = 0; }
+                    losingTrades++;
+                    grossLoss += d.NetProfit;
+                    
+                    if (d.NetProfit < maxSingleLoss) {
+                        maxSingleLoss = d.NetProfit;
+                        let currentBalance = d.BalanceAfter !== undefined ? d.BalanceAfter : (10000 + cumulative);
+                        let balanceBefore = currentBalance - d.NetProfit;
+                        maxSingleLossPct = balanceBefore > 0 ? (d.NetProfit / balanceBefore) * 100 : 0;
+                        maxSingleDate = d.Time;
+                    }
+                    
+                    if (currentLossStreak === 0) {
+                        balanceAtStreakStart = d.BalanceAfter !== undefined ? (d.BalanceAfter - d.NetProfit) : (10000 + cumulative - d.NetProfit);
+                    }
+
+                    currentLossStreak++;
+                    currentWinStreak = 0;
+                    currentConsecutiveLoss += Math.abs(d.NetProfit);
+                    
+                    if(currentLossStreak > maxLossStreak) maxLossStreak = currentLossStreak;
+
+                    if(currentConsecutiveLoss > maxConsecutiveLoss) {
+                        maxConsecutiveLoss = currentConsecutiveLoss;
+                        let baseCapital = balanceAtStreakStart > 0 ? balanceAtStreakStart : 10000;
+                        maxConsDrawdownPct = (maxConsecutiveLoss / baseCapital) * 100;
+                        maxConsDate = d.Time;
+                    }
+                }
+            });
+
+            if (currentWinStreak > 0) winStreaks.push(currentWinStreak);
+            if (currentLossStreak > 0) lossStreaks.push(currentLossStreak);
+
+            const avgWinStreak = winStreaks.length > 0 ? winStreaks.reduce((a, b) => a + b, 0) / winStreaks.length : 0;
+            const avgLossStreak = lossStreaks.length > 0 ? lossStreaks.reduce((a, b) => a + b, 0) / lossStreaks.length : 0;
+
+            const winRate = totalTrades > 0 ? (winningTrades / totalTrades) * 100 : 0;
+            const avgTrade = totalTrades > 0 ? totalProfit / totalTrades : 0;
+            const absoluteGrossLoss = Math.abs(grossLoss);
+            const profitFactor = absoluteGrossLoss > 0 ? (grossProfit / absoluteGrossLoss) : (grossProfit > 0 ? 99.99 : 0);
+            const avgWin = winningTrades > 0 ? grossProfit / winningTrades : 0;
+            const avgLoss = losingTrades > 0 ? absoluteGrossLoss / losingTrades : 0;
+            const riskReward = avgLoss > 0 ? (avgWin / avgLoss) : (avgWin > 0 ? 99.99 : 0);
+
+            // CÁLCULO DE INTERÉS COMPUESTO Y DRAWDOWNS
+            let symTrades = {};
+            dataArr.forEach(d => {
+                let sym = d.Symbol || 'Estrategia';
+                if(!symTrades[sym]) symTrades[sym] = { wins: [], losses: [] };
+                if(d.NetProfit < 0) symTrades[sym].losses.push(Math.abs(d.NetProfit));
+                else if(d.NetProfit > 0) symTrades[sym].wins.push(d.NetProfit);
+            });
+
+            let symbolStats = {};
+            Object.keys(symTrades).forEach(sym => {
+                let losses = symTrades[sym].losses.sort((a,b) => b - a); 
+                let wins = symTrades[sym].wins;
+                let oneR = 1;
+                if(losses.length > 0) {
+                    let topCount = Math.max(1, Math.ceil(losses.length * 0.25));
+                    let sum = 0;
+                    for(let i=0; i<topCount; i++) sum += losses[i];
+                    oneR = sum / topCount;
+                } else if (wins.length > 0) {
+                    let sum = wins.reduce((a,b) => a+b, 0);
+                    oneR = sum / wins.length;
+                }
+                symbolStats[sym] = { oneR: oneR };
+            });
+
+            let sortedDataForComp = [...dataArr].sort((a, b) => a.Time - b.Time);
+
+            let compBalance = 10000; 
+            compChartDataObj = []; 
+            let compPeak = 10000;
+            let compPeakDate = sortedDataForComp.length > 0 ? sortedDataForComp[0].Time : null;
+            let maxCompDDMoney = 0; let maxCompDDPct = 0;
+            let maxCompDDStartDate = null; let maxCompDDEndDate = null;
+            let compDailyDDs = {}; let prevDateStr = null;
+            let currentDayPeak = 10000; let prevCompBalance = 10000;
+
+            let realBalance = 10000; let realPeak = 10000;
+            let realPeakDate = sortedDataForComp.length > 0 ? sortedDataForComp[0].Time : null;
+            let maxRealDDMoney = 0; let maxRealDDPct = 0;
+            let maxRealDDStartDate = null; let maxRealDDEndDate = null;
+            let realDailyDDs = {}; let prevRealDateStr = null;
+            let currentRealDayPeak = 10000; let prevRealBalance = 10000;
+
+            sortedDataForComp.forEach(d => {
+                let dateStr = d.DateOnly;
+                if (!dateStr) {
+                    let timeVal = d.Time instanceof Date ? d.Time : new Date(d.Time);
+                    dateStr = isNaN(timeVal.getTime()) ? '1970-01-01' : timeVal.toISOString().split('T')[0];
+                }
+
+                // DRAWDOWN REAL
+                realBalance += (d.NetProfit || 0);
+                if (realBalance > realPeak) {
+                    realPeak = realBalance; realPeakDate = d.Time;
+                } else {
+                    let currentRealDDMoney = realPeak - realBalance;
+                    let currentRealDDPct = (currentRealDDMoney / realPeak) * 100;
+                    if (currentRealDDPct > maxRealDDPct) {
+                        maxRealDDMoney = currentRealDDMoney; maxRealDDPct = currentRealDDPct;
+                        maxRealDDStartDate = realPeakDate; maxRealDDEndDate = d.Time;
+                    }
+                }
+                if (dateStr !== prevRealDateStr) {
+                    currentRealDayPeak = prevRealBalance;
+                    if (!realDailyDDs[dateStr]) realDailyDDs[dateStr] = { maxPct: 0, maxMoney: 0 };
+                    prevRealDateStr = dateStr;
+                }
+                if (realBalance > currentRealDayPeak) currentRealDayPeak = realBalance;
+                let currentRealDailyDDMoney = currentRealDayPeak - realBalance;
+                let currentRealDailyDDPct = currentRealDayPeak > 0 ? (currentRealDailyDDMoney / currentRealDayPeak) * 100 : 0;
+                if (currentRealDailyDDPct > realDailyDDs[dateStr].maxPct) {
+                    realDailyDDs[dateStr].maxPct = currentRealDailyDDPct;
+                    realDailyDDs[dateStr].maxMoney = currentRealDailyDDMoney;
+                }
+                prevRealBalance = realBalance;
+
+                // COMPUESTO
+                let sym = d.Symbol || 'Estrategia';
+                let oneR = symbolStats[sym].oneR;
+                let R = d.NetProfit / oneR;
+                if(R > 30) R = 30; if(R < -15) R = -15;
+
+                compBalance *= (1 + (R * 0.01));
+                if (compBalance < 0) compBalance = 0; 
+                if (isNaN(compBalance)) compBalance = 10000; 
+                compBalance = Math.min(compBalance, 1000000000000); 
+
+                if (compBalance > compPeak) {
+                    compPeak = compBalance; compPeakDate = d.Time;
+                } else {
+                    let currentDDMoney = compPeak - compBalance;
+                    let currentDDPct = (currentDDMoney / compPeak) * 100;
+                    if (currentDDPct > maxCompDDPct) {
+                        maxCompDDMoney = currentDDMoney; maxCompDDPct = currentDDPct;
+                        maxCompDDStartDate = compPeakDate; maxCompDDEndDate = d.Time;
+                    }
+                }
+                if (dateStr !== prevDateStr) {
+                    currentDayPeak = prevCompBalance; 
+                    if (!compDailyDDs[dateStr]) compDailyDDs[dateStr] = { maxPct: 0, maxMoney: 0 };
+                    prevDateStr = dateStr;
+                }
+                if (compBalance > currentDayPeak) currentDayPeak = compBalance;
+                let currentDailyDDMoney = currentDayPeak - compBalance;
+                let currentDailyDDPct = currentDayPeak > 0 ? (currentDailyDDMoney / currentDayPeak) * 100 : 0;
+                if (currentDailyDDPct > compDailyDDs[dateStr].maxPct) {
+                    compDailyDDs[dateStr].maxPct = currentDailyDDPct;
+                    compDailyDDs[dateStr].maxMoney = currentDailyDDMoney;
+                }
+                prevCompBalance = compBalance;
+                compChartDataObj.push({ time: d.Time, balance: compBalance });
+            });
+            
+            // ESTADISTICAS
+            let maxRealDailyDDPct = 0; let maxRealDailyDDMoney = 0;
+            let sumRealDailyDDPct = 0; let sumRealDailyDDMoney = 0;
+            let realTradingDaysCount = 0; let maxRealDailyDDDate = null;
+            for (let date in realDailyDDs) {
+                let dayStats = realDailyDDs[date];
+                if (dayStats.maxPct > maxRealDailyDDPct) {
+                    maxRealDailyDDPct = dayStats.maxPct; maxRealDailyDDMoney = dayStats.maxMoney; maxRealDailyDDDate = date;
+                }
+                sumRealDailyDDPct += dayStats.maxPct; sumRealDailyDDMoney += dayStats.maxMoney; realTradingDaysCount++;
+            }
+            let avgRealDailyDDPct = realTradingDaysCount > 0 ? (sumRealDailyDDPct / realTradingDaysCount) : 0;
+            let avgRealDailyDDMoney = realTradingDaysCount > 0 ? (sumRealDailyDDMoney / realTradingDaysCount) : 0;
+
+            let maxCompDailyDDPct = 0; let maxCompDailyDDMoney = 0;
+            let sumCompDailyDDPct = 0; let sumCompDailyDDMoney = 0;
+            let tradingDaysCount = 0; let maxCompDailyDDDate = null;
+            for (let date in compDailyDDs) {
+                let dayStats = compDailyDDs[date];
+                if (dayStats.maxPct > maxCompDailyDDPct) {
+                    maxCompDailyDDPct = dayStats.maxPct; maxCompDailyDDMoney = dayStats.maxMoney; maxCompDailyDDDate = date;
+                }
+                sumCompDailyDDPct += dayStats.maxPct; sumCompDailyDDMoney += dayStats.maxMoney; tradingDaysCount++;
+            }
+            let avgCompDailyDDPct = tradingDaysCount > 0 ? (sumCompDailyDDPct / tradingDaysCount) : 0;
+            let avgCompDailyDDMoney = tradingDaysCount > 0 ? (sumCompDailyDDMoney / tradingDaysCount) : 0;
+
+            const finalCompBalance = compBalance;
+            const compReturnPct = ((finalCompBalance - 10000) / 10000) * 100;
+
+            let monthsSpan = 1;
+            if(totalTrades > 0 && maxDate > minDate) {
+                monthsSpan = (maxDate.getFullYear() - minDate.getFullYear()) * 12 + (maxDate.getMonth() - minDate.getMonth()) + 1;
+                if(monthsSpan <= 0) monthsSpan = 1;
+            }
+            const tradesPerMonth = totalTrades > 0 ? (totalTrades / monthsSpan) : 0;
+
+            return {
+                totalProfit, grossProfit, grossLoss, absoluteGrossLoss,
+                totalTrades, winningTrades, losingTrades, winRate, avgTrade, tradesPerMonth,
+                profitFactor, riskReward, maxConsDrawdownPct, maxConsecutiveLoss, maxConsDate, maxSingleLoss, maxSingleLossPct, maxSingleDate, 
+                maxWinStreak, maxLossStreak, avgWinStreak, avgLossStreak,
+                maxSimultaneous, finalCompBalance, compReturnPct,
+                maxRealDDMoney, maxRealDDPct, maxRealDDStartDate, maxRealDDEndDate,
+                maxRealDailyDDPct, maxRealDailyDDMoney, maxRealDailyDDDate, avgRealDailyDDPct, avgRealDailyDDMoney,
+                maxCompDDMoney, maxCompDDPct, maxCompDDStartDate, maxCompDDEndDate,
+                maxCompDailyDDPct, maxCompDailyDDMoney, maxCompDailyDDDate, avgCompDailyDDPct, avgCompDailyDDMoney
+            };
+        }
+
+        function updateLeaderboard() {
+            const container = document.getElementById('leaderboardContainer');
+            let pairData = {};
+            rawData.forEach(d => {
+                if(!d.Symbol) return;
+                if(!pairData[d.Symbol]) pairData[d.Symbol] = { profit: 0, count: 0 };
+                pairData[d.Symbol].profit += d.NetProfit || 0;
+                pairData[d.Symbol].count += 1;
+            });
+            let sortedPairs = Object.keys(pairData).sort((a,b) => pairData[b].profit - pairData[a].profit);
+            container.innerHTML = '';
+            if (sortedPairs.length === 0) {
+                container.innerHTML = '<div class="text-xs text-gray-500 text-center py-4">Sin operaciones</div>'; return;
+            }
+            let html = '';
+            sortedPairs.forEach((p, index) => {
+                let prof = pairData[p].profit; let count = pairData[p].count;
+                let colorClass = prof >= 0 ? 'text-green-400' : 'text-red-400';
+                let bgClass = index % 2 === 0 ? 'bg-gray-700/30' : 'bg-transparent';
+                let prefix = prof > 0 ? '+' : '';
+                html += `<div class="flex justify-between items-center text-sm p-3 rounded hover:bg-gray-700 transition-colors ${bgClass}">
+                            <div class="flex items-center gap-2 truncate pr-2">
+                                <span class="text-xs font-bold text-gray-500 w-5 shrink-0">${index + 1}.</span>
+                                <span class="font-semibold text-gray-200 truncate text-sm" title="${p}">${p}</span>
+                                <span class="text-[11px] text-gray-400 shrink-0 ml-1">${count}</span>
+                            </div>
+                            <span class="font-bold font-mono text-sm ${colorClass} shrink-0">${prefix}${fmtMoney(prof, 2)}</span>
+                        </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function updateKPIs() {
+            const metrics = calculateMetrics(filteredData);
+            document.getElementById('kpiTotalProfit').innerText = fmtMoney(metrics.totalProfit);
+            document.getElementById('kpiTotalProfit').className = `text-2xl lg:text-3xl font-bold mt-1 ${metrics.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}`;
+            document.getElementById('kpiGrossProfit').lastElementChild.innerText = fmtMoney(metrics.grossProfit);
+            document.getElementById('kpiGrossLoss').lastElementChild.innerText = fmtMoney(metrics.absoluteGrossLoss);
+            
+            document.getElementById('kpiTotalTrades').innerText = metrics.totalTrades;
+            document.getElementById('kpiSimultaneous').innerText = `Simultáneos: ${metrics.maxSimultaneous}`;
+            document.getElementById('kpiWinRate').innerText = `${metrics.winRate.toFixed(1)}%`;
+            document.getElementById('kpiWinRateSub').innerText = `${metrics.winningTrades} / ${metrics.totalTrades} Victorias`;
+            
+            document.getElementById('kpiAvgTrade').innerText = fmtMoney(metrics.avgTrade);
+            document.getElementById('kpiAvgTrade').className = `text-xl lg:text-2xl font-bold leading-none mt-1 ${metrics.avgTrade >= 0 ? 'text-green-400' : 'text-red-400'}`;
+            document.getElementById('kpiTradesPerMonth').innerText = metrics.tradesPerMonth.toFixed(1);
+
+            document.getElementById('kpiProfitFactor').innerText = metrics.profitFactor === 99.99 ? '∞' : metrics.profitFactor.toFixed(2);
+            document.getElementById('kpiProfitFactor').className = `text-2xl lg:text-3xl font-bold mt-1 ${metrics.profitFactor >= 1.5 ? 'text-green-400' : (metrics.profitFactor >= 1 ? 'text-blue-400' : 'text-red-400')}`;
+            document.getElementById('kpiRiskReward').innerText = metrics.riskReward === 99.99 ? `1:∞` : `1:${metrics.riskReward.toFixed(2)}`;
+            
+            document.getElementById('kpiMaxWinStreak').innerText = metrics.maxWinStreak;
+            document.getElementById('kpiMaxLossStreak').innerText = metrics.maxLossStreak;
+            document.getElementById('kpiAvgWinStreak').innerText = metrics.avgWinStreak.toFixed(0);
+            document.getElementById('kpiAvgLossStreak').innerText = metrics.avgLossStreak.toFixed(0);
+
+            const baseCapital = 10000;
+            document.getElementById('kpiLinearFinal').innerText = fmtMoney(baseCapital + metrics.totalProfit, 0);
+
+            let linearReturnPct = (metrics.totalProfit / baseCapital) * 100;
+            let kpiLinearPctEl = document.getElementById('kpiLinearPct');
+            kpiLinearPctEl.innerText = (linearReturnPct > 0 ? '+' : '') + linearReturnPct.toFixed(2) + '%';
+            kpiLinearPctEl.className = `text-xs font-semibold block ${linearReturnPct >= 0 ? 'text-blue-400' : 'text-red-400'}`;
+
+            // Drawdowns Reales
+            let realDDContainer = document.getElementById('realDDContainer');
+            if (metrics.maxRealDDPct > 0) {
+                realDDContainer.classList.remove('hidden');
+                document.getElementById('kpiRealDDPct').innerText = `-${metrics.maxRealDDPct.toFixed(2)}%`;
+                document.getElementById('kpiRealDDMoney').innerText = `-${fmtMoney(metrics.maxRealDDMoney)}`;
+                document.getElementById('realDDHistDiv').title = `Desde: ${formatShortDate(metrics.maxRealDDStartDate)}\nHasta: ${formatShortDate(metrics.maxRealDDEndDate)}`;
+                document.getElementById('kpiRealDailyDDPct').innerText = `-${metrics.maxRealDailyDDPct.toFixed(2)}%`;
+                document.getElementById('kpiRealDailyDDMoney').innerText = `-${fmtMoney(metrics.maxRealDailyDDMoney)}`;
+                document.getElementById('realDDDailyDiv').title = `Día: ${metrics.maxRealDailyDDDate}`;
+                document.getElementById('kpiRealAvgDailyDDPct').innerText = `-${metrics.avgRealDailyDDPct.toFixed(2)}%`;
+                document.getElementById('kpiRealAvgDailyDDMoney').innerText = `-${fmtMoney(metrics.avgRealDailyDDMoney)}`;
+            } else { realDDContainer.classList.add('hidden'); }
+
+            let renderComp = isNaN(metrics.finalCompBalance) ? 10000 : metrics.finalCompBalance;
+            let renderCompPct = isNaN(metrics.compReturnPct) ? 0 : metrics.compReturnPct;
+            document.getElementById('kpiCompFinal').innerText = fmtMoney(renderComp, 0);
+            document.getElementById('kpiCompPct').innerText = (renderCompPct > 0 ? '+' : '') + renderCompPct.toFixed(2) + '%';
+            document.getElementById('kpiCompPct').className = `text-xs font-semibold block ${renderCompPct >= 0 ? 'text-purple-400' : 'text-red-400'}`;
+            
+            // Drawdowns Compuestos
+            let compDDContainer = document.getElementById('compoundDDContainer');
+            if (metrics.maxCompDDPct > 0) {
+                compDDContainer.classList.remove('hidden');
+                document.getElementById('kpiCompDDPct').innerText = `-${metrics.maxCompDDPct.toFixed(2)}%`;
+                document.getElementById('kpiCompDDMoney').innerText = `-${fmtMoney(metrics.maxCompDDMoney)}`;
+                document.getElementById('compDDHistDiv').title = `Desde: ${formatShortDate(metrics.maxCompDDStartDate)}\nHasta: ${formatShortDate(metrics.maxCompDDEndDate)}`;
+                document.getElementById('kpiCompDailyDDPct').innerText = `-${metrics.maxCompDailyDDPct.toFixed(2)}%`;
+                document.getElementById('kpiCompDailyDDMoney').innerText = `-${fmtMoney(metrics.maxCompDailyDDMoney)}`;
+                document.getElementById('compDDDailyDiv').title = `Día: ${metrics.maxCompDailyDDDate}`;
+                document.getElementById('kpiCompAvgDailyDDPct').innerText = `-${metrics.avgCompDailyDDPct.toFixed(2)}%`;
+                document.getElementById('kpiCompAvgDailyDDMoney').innerText = `-${fmtMoney(metrics.avgCompDailyDDMoney)}`;
+            } else { compDDContainer.classList.add('hidden'); }
+        }
+
+        function updateChart() {
+            const ctxEq = document.getElementById('equityChart').getContext('2d');
+            let cumulative = 0; let chartLabels = []; let chartData = [];
+            filteredData.forEach(d => {
+                cumulative += d.NetProfit || 0;
+                let timeVal = d.Time instanceof Date ? d.Time : new Date(d.Time);
+                if(isNaN(timeVal.getTime())) timeVal = new Date();
+                chartLabels.push(timeVal); chartData.push(cumulative);
+            });
+
+            safeDestroy(equityChartInstance);
+            equityChartInstance = new Chart(ctxEq, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'Beneficio Lineal ($)', data: chartData,
+                        borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2, fill: true, pointRadius: 0, pointHoverRadius: 5,
+                        tension: 0.4, cubicInterpolationMode: 'monotone'
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => 'Beneficio: ' + fmtMoney(ctx.parsed.y) } } },
+                    scales: {
+                        x: { type: 'time', time: { tooltipFormat: 'dd MMM yyyy, HH:mm' }, grid: { color: '#374151' }, ticks: { color: '#9ca3af' } },
+                        y: { grid: { color: '#374151' }, ticks: { color: '#9ca3af', callback: (v) => fmtMoney(v, 0) } }
+                    }
+                }
+            });
+
+            const ctxComp = document.getElementById('compoundChart').getContext('2d');
+            let compLabels = compChartDataObj.map(d => {
+                let timeVal = d.time instanceof Date ? d.time : new Date(d.time);
+                return isNaN(timeVal.getTime()) ? new Date() : timeVal;
+            });
+            let compData = compChartDataObj.map(d => isNaN(d.balance) ? 0 : (d.balance - 10000));
+
+            safeDestroy(compoundChartInstance);
+            compoundChartInstance = new Chart(ctxComp, {
+                type: 'line',
+                data: {
+                    labels: compLabels,
+                    datasets: [{
+                        label: 'Beneficio Compuesto ($)', data: compData,
+                        borderColor: '#a855f7', backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                        borderWidth: 2, fill: true, pointRadius: 0, pointHoverRadius: 5,
+                        tension: 0.4, cubicInterpolationMode: 'monotone'
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => 'Beneficio: ' + fmtMoney(ctx.parsed.y) } } },
+                    scales: {
+                        x: { type: 'time', time: { tooltipFormat: 'dd MMM yyyy, HH:mm' }, grid: { color: '#374151' }, ticks: { color: '#9ca3af' } },
+                        y: { grid: { color: '#374151' }, ticks: { color: '#9ca3af', callback: (v) => fmtMoney(v, 0) } }
+                    }
+                }
+            });
+        }
+
+        function updateAnalyticsCharts() {
+            let tHour = new Array(24).fill(0); let pHourWin = new Array(24).fill(0); let pHourLoss = new Array(24).fill(0);
+            let tDay = new Array(7).fill(0);   let pDayWin = new Array(7).fill(0);  let pDayLoss = new Array(7).fill(0);
+            let tMonth = new Array(12).fill(0);let pMonthWin = new Array(12).fill(0);let pMonthLoss = new Array(12).fill(0);
+            let scatterData = []; let realTradesCount = 0; let totalDur = 0; let maxDur = 0; let minDur = Infinity;
+
+            filteredData.forEach(d => {
+                realTradesCount++;
+                if (d.EntryHour !== undefined) tHour[d.EntryHour]++;  
+                if (d.DayOfWeek !== undefined) tDay[d.DayOfWeek]++;   
+                if (d.ExitMonth !== undefined) tMonth[d.ExitMonth]++; 
+                
+                if(d.NetProfit > 0) {
+                    if (d.EntryHour !== undefined) pHourWin[d.EntryHour] += d.NetProfit;
+                    if (d.DayOfWeek !== undefined) pDayWin[d.DayOfWeek] += d.NetProfit;
+                    if (d.ExitMonth !== undefined) pMonthWin[d.ExitMonth] += d.NetProfit;
+                } else if(d.NetProfit < 0) {
+                    if (d.EntryHour !== undefined) pHourLoss[d.EntryHour] += Math.abs(d.NetProfit);
+                    if (d.DayOfWeek !== undefined) pDayLoss[d.DayOfWeek] += Math.abs(d.NetProfit);
+                    if (d.ExitMonth !== undefined) pMonthLoss[d.ExitMonth] += Math.abs(d.NetProfit);
+                }
+                
+                let dur = d.DurationHours;
+                if (dur === undefined || isNaN(dur) || !isFinite(dur)) dur = 0;
+                scatterData.push({ x: dur, y: d.NetProfit || 0 });
+                totalDur += dur; if(dur > maxDur) maxDur = dur; if(dur < minDur) minDur = dur;
+            });
+
+            if(realTradesCount === 0) { minDur = 0; maxDur = 0; }
+            let avgDur = realTradesCount > 0 ? (totalDur / realTradesCount) : 0;
+            document.getElementById('statHoldMin').innerText = formatDurationText(minDur);
+            document.getElementById('statHoldAvg').innerText = formatDurationText(avgDur);
+            document.getElementById('statHoldMax').innerText = formatDurationText(maxDur);
+
+            const barOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: '#9ca3af', font: {size: 10} } }, y: { grid: { color: '#374151', drawBorder: false }, ticks: { color: '#9ca3af', font: {size: 10} } } } };
+            const barOptionsMoneyGrouped = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top', labels: { color: '#9ca3af', boxWidth: 10, font: {size: 10} } }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${fmtMoney(ctx.raw)}` } } }, scales: { x: { grid: { display: false }, ticks: { color: '#9ca3af', font: {size: 10} } }, y: { grid: { color: '#374151', drawBorder: false }, ticks: { color: '#9ca3af', font: {size: 10}, callback: (v) => fmtMoney(v, 0) } } } };
+
+            let hourColors = tHour.map((_, h) => {
+                if (h >= 8 && h < 13) return '#3b82f6'; if (h >= 13 && h < 22) return '#10b981'; return '#8b5cf6';
+            });
+            let hourLabels = Array.from({length: 24}, (_, i) => i + 'h');
+
+            safeDestroy(cTH); cTH = new Chart(document.getElementById('cTradesHour'), { type: 'bar', data: { labels: hourLabels, datasets: [{ data: tHour, backgroundColor: hourColors, borderRadius: 2 }] }, options: barOptions });
+            safeDestroy(cTD); cTD = new Chart(document.getElementById('cTradesDay'), { type: 'bar', data: { labels: daysArr, datasets: [{ data: tDay, backgroundColor: '#3b82f6', borderRadius: 2 }] }, options: barOptions });
+            safeDestroy(cTM); cTM = new Chart(document.getElementById('cTradesMonth'), { type: 'bar', data: { labels: monthNames, datasets: [{ data: tMonth, backgroundColor: '#3b82f6', borderRadius: 2 }] }, options: barOptions });
+
+            safeDestroy(cPH); cPH = new Chart(document.getElementById('cProfitHour'), { type: 'bar', data: { labels: hourLabels, datasets: [ { label: 'Ganancia', data: pHourWin, backgroundColor: '#10b981', borderRadius: 2, barPercentage: 0.9, categoryPercentage: 0.8 }, { label: 'Pérdida.', data: pHourLoss, backgroundColor: '#ef4444', borderRadius: 2, barPercentage: 0.9, categoryPercentage: 0.8 } ] }, options: barOptionsMoneyGrouped });
+            safeDestroy(cPD); cPD = new Chart(document.getElementById('cProfitDay'), { type: 'bar', data: { labels: daysArr, datasets: [ { label: 'Ganancia', data: pDayWin, backgroundColor: '#10b981', borderRadius: 2, barPercentage: 0.9, categoryPercentage: 0.8 }, { label: 'Pérdida.', data: pDayLoss, backgroundColor: '#ef4444', borderRadius: 2, barPercentage: 0.9, categoryPercentage: 0.8 } ] }, options: barOptionsMoneyGrouped });
+            safeDestroy(cPM); cPM = new Chart(document.getElementById('cProfitMonth'), { type: 'bar', data: { labels: monthNames, datasets: [ { label: 'Ganancia', data: pMonthWin, backgroundColor: '#10b981', borderRadius: 2, barPercentage: 0.9, categoryPercentage: 0.8 }, { label: 'Pérdida.', data: pMonthLoss, backgroundColor: '#ef4444', borderRadius: 2, barPercentage: 0.9, categoryPercentage: 0.8 } ] }, options: barOptionsMoneyGrouped });
+
+            safeDestroy(scatterChartInstance);
+            scatterChartInstance = new Chart(document.getElementById('scatterChart'), {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Operación', data: scatterData,
+                        backgroundColor: scatterData.map(d => d.y >= 0 ? 'rgba(16, 185, 129, 0.6)' : 'rgba(239, 68, 68, 0.6)'),
+                        borderColor: scatterData.map(d => d.y >= 0 ? 'rgb(16, 185, 129)' : 'rgb(239, 68, 68)'),
+                        borderWidth: 1, pointRadius: 4, pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => `Retención: ${formatDurationText(ctx.parsed.x)} | Profit: ${fmtMoney(ctx.parsed.y)}` } } },
+                    scales: {
+                        x: { title: { display: true, text: 'Tiempo retenido (Horas)', color: '#9ca3af' }, grid: { color: '#374151' }, ticks: { color: '#9ca3af' } },
+                        y: { title: { display: true, text: 'Profit ($)', color: '#9ca3af' }, grid: { color: '#374151' }, ticks: { color: '#9ca3af', callback: (v) => fmtMoney(v, 0) } }
+                    }
+                }
+            });
+        }
+
+        // --- CALENDARIO ---
+        function getCellColorClass(profit) {
+            if (profit === undefined || profit === null || profit === 0) return "bg-gray-800/50 border-gray-700 text-gray-500 hover:border-gray-500";
+            if (profit > 0) return "bg-green-900/40 border-green-600 text-green-400 shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:border-green-400";
+            return "bg-red-900/40 border-red-600 text-red-400 shadow-[0_0_10px_rgba(239,68,68,0.1)] hover:border-red-400";
+        }
+
+        window.calZoomInYear = function(year) { calYear = parseInt(year); calMode = 'MONTHS'; updateSmartCalendar(); };
+        window.calZoomInMonth = function(month) { calMonth = parseInt(month); calMode = 'DAYS'; updateSmartCalendar(); };
+        window.calZoomOut = function() {
+            if (calMode === 'DAYS') calMode = 'MONTHS'; else if (calMode === 'MONTHS') calMode = 'YEARS';
+            updateSmartCalendar();
+        };
+        window.calZoomIn = function() {
+            if (calMode === 'YEARS') {
+                let years = [...new Set(filteredData.map(d => d.Year).filter(Boolean))].sort((a,b) => b-a);
+                if (years.length > 0) calZoomInYear(years[0]);
+            } else if (calMode === 'MONTHS') {
+                let months = [...new Set(filteredData.filter(d => d.Year === calYear).map(d => d.Month).filter(Boolean))].sort((a,b) => b-a);
+                if (months.length > 0) calZoomInMonth(months[0]); else calZoomInMonth(1);
+            }
+        };
+        window.calNavigate = function(dir) {
+            if (calMode === 'MONTHS') calYear += dir;
+            else if (calMode === 'DAYS') {
+                calMonth += dir;
+                if (calMonth > 12) { calMonth = 1; calYear++; }
+                if (calMonth < 1) { calMonth = 12; calYear--; }
+            }
+            updateSmartCalendar();
+        };
+
+        function toggleCalendarDetail() {
+            isDetailedCalendar = !isDetailedCalendar;
+            const btn = document.getElementById('btnToggleCalendarDetail');
+            if (isDetailedCalendar) {
+                btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg><span class="hidden md:inline">Ver Resumen</span>`;
+                btn.className = "ml-2 md:ml-4 px-3 py-1 bg-orange-600 hover:bg-orange-500 text-white rounded text-xs md:text-sm font-semibold transition-colors flex items-center gap-1 shadow-md";
+            } else {
+                btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg><span class="hidden md:inline">Ver Ruta de Trades</span>`;
+                btn.className = "ml-2 md:ml-4 px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded text-xs md:text-sm font-semibold transition-colors flex items-center gap-1 shadow-md";
+            }
+            updateSmartCalendar();
+        }
+
+        function updateSmartCalendar() {
+            const container = document.getElementById('calendarContainer');
+            const indicator = document.getElementById('calendarModeIndicator');
+            const btnPrev = document.getElementById('btnCalPrev');
+            const btnNext = document.getElementById('btnCalNext');
+            const btnZoomOut = document.getElementById('btnCalZoomOut');
+            const btnZoomIn = document.getElementById('btnCalZoomIn');
+            const btnDetail = document.getElementById('btnToggleCalendarDetail');
+
+            let calData = filteredData; 
+            container.innerHTML = ''; 
+
+            btnPrev.disabled = (calMode === 'YEARS'); btnNext.disabled = (calMode === 'YEARS');
+            btnZoomOut.disabled = (calMode === 'YEARS'); if (btnZoomIn) btnZoomIn.disabled = (calMode === 'DAYS');
+            
+            if (btnDetail) {
+                btnDetail.disabled = (calMode !== 'DAYS');
+                if (calMode !== 'DAYS') btnDetail.classList.add('opacity-30', 'cursor-not-allowed');
+                else btnDetail.classList.remove('opacity-30', 'cursor-not-allowed');
+            }
+
+            if (calData.length === 0) {
+                indicator.innerText = "Sin Datos";
+                container.innerHTML = '<div class="text-gray-500 py-8 text-center border border-dashed border-gray-700 rounded-xl">No hay operaciones registradas.</div>';
+                return;
+            }
+
+            if (calMode === 'YEARS') { indicator.innerText = "Vista: Años"; renderYearsGrid(container, calData); } 
+            else if (calMode === 'MONTHS') { indicator.innerText = `Año ${calYear}`; renderMonthsGrid(container, calData, calYear); } 
+            else if (calMode === 'DAYS') { indicator.innerText = `${monthNames[(calMonth || 1)-1]} ${calYear}`; renderDaysGrid(container, calData, calYear, calMonth); }
+        }
+
+        function renderYearsGrid(container, data) {
+            let yearlyData = {};
+            data.forEach(d => {
+                if(!d.Year) return;
+                if(!yearlyData[d.Year]) yearlyData[d.Year] = 0;
+                yearlyData[d.Year] += d.NetProfit || 0;
+            });
+            let years = Object.keys(yearlyData).sort((a,b) => b - a); 
+            let html = `<div class="grid grid-cols-2 md:grid-cols-4 gap-4 fade-in">`;
+            years.forEach(year => {
+                let profit = yearlyData[year];
+                let colorClass = getCellColorClass(profit);
+                html += `<div onclick="calZoomInYear('${year}')" class="h-28 flex flex-col items-center justify-center rounded-xl border ${colorClass} p-4 transition-transform hover:-translate-y-1 cursor-pointer relative group">
+                            <span class="absolute top-2 right-3 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-black/30 px-2 py-1 rounded">Ver Meses 🔍</span>
+                            <span class="text-sm font-semibold mb-2 opacity-75">Año ${year}</span>
+                            <span class="text-2xl font-bold truncate-text w-full text-center">${fmtMoney(profit, 2)}</span>
+                        </div>`;
+            });
+            container.innerHTML = html + `</div>`;
+        }
+
+        function renderMonthsGrid(container, data, year) {
+            let monthlyData = {}; let monthlyTrades = {};
+            data.forEach(d => {
+                if (d.Year === year && d.Month) {
+                    if(!monthlyData[d.Month]) { monthlyData[d.Month] = 0; monthlyTrades[d.Month] = 0; }
+                    monthlyData[d.Month] += d.NetProfit || 0; monthlyTrades[d.Month]++;
+                }
+            });
+            let html = `<div class="grid grid-cols-3 md:grid-cols-4 gap-4 fade-in">`;
+            for(let i = 1; i <= 12; i++) {
+                let profit = monthlyData[i]; let trades = monthlyTrades[i] || 0;
+                let colorClass = getCellColorClass(profit);
+                let displayProfit = profit !== undefined ? fmtMoney(profit, 2) : 'Sin trades';
+                html += `<div onclick="calZoomInMonth('${i}')" class="h-24 flex flex-col items-center justify-center rounded-xl border ${colorClass} p-2 transition-transform hover:-translate-y-1 cursor-pointer relative group">
+                            <span class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-black/30 px-2 py-1 rounded">Ver Días 🔍</span>
+                            <span class="text-xs font-semibold mb-1 opacity-75 uppercase">${monthNames[i-1]}</span>
+                            <span class="text-lg font-bold truncate-text w-full text-center">${displayProfit}</span>
+                            <span class="text-[10px] text-gray-400 mt-1">${trades} trades</span>
+                        </div>`;
+            }
+            container.innerHTML = html + `</div>`;
+        }
+
+        function renderDaysGrid(container, data, year, month) {
+            let daysInMonth = new Date(year, month, 0).getDate();
+            let firstDay = new Date(year, month - 1, 1).getDay();
+
+            let html = `<div class="w-full max-w-6xl mx-auto fade-in">`;
+            html += `<div class="grid grid-cols-7 text-center text-xs text-gray-400 font-bold mb-2">`;
+            daysArr.forEach(d => html += `<div class="py-2">${d}</div>`);
+            html += `</div><div class="grid grid-cols-7 gap-1 md:gap-2">`;
+            
+            for(let i = 0; i < firstDay; i++) { html += `<div class="min-h-[80px] rounded border border-transparent"></div>`; }
+
+            if (!isDetailedCalendar) {
+                let dailyData = {};
+                data.forEach(d => {
+                    if (d.Year === year && d.Month === month && d.Time) {
+                        let day = d.Time.getDate();
+                        if(!dailyData[day]) dailyData[day] = { total: 0, trades: [] };
+                        dailyData[day].total += d.NetProfit || 0;
+                        dailyData[day].trades.push({ sym: d.Symbol || '-', prof: d.NetProfit || 0, time: d.EntryTime || d.Time });
+                    }
+                });
+
+                for(let i = 1; i <= daysInMonth; i++) {
+                    let dayData = dailyData[i];
+                    let profit = dayData ? dayData.total : undefined;
+                    let colorClass = getCellColorClass(profit);
+                    let displayProfit = profit !== undefined ? fmtMoney(profit, 2) : '-';
+                    
+                    let tradesHtml = '';
+                    if (dayData) {
+                        dayData.trades.sort((a,b) => a.time - b.time).forEach(t => {
+                            let hh = t.time && t.time.getHours ? t.time.getHours().toString().padStart(2, '0') : '--';
+                            let mm = t.time && t.time.getMinutes ? t.time.getMinutes().toString().padStart(2, '0') : '--';
+                            let sColorClass = t.prof >= 0 ? 'text-green-300' : 'text-red-300';
+                            let sPrefix = t.prof > 0 ? '+' : '';
+                            tradesHtml += `<div class="flex justify-between w-full items-center gap-1 border-b border-white/5 pb-[2px] last:border-0 opacity-90 hover:opacity-100">
+                                <span class="text-[8px] text-gray-500 font-mono tracking-tighter shrink-0" title="Hora de entrada">${hh}:${mm}</span>
+                                <span class="truncate max-w-[35px] md:max-w-[45px] text-[8px] text-gray-400" title="${t.sym}">${t.sym}</span>
+                                <span class="${sColorClass} font-mono shrink-0 text-[9px]">${sPrefix}${fmtMoney(t.prof, 0)}</span>
+                            </div>`;
+                        });
+                    }
+                    html += `<div class="min-h-[85px] max-h-[120px] flex flex-col items-center justify-start rounded-lg border ${colorClass} bg-gray-800/60 p-1 transition-transform hover:scale-105 cursor-default overflow-hidden shadow-sm" title="Día ${i}\nNeto: ${profit !== undefined ? fmtMoney(profit, 2) : '0.00'}">
+                                <div class="text-[10px] md:text-xs font-semibold opacity-90 border-b border-white/20 w-full text-center pb-1 mb-1 flex flex-col">
+                                    <span class="text-gray-300">${i}</span><span class="font-bold text-[10px] md:text-[11px]">${displayProfit}</span>
+                                </div>
+                                <div class="w-full flex flex-col gap-[2px] overflow-y-auto cell-scrollbar px-[2px]">${tradesHtml}</div>
+                            </div>`;
+                }
+            } else {
+                let monthStartMs = new Date(year, month - 1, 1).getTime();
+                let monthEndMs = new Date(year, month, 0, 23, 59, 59).getTime();
+
+                let monthTrades = data.filter(d => {
+                    let st = d.EntryTime || d.Time; let et = d.Time;
+                    return st.getTime() <= monthEndMs && et.getTime() >= monthStartMs;
+                });
+                monthTrades.sort((a,b) => (a.EntryTime||a.Time) - (b.EntryTime||b.Time));
+
+                let tracks = [];
+                monthTrades.forEach(t => {
+                    let st = t.EntryTime || t.Time; let et = t.Time;
+                    let dStart = 1; if (st.getFullYear() === year && (st.getMonth()+1) === month) dStart = st.getDate();
+                    let dEnd = daysInMonth; if (et.getFullYear() === year && (et.getMonth()+1) === month) dEnd = et.getDate();
+
+                    let trackIdx = 0;
+                    while(true) {
+                        if (!tracks[trackIdx]) { tracks[trackIdx] = []; break; }
+                        let overlaps = tracks[trackIdx].some(interval => !(dEnd < interval.start || dStart > interval.end));
+                        if (!overlaps) break; trackIdx++;
+                    }
+                    tracks[trackIdx].push({ start: dStart, end: dEnd, trade: t });
+                });
+
+                let numTracks = tracks.length;
+                for(let i = 1; i <= daysInMonth; i++) {
+                    let dayHtml = '';
+                    for(let tr = 0; tr < numTracks; tr++) {
+                        let segment = tracks[tr].find(item => item.start <= i && item.end >= i);
+                        if (segment) {
+                            let t = segment.trade; let st = t.EntryTime || t.Time; let et = t.Time;
+                            let isActualStart = (st.getFullYear() === year && (st.getMonth()+1) === month && st.getDate() === i);
+                            let isActualEnd   = (et.getFullYear() === year && (et.getMonth()+1) === month && et.getDate() === i);
+                            let bgBase = t.NetProfit >= 0 ? 'bg-green-600/20 text-green-300 border-green-500/50' : 'bg-red-600/20 text-red-300 border-red-500/50';
+                            let sTime = st ? `${st.getHours().toString().padStart(2,'0')}:${st.getMinutes().toString().padStart(2,'0')}` : '--:--';
+                            let eTime = et ? `${et.getHours().toString().padStart(2,'0')}:${et.getMinutes().toString().padStart(2,'0')}` : '--:--';
+                            let symStr = t.Symbol || 'UNK'; if(symStr.length > 8) symStr = symStr.substring(0,8) + '..';
+
+                            let content = '';
+                            let classes = `h-[22px] mb-1 text-[9.5px] font-mono flex items-center px-1 border-y border-x truncate shadow-sm transition-opacity hover:opacity-100 ${isActualStart || isActualEnd ? 'opacity-90' : 'opacity-70'}`;
+
+                            if (isActualStart && isActualEnd) {
+                                classes += ` rounded-md ${bgBase} justify-between`;
+                                content = `<span class="truncate pr-1 opacity-80">[${sTime}] ${symStr}</span><span class="font-bold">${fmtMoney(t.NetProfit,0)}</span>`;
+                            } else if (isActualStart) {
+                                classes += ` rounded-l-md border-r-0 mr-[-6px] ${bgBase} justify-start`;
+                                content = `<span class="font-bold opacity-80">[${sTime}] ${symStr} <span class="text-[8px]">➔</span></span>`;
+                            } else if (isActualEnd) {
+                                classes += ` rounded-r-md border-l-0 ml-[-6px] ${bgBase} justify-between`;
+                                content = `<span class="opacity-40 text-[8px] mr-1">➔</span><span class="font-bold ml-auto">${fmtMoney(t.NetProfit,0)} <span class="opacity-80">[${eTime}]</span></span>`;
+                            } else {
+                                classes += ` rounded-none border-x-0 mx-[-6px] ${bgBase} justify-center bg-opacity-10`;
+                                content = `<span class="opacity-50 tracking-widest uppercase">〰️ ${symStr} 〰️</span>`;
+                            }
+                            dayHtml += `<div class="${classes}" title="${t.Symbol}\nApertura: ${sTime}\nCierre: ${eTime}\nDuración: ${formatDurationText(t.DurationHours)}\nGanancia: ${fmtMoney(t.NetProfit)}">${content}</div>`;
+                        } else {
+                            dayHtml += `<div class="h-[22px] mb-1"></div>`; 
+                        }
+                    }
+                    html += `<div class="min-h-[100px] flex flex-col rounded-lg border border-gray-700 bg-gray-800/40 p-1.5 shadow-sm overflow-hidden group">
+                                <span class="text-xs font-bold opacity-80 mb-1 border-b border-gray-700/50 pb-1 w-full text-center text-gray-400 group-hover:text-blue-400 transition-colors">${i}</span>
+                                <div class="flex flex-col flex-1 overflow-visible">${dayHtml || '<span class="text-[9px] text-gray-600 m-auto italic">Libre</span>'}</div>
+                            </div>`;
+                }
+            }
+            container.innerHTML = html + `</div></div>`;
+        }
+
+    </script>
+</body>
+</html>
