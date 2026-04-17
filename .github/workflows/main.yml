@@ -12,6 +12,10 @@ on:
 permissions:
   contents: write
 
+# AQUÍ ESTÁ LA SOLUCIÓN DEFINITIVA AL AVISO DE NODE.JS 20
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     # Volvemos a Ubuntu porque es más rápido y compatible con llamadas a APIs web
