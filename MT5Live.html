@@ -3,51 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trading Journal - JSON Version</title>
+    <title>Trading Journal</title>
     
     <link rel="icon" href="https://res.cloudinary.com/dlo3r0you/image/upload/v1754687755/logo_oyr4yr.png" type="image/png">
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 
     <style>
-        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .truncate-text {
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         /* SCROLLBARS PERSONALIZADAS */
-        .cell-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .cell-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .cell-scrollbar::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.3); border-radius: 6px; }
-        .cell-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(156, 163, 175, 0.6); }
+        .cell-scrollbar::-webkit-scrollbar {
+            width: 6px; height: 6px;
+        }
+        .cell-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .cell-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.3); /* gray-400 con opacidad */
+            border-radius: 6px;
+        }
+        .cell-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(156, 163, 175, 0.6);
+        }
         
-        .nav-link.active { border-bottom: 2px solid #3b82f6; color: #60a5fa; }
-        .custom-checkbox { accent-color: #3b82f6; width: 1.1rem; height: 1.1rem; cursor: pointer; }
+        .nav-link.active {
+            border-bottom: 2px solid #3b82f6;
+            color: #60a5fa;
+        }
+        .hide-arrows::-webkit-outer-spin-button,
+        .hide-arrows::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .hide-arrows[type=number] {
+            -moz-appearance: textfield;
+        }
 
-        .filter-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
-        .filter-scrollbar::-webkit-scrollbar-track { background: rgba(31, 41, 55, 0.8); border-radius: 8px; }
-        .filter-scrollbar::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.6); border-radius: 8px; border: 2px solid rgba(31, 41, 55, 0.8); }
-        .filter-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.9); }
+        /* ESTILOS PARA CHECKBOXES PERSONALIZADOS */
+        .custom-checkbox {
+            accent-color: #3b82f6;
+            width: 1.1rem;
+            height: 1.1rem;
+            cursor: pointer;
+        }
+
+        /* ESTILOS DE SCROLLBAR ELEGANTES PARA FILTROS DESPLEGABLES */
+        .filter-scrollbar::-webkit-scrollbar {
+            width: 8px; height: 8px;
+        }
+        .filter-scrollbar::-webkit-scrollbar-track {
+            background: rgba(31, 41, 55, 0.8); /* bg-gray-800 */
+            border-radius: 8px;
+        }
+        .filter-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.6); /* blue-500 */
+            border-radius: 8px;
+            border: 2px solid rgba(31, 41, 55, 0.8);
+        }
+        .filter-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.9);
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white font-sans min-h-screen">
 
-    <!-- Loader -->
-    <div id="globalLoader" class="fixed inset-0 z-[9999] bg-gray-900/90 backdrop-blur-sm flex flex-col items-center justify-center transition-opacity">
+    <div id="globalLoader" class="fixed inset-0 z-[9999] bg-gray-900/90 backdrop-blur-sm hidden flex-col items-center justify-center transition-opacity">
         <svg class="animate-spin h-16 w-16 text-blue-500 mb-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
-        <h2 class="text-2xl font-bold text-white tracking-wide">Cargando Datos JSON...</h2>
-        <p class="text-gray-400 text-sm mt-2 font-medium">Leyendo datos_trading.json</p>
+        <h2 class="text-2xl font-bold text-white tracking-wide">Procesando Datos...</h2>
+        <p class="text-gray-400 text-sm mt-2 font-medium">Cargando información del servidor...</p>
     </div>
 
-    <!-- Navegación -->
+    <div id="dndOverlay" class="fixed inset-0 z-[9998] bg-blue-900/60 backdrop-blur-md hidden flex-col items-center justify-center transition-all border-[6px] border-dashed border-blue-400 pointer-events-none">
+        <svg class="w-24 h-24 text-blue-400 mb-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+        <h2 class="text-4xl font-bold text-white tracking-wide">Suelta tus archivos aquí</h2>
+        <p class="text-blue-200 text-lg mt-4 font-medium">Se procesarán automáticamente.</p>
+    </div>
+
     <nav class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -56,313 +104,364 @@
                     <span class="text-xl font-bold tracking-wide">Trading<span class="text-blue-500">Analytics</span></span>
                 </div>
                 <div class="flex gap-4 md:gap-8 items-center">
-                    <button class="nav-link active font-semibold text-gray-300 hover:text-white pb-1 transition-colors cursor-default">Dashboard</button>
+                    <button id="nav-dashboard" class="nav-link active font-semibold text-gray-300 hover:text-white pb-1 transition-colors cursor-default">
+                        Dashboard
+                    </button>
+                    <a href="Optimizador" target="_blank" rel="noopener noreferrer" class="font-semibold text-gray-300 hover:text-white pb-1 transition-colors flex items-center gap-1">
+                        Optimizador
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Contenido Principal -->
     <div class="p-4 md:p-8">
-        <div id="dashboardContent" class="hidden fade-in flex flex-col lg:flex-row gap-4 items-stretch">
+
+        <div id="view-dashboard" class="fade-in block">
             
-            <!-- Barra Lateral: Leaderboard -->
-            <div class="w-full lg:w-64 xl:w-80 shrink-0 flex flex-col gap-4">
-                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-lg flex flex-col flex-1 min-h-[350px]">
-                    <h2 class="text-base font-semibold text-gray-300 mb-3 border-b border-gray-700 pb-2 flex items-center gap-2">
-                        <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
-                        Top Rendimiento
-                    </h2>
-                    <div id="leaderboardContainer" class="mt-1 flex-1 overflow-y-auto cell-scrollbar pr-1 flex flex-col gap-1"></div>
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-gray-800 py-3 px-5 rounded-xl shadow-lg border border-gray-700">
+                <div>
+                    <h1 class="text-2xl font-bold text-blue-400">📊 Trading Performance</h1>
+                    <p class="text-gray-400 text-xs mt-0.5">Analizador de Historial MT5</p>
+                </div>
+                <div class="mt-3 md:mt-0 flex flex-wrap gap-3">
+                    <input type="file" id="dashInputClassic" accept=".xlsx, .xls, .csv, .htm, .html" multiple class="hidden" />
+                    <input type="file" id="dashInputGraph" accept=".csv, .tsv, .txt" multiple class="hidden" />
+                    
+                    <button onclick="document.getElementById('dashInputClassic').click()" class="bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold py-1.5 px-4 rounded-lg shadow-md transition-all flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Historial (MT5)
+                    </button>
+                    
+                    <button onclick="document.getElementById('dashInputGraph').click()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold py-1.5 px-4 rounded-lg shadow-md transition-all flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                        Gráfico (.csv)
+                    </button>
+
+                    <button onclick="clearData()" id="clearBtn" class="hidden bg-red-600 hover:bg-red-500 text-white text-sm font-semibold py-1.5 px-4 rounded-lg shadow-md transition-all">
+                        Borrar
+                    </button>
                 </div>
             </div>
 
-            <!-- Columna Central: Contenido y KPIs -->
-            <div class="flex-1 min-w-0 flex flex-col gap-4">
+            <div id="dashFilesList" class="flex flex-wrap gap-3 mb-4"></div>
+
+            <div id="dashboardContent" class="hidden fade-in flex flex-col lg:flex-row gap-4 items-stretch">
                 
-                <!-- Filtros -->
-                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-lg flex flex-col md:flex-row items-center gap-4 justify-between relative z-40">
-                    <div class="flex items-center gap-2 text-gray-300 font-semibold w-full md:w-auto">
-                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-                        <span>Filtros Globales</span>
-                    </div>
-                    
-                    <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto flex-1 md:justify-end">
-                        <div class="custom-select-container relative flex flex-col md:flex-row items-start md:items-center gap-2">
-                            <label class="text-xs text-gray-400 uppercase tracking-wide whitespace-nowrap">Símbolos:</label>
-                            <button onclick="toggleDropdown('dropdownSymbols')" class="w-full md:w-44 bg-gray-700 text-white text-sm rounded py-1.5 px-3 border border-gray-600 focus:outline-none hover:border-blue-500 cursor-pointer flex justify-between items-center transition-colors">
-                                <span id="labelSymbols" class="truncate pr-2">Todos</span>
-                                <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                            </button>
-                            <div id="dropdownSymbols" class="custom-select-dropdown hidden absolute top-full left-0 md:left-auto right-0 mt-1 w-full md:w-56 bg-gray-800 border border-gray-600 rounded-md shadow-xl max-h-60 overflow-y-auto filter-scrollbar z-50 p-2"></div>
-                        </div>
-
-                        <div class="custom-select-container relative flex flex-col md:flex-row items-start md:items-center gap-2">
-                            <label class="text-xs text-gray-400 uppercase tracking-wide whitespace-nowrap">Años:</label>
-                            <button onclick="toggleDropdown('dropdownYears')" class="w-full md:w-36 bg-gray-700 text-white text-sm rounded py-1.5 px-3 border border-gray-600 focus:outline-none hover:border-blue-500 cursor-pointer flex justify-between items-center transition-colors">
-                                <span id="labelYears" class="truncate pr-2">Todos</span>
-                                <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                            </button>
-                            <div id="dropdownYears" class="custom-select-dropdown hidden absolute top-full left-0 md:left-auto right-0 mt-1 w-full md:w-40 bg-gray-800 border border-gray-600 rounded-md shadow-xl max-h-60 overflow-y-auto filter-scrollbar z-50 p-2"></div>
-                        </div>
-
-                        <div class="custom-select-container relative flex flex-col md:flex-row items-start md:items-center gap-2">
-                            <label class="text-xs text-gray-400 uppercase tracking-wide whitespace-nowrap">Meses:</label>
-                            <button onclick="toggleDropdown('dropdownMonths')" class="w-full md:w-36 bg-gray-700 text-white text-sm rounded py-1.5 px-3 border border-gray-600 focus:outline-none hover:border-blue-500 cursor-pointer flex justify-between items-center transition-colors">
-                                <span id="labelMonths" class="truncate pr-2">Todos</span>
-                                <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                            </button>
-                            <div id="dropdownMonths" class="custom-select-dropdown hidden absolute top-full left-0 md:left-auto right-0 mt-1 w-full md:w-40 bg-gray-800 border border-gray-600 rounded-md shadow-xl max-h-60 overflow-y-auto filter-scrollbar z-50 p-2"></div>
-                        </div>
-
-                        <button onclick="clearGlobalFilters()" class="bg-gray-700 hover:bg-red-600 hover:text-white text-gray-300 text-xs font-semibold py-1.5 px-3 rounded border border-gray-600 hover:border-red-500 transition-all flex items-center justify-center gap-1 mt-2 md:mt-0">
-                            Limpiar Filtros
-                        </button>
+                <div class="w-full lg:w-64 xl:w-80 shrink-0 flex flex-col gap-4">
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-lg flex flex-col flex-1 min-h-[350px]">
+                        <h2 class="text-base font-semibold text-gray-300 mb-3 border-b border-gray-700 pb-2 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                            Top Rendimiento
+                        </h2>
+                        <div id="leaderboardContainer" class="mt-1 flex-1 overflow-y-auto cell-scrollbar pr-1 flex flex-col gap-1"></div>
                     </div>
                 </div>
 
-                <!-- KPIs Top -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 z-10">
-                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
-                        <span class="text-gray-400 text-xs uppercase tracking-wide">Grand Total (Neto)</span>
-                        <span id="kpiTotalProfit" class="text-2xl lg:text-3xl font-bold mt-1">$0.00</span>
-                        <div class="flex gap-4 mt-2 text-[10px] lg:text-xs font-semibold w-full justify-center">
-                            <span id="kpiGrossProfit" class="text-green-400 flex flex-col"><span>Ganancias</span><span class="mt-1">$0.00</span></span>
-                            <span id="kpiGrossLoss" class="text-red-400 flex flex-col"><span>Pérdidas</span><span class="mt-1">$0.00</span></span>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
-                        <span class="text-gray-400 text-xs uppercase tracking-wide">Cantidad de Trades</span>
-                        <span id="kpiTotalTrades" class="text-2xl lg:text-3xl font-bold mt-1 text-white">0</span>
-                        <div class="flex flex-col items-center mt-2 gap-0.5 w-full">
-                            <span id="kpiSimultaneous" class="text-[10px] lg:text-xs text-purple-400 font-semibold" title="Máxima cantidad de trades abiertos al mismo tiempo">Simultáneos: -</span>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
-                        <span class="text-gray-400 text-xs uppercase tracking-wide">Win Rate</span>
-                        <span id="kpiWinRate" class="text-2xl lg:text-3xl font-bold mt-1 text-blue-400">0%</span>
-                        <span id="kpiWinRateSub" class="text-[10px] lg:text-xs text-gray-500 mt-2">0 / 0 Victorias</span>
-                    </div>
-                    
-                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
-                        <span class="text-gray-400 text-xs uppercase tracking-wide">Métricas por Trade</span>
-                        <div class="flex gap-4 mt-2 text-xs font-semibold w-full justify-center">
-                            <span class="flex flex-col items-center">
-                                <span class="text-gray-500 text-[9px] uppercase tracking-widest mb-0.5">Promedio ($)</span>
-                                <span id="kpiAvgTrade" class="text-xl lg:text-2xl font-bold leading-none">$0.00</span>
-                            </span>
-                            <span class="flex flex-col items-center border-l border-gray-700 pl-4">
-                                <span class="text-gray-500 text-[9px] uppercase tracking-widest mb-0.5">Trades / Mes</span>
-                                <span id="kpiTradesPerMonth" class="text-xl lg:text-2xl font-bold leading-none text-blue-400">0.0</span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
+                <div class="flex-1 min-w-0 flex flex-col gap-4">
 
-                <!-- KPIs Mid -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
-                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow relative group">
-                        <span class="text-gray-400 text-xs uppercase tracking-wide">Profit Factor</span>
-                        <span id="kpiProfitFactor" class="text-2xl lg:text-3xl font-bold mt-1 text-white">0.00</span>
-                        <span class="text-[10px] lg:text-xs text-gray-500 mt-2">Ganado / Perdido Bruto</span>
-                    </div>
-
-                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
-                        <span class="text-gray-400 text-xs uppercase tracking-wide">Riesgo / Beneficio</span>
-                        <span id="kpiRiskReward" class="text-2xl lg:text-3xl font-bold mt-1 text-white">1:0.00</span>
-                        <span class="text-[10px] lg:text-xs text-gray-500 mt-2">Win Prom. vs Loss Prom.</span>
-                    </div>
-
-                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
-                        <span class="text-gray-400 text-xs uppercase tracking-wide">Análisis de Rachas</span>
-                        <div class="flex gap-4 mt-2 text-xs font-semibold w-full justify-center">
-                            <span class="text-green-400 flex flex-col items-center group cursor-help">
-                                <span class="text-gray-500 text-[9px] uppercase tracking-widest mb-0.5">Ganadoras</span>
-                                <span class="text-xl lg:text-2xl font-bold leading-none"><span id="kpiMaxWinStreak">0</span><span class="text-xs text-gray-500 ml-1">máx</span></span>
-                                <span class="text-[10px] text-gray-400 mt-1 font-mono tracking-tighter">Promedio: <span id="kpiAvgWinStreak">0</span></span>
-                            </span>
-                            <span class="text-red-400 flex flex-col items-center border-l border-gray-700 pl-4 group cursor-help">
-                                <span class="text-gray-500 text-[9px] uppercase tracking-widest mb-0.5">Perdedoras</span>
-                                <span class="text-xl lg:text-2xl font-bold leading-none"><span id="kpiMaxLossStreak">0</span><span class="text-xs text-gray-500 ml-1">máx</span></span>
-                                <span class="text-[10px] text-gray-400 mt-1 font-mono tracking-tighter">Promedio: <span id="kpiAvgLossStreak">0</span></span>
-                            </span>
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-lg flex flex-col md:flex-row items-center gap-4 justify-between relative z-40">
+                        <div class="flex items-center gap-2 text-gray-300 font-semibold w-full md:w-auto">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                            <span>Filtros Globales</span>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Gráficas de Equidad -->
-                <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                    <!-- Real -->
-                    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 shadow-lg flex flex-col w-full relative">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h2 class="text-lg font-semibold text-gray-300">Curva de Capital Real</h2>
-                                <p class="text-[10px] text-gray-500">Balance final del set de datos</p>
-                            </div>
-                            <div class="text-right flex flex-col items-end gap-1">
-                                <div class="flex items-baseline gap-2">
-                                    <span id="kpiLinearPct" class="text-xs font-semibold block">+0.00%</span>
-                                    <span id="kpiLinearFinal" class="text-xl font-bold text-blue-400">$10,000</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="realDDContainer" class="hidden w-full mb-4 bg-gray-900/60 rounded-lg border border-gray-700/50 py-2 px-3 grid grid-cols-3 gap-2 divide-x divide-gray-700/60 shadow-inner">
-                            <div id="realDDHistDiv" class="flex flex-col justify-center px-1 md:px-2 group transition-colors rounded cursor-help">
-                                <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Max DD Histórico</span>
-                                <div class="flex items-baseline gap-1.5 flex-wrap">
-                                    <span id="kpiRealDDPct" class="text-sm md:text-base font-bold text-red-400">-0.00%</span>
-                                    <span id="kpiRealDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
-                                </div>
-                            </div>
-                            <div id="realDDDailyDiv" class="flex flex-col justify-center px-3 group transition-colors rounded cursor-help">
-                                <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Peor Día DD</span>
-                                <div class="flex items-baseline gap-1.5 flex-wrap">
-                                    <span id="kpiRealDailyDDPct" class="text-sm md:text-base font-bold text-orange-400">-0.00%</span>
-                                    <span id="kpiRealDailyDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
-                                </div>
-                            </div>
-                            <div class="flex flex-col justify-center px-3 group cursor-help" title="Promedio de los drawdowns diarios en todo el historial">
-                                <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Promedio Diario DD</span>
-                                <div class="flex items-baseline gap-1.5 flex-wrap">
-                                    <span id="kpiRealAvgDailyDDPct" class="text-sm md:text-base font-bold text-yellow-400">-0.00%</span>
-                                    <span id="kpiRealAvgDailyDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="relative w-full h-[200px] md:h-[240px] lg:h-[280px] xl:h-[320px]">
-                            <canvas id="equityChart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Compound -->
-                    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 shadow-lg flex flex-col w-full relative">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h2 class="text-lg font-semibold text-gray-300 text-purple-400">Proyección Compuesta</h2>
-                                <p class="text-[10px] text-gray-500">Asumiendo 1% de riesgo estricto por trade</p>
-                            </div>
-                            <div class="text-right flex flex-col items-end gap-1">
-                                <div class="flex items-baseline gap-2">
-                                    <span id="kpiCompPct" class="text-xs font-semibold text-gray-400 block">+0.00%</span>
-                                    <span id="kpiCompFinal" class="text-xl font-bold text-purple-400">$10,000</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="compoundDDContainer" class="hidden w-full mb-4 bg-gray-900/60 rounded-lg border border-gray-700/50 py-2 px-3 grid grid-cols-3 gap-2 divide-x divide-gray-700/60 shadow-inner">
-                            <div id="compDDHistDiv" class="flex flex-col justify-center px-1 md:px-2 group transition-colors rounded cursor-help">
-                                <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Max DD Histórico</span>
-                                <div class="flex items-baseline gap-1.5 flex-wrap">
-                                    <span id="kpiCompDDPct" class="text-sm md:text-base font-bold text-red-400">-0.00%</span>
-                                    <span id="kpiCompDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
-                                </div>
-                            </div>
-                            <div id="compDDDailyDiv" class="flex flex-col justify-center px-3 group transition-colors rounded cursor-help">
-                                <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Peor Día DD</span>
-                                <div class="flex items-baseline gap-1.5 flex-wrap">
-                                    <span id="kpiCompDailyDDPct" class="text-sm md:text-base font-bold text-orange-400">-0.00%</span>
-                                    <span id="kpiCompDailyDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
-                                </div>
-                            </div>
-                            <div class="flex flex-col justify-center px-3 group cursor-help" title="Promedio de los drawdowns diarios en todo el historial">
-                                <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Promedio Diario DD</span>
-                                <div class="flex items-baseline gap-1.5 flex-wrap">
-                                    <span id="kpiCompAvgDailyDDPct" class="text-sm md:text-base font-bold text-yellow-400">-0.00%</span>
-                                    <span id="kpiCompAvgDailyDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="relative w-full h-[200px] md:h-[240px] lg:h-[280px] xl:h-[320px]">
-                            <canvas id="compoundChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Calendario de Rendimiento -->
-                <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 shadow-lg mt-2">
-                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                        <h2 class="text-lg font-semibold text-gray-300">Calendario de Desempeño</h2>
-                        <div class="flex items-center gap-1 md:gap-2">
-                            <button id="btnCalPrev" onclick="calNavigate(-1)" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded font-bold disabled:opacity-30 disabled:cursor-not-allowed transition-colors">◀</button>
-                            <span id="calendarModeIndicator" class="text-xs md:text-sm font-semibold bg-gray-900 border border-gray-600 px-3 py-1 rounded text-blue-400 min-w-[120px] md:min-w-[160px] text-center">Años</span>
-                            <button id="btnCalNext" onclick="calNavigate(1)" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded font-bold disabled:opacity-30 disabled:cursor-not-allowed transition-colors">▶</button>
+                        
+                        <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto flex-1 md:justify-end">
                             
-                            <button id="btnToggleCalendarDetail" onclick="toggleCalendarDetail()" class="ml-2 md:ml-4 px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded text-xs md:text-sm font-semibold transition-colors flex items-center gap-1 shadow-md disabled:opacity-30 disabled:cursor-not-allowed">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-                                <span class="hidden md:inline">Ver Ruta de Trades</span>
+                            <div class="custom-select-container relative flex flex-col md:flex-row items-start md:items-center gap-2">
+                                <label class="text-xs text-gray-400 uppercase tracking-wide whitespace-nowrap">Símbolos:</label>
+                                <button onclick="toggleDropdown('dropdownSymbols')" class="w-full md:w-44 bg-gray-700 text-white text-sm rounded py-1.5 px-3 border border-gray-600 focus:outline-none hover:border-blue-500 cursor-pointer flex justify-between items-center transition-colors">
+                                    <span id="labelSymbols" class="truncate pr-2">Todos</span>
+                                    <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                                <div id="dropdownSymbols" class="custom-select-dropdown hidden absolute top-full left-0 md:left-auto right-0 mt-1 w-full md:w-56 bg-gray-800 border border-gray-600 rounded-md shadow-xl max-h-60 overflow-y-auto filter-scrollbar z-50 p-2">
+                                    </div>
+                            </div>
+
+                            <div class="custom-select-container relative flex flex-col md:flex-row items-start md:items-center gap-2">
+                                <label class="text-xs text-gray-400 uppercase tracking-wide whitespace-nowrap">Años:</label>
+                                <button onclick="toggleDropdown('dropdownYears')" class="w-full md:w-36 bg-gray-700 text-white text-sm rounded py-1.5 px-3 border border-gray-600 focus:outline-none hover:border-blue-500 cursor-pointer flex justify-between items-center transition-colors">
+                                    <span id="labelYears" class="truncate pr-2">Todos</span>
+                                    <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                                <div id="dropdownYears" class="custom-select-dropdown hidden absolute top-full left-0 md:left-auto right-0 mt-1 w-full md:w-40 bg-gray-800 border border-gray-600 rounded-md shadow-xl max-h-60 overflow-y-auto filter-scrollbar z-50 p-2">
+                                    </div>
+                            </div>
+
+                            <div class="custom-select-container relative flex flex-col md:flex-row items-start md:items-center gap-2">
+                                <label class="text-xs text-gray-400 uppercase tracking-wide whitespace-nowrap">Meses:</label>
+                                <button onclick="toggleDropdown('dropdownMonths')" class="w-full md:w-36 bg-gray-700 text-white text-sm rounded py-1.5 px-3 border border-gray-600 focus:outline-none hover:border-blue-500 cursor-pointer flex justify-between items-center transition-colors">
+                                    <span id="labelMonths" class="truncate pr-2">Todos</span>
+                                    <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                                <div id="dropdownMonths" class="custom-select-dropdown hidden absolute top-full left-0 md:left-auto right-0 mt-1 w-full md:w-40 bg-gray-800 border border-gray-600 rounded-md shadow-xl max-h-60 overflow-y-auto filter-scrollbar z-50 p-2">
+                                    </div>
+                            </div>
+
+                            <button onclick="clearGlobalFilters()" class="bg-gray-700 hover:bg-red-600 hover:text-white text-gray-300 text-xs font-semibold py-1.5 px-3 rounded border border-gray-600 hover:border-red-500 transition-all flex items-center justify-center gap-1 mt-2 md:mt-0">
+                                Limpiar Filtros
                             </button>
-
-                            <button id="btnCalZoomOut" onclick="calZoomOut()" class="ml-2 md:ml-4 px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs md:text-sm font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center gap-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"></path></svg>
-                                <span class="hidden md:inline">Alejar</span>
-                            </button>
-                            <button id="btnCalZoomIn" onclick="calZoomIn()" class="ml-1 md:ml-2 px-3 py-1 bg-green-600 hover:bg-green-500 text-white rounded text-xs md:text-sm font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center gap-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
-                                <span class="hidden md:inline">Acercar</span>
-                            </button>
                         </div>
                     </div>
-                    <div id="calendarContainer" class="w-full"></div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 z-10">
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
+                            <span class="text-gray-400 text-xs uppercase tracking-wide">Grand Total (Neto)</span>
+                            <span id="kpiTotalProfit" class="text-2xl lg:text-3xl font-bold mt-1">$0.00</span>
+                            <div class="flex gap-4 mt-2 text-[10px] lg:text-xs font-semibold w-full justify-center">
+                                <span id="kpiGrossProfit" class="text-green-400 flex flex-col"><span>Ganancias</span><span class="mt-1">$0.00</span></span>
+                                <span id="kpiGrossLoss" class="text-red-400 flex flex-col"><span>Pérdidas</span><span class="mt-1">$0.00</span></span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
+                            <span class="text-gray-400 text-xs uppercase tracking-wide">Cantidad de Trades</span>
+                            <span id="kpiTotalTrades" class="text-2xl lg:text-3xl font-bold mt-1 text-white">0</span>
+                            <div class="flex flex-col items-center mt-2 gap-0.5 w-full">
+                                <span id="kpiSimultaneous" class="text-[10px] lg:text-xs text-purple-400 font-semibold" title="Máxima cantidad de trades abiertos al mismo tiempo">Simultáneos: -</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
+                            <span class="text-gray-400 text-xs uppercase tracking-wide">Win Rate</span>
+                            <span id="kpiWinRate" class="text-2xl lg:text-3xl font-bold mt-1 text-blue-400">0%</span>
+                            <span id="kpiWinRateSub" class="text-[10px] lg:text-xs text-gray-500 mt-2">0 / 0 Victorias</span>
+                        </div>
+                        
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
+                            <span class="text-gray-400 text-xs uppercase tracking-wide">Métricas por Trade</span>
+                            <div class="flex gap-4 mt-2 text-xs font-semibold w-full justify-center">
+                                <span class="flex flex-col items-center">
+                                    <span class="text-gray-500 text-[9px] uppercase tracking-widest mb-0.5">Promedio ($)</span>
+                                    <span id="kpiAvgTrade" class="text-xl lg:text-2xl font-bold leading-none">$0.00</span>
+                                </span>
+                                <span class="flex flex-col items-center border-l border-gray-700 pl-4">
+                                    <span class="text-gray-500 text-[9px] uppercase tracking-widest mb-0.5">Trades / Mes</span>
+                                    <span id="kpiTradesPerMonth" class="text-xl lg:text-2xl font-bold leading-none text-blue-400">0.0</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow relative group">
+                            <span class="text-gray-400 text-xs uppercase tracking-wide">Profit Factor</span>
+                            <span id="kpiProfitFactor" class="text-2xl lg:text-3xl font-bold mt-1 text-white">0.00</span>
+                            <span class="text-[10px] lg:text-xs text-gray-500 mt-2">Ganado / Perdido Bruto</span>
+                        </div>
+
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
+                            <span class="text-gray-400 text-xs uppercase tracking-wide">Riesgo / Beneficio</span>
+                            <span id="kpiRiskReward" class="text-2xl lg:text-3xl font-bold mt-1 text-white">1:0.00</span>
+                            <span class="text-[10px] lg:text-xs text-gray-500 mt-2">Win Prom. vs Loss Prom.</span>
+                        </div>
+
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col justify-center items-center text-center shadow">
+                            <span class="text-gray-400 text-xs uppercase tracking-wide">Análisis de Rachas</span>
+                            <div class="flex gap-4 mt-2 text-xs font-semibold w-full justify-center">
+                                <span class="text-green-400 flex flex-col items-center group cursor-help">
+                                    <span class="text-gray-500 text-[9px] uppercase tracking-widest mb-0.5">Ganadoras</span>
+                                    <span class="text-xl lg:text-2xl font-bold leading-none"><span id="kpiMaxWinStreak">0</span><span class="text-xs text-gray-500 ml-1">máx</span></span>
+                                    <span class="text-[10px] text-gray-400 mt-1 font-mono tracking-tighter">Promedio: <span id="kpiAvgWinStreak">0</span></span>
+                                </span>
+                                <span class="text-red-400 flex flex-col items-center border-l border-gray-700 pl-4 group cursor-help">
+                                    <span class="text-gray-500 text-[9px] uppercase tracking-widest mb-0.5">Perdedoras</span>
+                                    <span class="text-xl lg:text-2xl font-bold leading-none"><span id="kpiMaxLossStreak">0</span><span class="text-xs text-gray-500 ml-1">máx</span></span>
+                                    <span class="text-[10px] text-gray-400 mt-1 font-mono tracking-tighter">Promedio: <span id="kpiAvgLossStreak">0</span></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                        <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 shadow-lg flex flex-col w-full relative">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h2 class="text-lg font-semibold text-gray-300">Curva de Capital Real</h2>
+                                    <p class="text-[10px] text-gray-500">Balance final del set de datos</p>
+                                </div>
+                                <div class="text-right flex flex-col items-end gap-1">
+                                    <div class="flex items-baseline gap-2">
+                                        <span id="kpiLinearPct" class="text-xs font-semibold block">+0.00%</span>
+                                        <span id="kpiLinearFinal" class="text-xl font-bold text-blue-400">$15,000</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="realDDContainer" class="hidden w-full mb-4 bg-gray-900/60 rounded-lg border border-gray-700/50 py-2 px-3 grid grid-cols-3 gap-2 divide-x divide-gray-700/60 shadow-inner">
+                                <div id="realDDHistDiv" class="flex flex-col justify-center px-1 md:px-2 group transition-colors rounded cursor-help">
+                                    <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Max DD Histórico</span>
+                                    <div class="flex items-baseline gap-1.5 flex-wrap">
+                                        <span id="kpiRealDDPct" class="text-sm md:text-base font-bold text-red-400">-0.00%</span>
+                                        <span id="kpiRealDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
+                                    </div>
+                                </div>
+                                <div id="realDDDailyDiv" class="flex flex-col justify-center px-3 group transition-colors rounded cursor-help">
+                                    <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Peor Día DD</span>
+                                    <div class="flex items-baseline gap-1.5 flex-wrap">
+                                        <span id="kpiRealDailyDDPct" class="text-sm md:text-base font-bold text-orange-400">-0.00%</span>
+                                        <span id="kpiRealDailyDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col justify-center px-3 group cursor-help" title="Promedio de los drawdowns diarios en todo el historial">
+                                    <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Promedio Diario DD</span>
+                                    <div class="flex items-baseline gap-1.5 flex-wrap">
+                                        <span id="kpiRealAvgDailyDDPct" class="text-sm md:text-base font-bold text-yellow-400">-0.00%</span>
+                                        <span id="kpiRealAvgDailyDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="relative w-full h-[200px] md:h-[240px] lg:h-[280px] xl:h-[320px]">
+                                <canvas id="equityChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 shadow-lg flex flex-col w-full relative">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h2 class="text-lg font-semibold text-gray-300 text-purple-400">Proyección Compuesta</h2>
+                                    <p class="text-[10px] text-gray-500">Asumiendo 1% de riesgo estricto por trade</p>
+                                </div>
+                                <div class="text-right flex flex-col items-end gap-1">
+                                    <div class="flex items-baseline gap-2">
+                                        <span id="kpiCompPct" class="text-xs font-semibold text-gray-400 block">+0.00%</span>
+                                        <span id="kpiCompFinal" class="text-xl font-bold text-purple-400">$15,000</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="compoundDDContainer" class="hidden w-full mb-4 bg-gray-900/60 rounded-lg border border-gray-700/50 py-2 px-3 grid grid-cols-3 gap-2 divide-x divide-gray-700/60 shadow-inner">
+                                <div id="compDDHistDiv" class="flex flex-col justify-center px-1 md:px-2 group transition-colors rounded cursor-help">
+                                    <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Max DD Histórico</span>
+                                    <div class="flex items-baseline gap-1.5 flex-wrap">
+                                        <span id="kpiCompDDPct" class="text-sm md:text-base font-bold text-red-400">-0.00%</span>
+                                        <span id="kpiCompDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
+                                    </div>
+                                </div>
+                                <div id="compDDDailyDiv" class="flex flex-col justify-center px-3 group transition-colors rounded cursor-help">
+                                    <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Peor Día DD</span>
+                                    <div class="flex items-baseline gap-1.5 flex-wrap">
+                                        <span id="kpiCompDailyDDPct" class="text-sm md:text-base font-bold text-orange-400">-0.00%</span>
+                                        <span id="kpiCompDailyDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col justify-center px-3 group cursor-help" title="Promedio de los drawdowns diarios en todo el historial">
+                                    <span class="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 group-hover:text-gray-300 transition-colors">Promedio Diario DD</span>
+                                    <div class="flex items-baseline gap-1.5 flex-wrap">
+                                        <span id="kpiCompAvgDailyDDPct" class="text-sm md:text-base font-bold text-yellow-400">-0.00%</span>
+                                        <span id="kpiCompAvgDailyDDMoney" class="text-[10px] font-mono text-gray-500">-$0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="relative w-full h-[200px] md:h-[240px] lg:h-[280px] xl:h-[320px]">
+                                <canvas id="compoundChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 shadow-lg mt-2">
+                        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                            <h2 class="text-lg font-semibold text-gray-300">Calendario de Desempeño</h2>
+                            <div class="flex items-center gap-1 md:gap-2">
+                                <button id="btnCalPrev" onclick="calNavigate(-1)" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded font-bold disabled:opacity-30 disabled:cursor-not-allowed transition-colors">◀</button>
+                                <span id="calendarModeIndicator" class="text-xs md:text-sm font-semibold bg-gray-900 border border-gray-600 px-3 py-1 rounded text-blue-400 min-w-[120px] md:min-w-[160px] text-center">Años</span>
+                                <button id="btnCalNext" onclick="calNavigate(1)" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded font-bold disabled:opacity-30 disabled:cursor-not-allowed transition-colors">▶</button>
+                                
+                                <button id="btnToggleCalendarDetail" onclick="toggleCalendarDetail()" class="ml-2 md:ml-4 px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded text-xs md:text-sm font-semibold transition-colors flex items-center gap-1 shadow-md disabled:opacity-30 disabled:cursor-not-allowed">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                                    <span class="hidden md:inline">Ver Ruta de Trades</span>
+                                </button>
+
+                                <button id="btnCalZoomOut" onclick="calZoomOut()" class="ml-2 md:ml-4 px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs md:text-sm font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"></path></svg>
+                                    <span class="hidden md:inline">Alejar</span>
+                                </button>
+                                <button id="btnCalZoomIn" onclick="calZoomIn()" class="ml-1 md:ml-2 px-3 py-1 bg-green-600 hover:bg-green-500 text-white rounded text-xs md:text-sm font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                                    <span class="hidden md:inline">Acercar</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="calendarContainer" class="w-full"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
+                            <h3 class="text-sm font-semibold text-gray-300 mb-1 text-center">Entradas por Hora</h3>
+                            <p class="text-[10px] text-gray-500 text-center mb-3">🟣 Asia (22-7) 🔵 Europa (8-12) 🟢 EEUU (13-21)</p>
+                            <div class="relative h-48 w-full"><canvas id="cTradesHour"></canvas></div>
+                        </div>
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
+                            <h3 class="text-sm font-semibold text-gray-300 mb-3 text-center">Entradas por Día de la Semana</h3>
+                            <div class="relative h-48 w-full"><canvas id="cTradesDay"></canvas></div>
+                        </div>
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
+                            <h3 class="text-sm font-semibold text-gray-300 mb-3 text-center">Entradas por Mes</h3>
+                            <div class="relative h-48 w-full"><canvas id="cTradesMonth"></canvas></div>
+                        </div>
+
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
+                            <h3 class="text-sm font-semibold text-gray-300 mb-1 text-center">Ganancias/Pérdidas por Hora</h3>
+                            <div class="relative h-48 w-full"><canvas id="cProfitHour"></canvas></div>
+                        </div>
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
+                            <h3 class="text-sm font-semibold text-gray-300 mb-1 text-center">Ganancias/Pérdidas por Día</h3>
+                            <div class="relative h-48 w-full"><canvas id="cProfitDay"></canvas></div>
+                        </div>
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
+                            <h3 class="text-sm font-semibold text-gray-300 mb-1 text-center">Ganancias/Pérdidas por Mes</h3>
+                            <div class="relative h-48 w-full"><canvas id="cProfitMonth"></canvas></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 shadow-lg flex flex-col w-full">
+                        
+                        <h2 class="text-lg font-semibold text-gray-300 mb-4">Análisis de Retención de Posición (Hold Time)</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-lg text-center flex justify-between px-6 items-center shadow-inner">
+                                <span class="text-gray-400 text-xs uppercase tracking-wide font-semibold">Tiempo Mínimo</span>
+                                <span id="statHoldMin" class="text-lg font-bold text-white">-</span>
+                            </div>
+                            <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-lg text-center flex justify-between px-6 items-center shadow-inner">
+                                <span class="text-gray-400 text-xs uppercase tracking-wide font-semibold">Tiempo Medio</span>
+                                <span id="statHoldAvg" class="text-lg font-bold text-blue-400">-</span>
+                            </div>
+                            <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-lg text-center flex justify-between px-6 items-center shadow-inner">
+                                <span class="text-gray-400 text-xs uppercase tracking-wide font-semibold">Tiempo Máximo</span>
+                                <span id="statHoldMax" class="text-lg font-bold text-purple-400">-</span>
+                            </div>
+                        </div>
+
+                        <div class="relative h-[500px] lg:h-[600px] xl:h-[700px] w-full flex-1">
+                            <canvas id="scatterChart"></canvas>
+                        </div>
+                    </div>
+
+                </div> 
+
+            </div>
+
+            <div id="welcomeScreen" class="flex flex-col items-center justify-center mt-20 text-center hidden">
+                <div class="bg-gray-800 p-10 rounded-2xl border border-gray-700 max-w-2xl shadow-2xl">
+                    <svg class="w-20 h-20 text-green-500 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                    <h2 class="text-2xl font-bold text-white mb-4">Elige tu tipo de archivo MT5</h2>
+                    <p class="text-gray-400 mb-6">Selecciona el botón que corresponda a lo que deseas analizar:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                        <div class="bg-gray-900 border border-gray-700 p-4 rounded-lg">
+                            <span class="text-blue-400 font-bold mb-2 block">📂 Historial (.xlsx, .csv MT5)</span>
+                            <p class="text-xs text-gray-500">Reporte clásico de historial (o el bruto) con columnas Time, Deal, Symbol, Profit. Lo limpiamos por ti.</p>
+                        </div>
+                        <div class="bg-gray-900 border border-gray-700 p-4 rounded-lg">
+                            <span class="text-indigo-400 font-bold mb-2 block">📈 Gráfico (.csv)</span>
+                            <p class="text-xs text-gray-500">Reporte tabulado con estructura &lt;DATE&gt;, &lt;BALANCE&gt;, &lt;EQUITY&gt;.</p>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <!-- Gráficas de Análisis -->
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
-                        <h3 class="text-sm font-semibold text-gray-300 mb-1 text-center">Entradas por Hora</h3>
-                        <p class="text-[10px] text-gray-500 text-center mb-3">🟣 Asia (22-7) 🔵 Europa (8-12) 🟢 EEUU (13-21)</p>
-                        <div class="relative h-48 w-full"><canvas id="cTradesHour"></canvas></div>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
-                        <h3 class="text-sm font-semibold text-gray-300 mb-3 text-center">Entradas por Día de la Semana</h3>
-                        <div class="relative h-48 w-full"><canvas id="cTradesDay"></canvas></div>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
-                        <h3 class="text-sm font-semibold text-gray-300 mb-3 text-center">Entradas por Mes</h3>
-                        <div class="relative h-48 w-full"><canvas id="cTradesMonth"></canvas></div>
-                    </div>
-
-                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
-                        <h3 class="text-sm font-semibold text-gray-300 mb-1 text-center">Ganancias/Pérdidas por Hora</h3>
-                        <div class="relative h-48 w-full"><canvas id="cProfitHour"></canvas></div>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
-                        <h3 class="text-sm font-semibold text-gray-300 mb-1 text-center">Ganancias/Pérdidas por Día</h3>
-                        <div class="relative h-48 w-full"><canvas id="cProfitDay"></canvas></div>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow flex flex-col">
-                        <h3 class="text-sm font-semibold text-gray-300 mb-1 text-center">Ganancias/Pérdidas por Mes</h3>
-                        <div class="relative h-48 w-full"><canvas id="cProfitMonth"></canvas></div>
-                    </div>
-                </div>
-
-                <!-- Hold Time Analysis -->
-                <div class="bg-gray-800 p-5 rounded-xl border border-gray-700 shadow-lg flex flex-col w-full">
-                    <h2 class="text-lg font-semibold text-gray-300 mb-4">Análisis de Retención de Posición (Hold Time)</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-lg text-center flex justify-between px-6 items-center shadow-inner">
-                            <span class="text-gray-400 text-xs uppercase tracking-wide font-semibold">Tiempo Mínimo</span>
-                            <span id="statHoldMin" class="text-lg font-bold text-white">-</span>
-                        </div>
-                        <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-lg text-center flex justify-between px-6 items-center shadow-inner">
-                            <span class="text-gray-400 text-xs uppercase tracking-wide font-semibold">Tiempo Medio</span>
-                            <span id="statHoldAvg" class="text-lg font-bold text-blue-400">-</span>
-                        </div>
-                        <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-lg text-center flex justify-between px-6 items-center shadow-inner">
-                            <span class="text-gray-400 text-xs uppercase tracking-wide font-semibold">Tiempo Máximo</span>
-                            <span id="statHoldMax" class="text-lg font-bold text-purple-400">-</span>
-                        </div>
-                    </div>
-                    <div class="relative h-[500px] lg:h-[600px] xl:h-[700px] w-full flex-1">
-                        <canvas id="scatterChart"></canvas>
-                    </div>
-                </div>
-
-            </div> 
         </div> 
     </div>
 
@@ -381,7 +480,11 @@
             if(isHidden) el.classList.remove('hidden');
         }
 
-        let activeFilters = { symbols: [], years: [], months: [] };
+        let activeFilters = {
+            symbols: [],
+            years: [],
+            months: []
+        };
 
         function updateMultiSelect(type, val, checked) {
             let arr = activeFilters[type];
@@ -391,12 +494,21 @@
                 cbs.forEach(cb => { if(cb.value !== 'ALL') cb.checked = false; else cb.checked = true; });
             } else {
                 document.querySelector(`.cb-${type}[value="ALL"]`).checked = false;
-                if (checked) { if (!arr.includes(val)) arr.push(val); } 
-                else { arr = arr.filter(v => v !== val); activeFilters[type] = arr; }
-                if (arr.length === 0) document.querySelector(`.cb-${type}[value="ALL"]`).checked = true;
+                
+                if (checked) {
+                    if (!arr.includes(val)) arr.push(val);
+                } else {
+                    arr = arr.filter(v => v !== val);
+                    activeFilters[type] = arr;
+                }
+                
+                if (arr.length === 0) {
+                    document.querySelector(`.cb-${type}[value="ALL"]`).checked = true;
+                }
             }
 
             let labelId = type === 'symbols' ? 'labelSymbols' : (type === 'years' ? 'labelYears' : 'labelMonths');
+            let baseText = type === 'symbols' ? 'Pares' : (type === 'years' ? 'Años' : 'Meses');
             let elLabel = document.getElementById(labelId);
             
             if (activeFilters[type].length === 0) {
@@ -411,139 +523,57 @@
                 elLabel.innerText = `${activeFilters[type].length} selec.`;
                 elLabel.classList.add('text-blue-400', 'font-bold');
             }
+
             applyFilters();
         }
 
-        // --- VARIABLES GLOBALES ---
+        // --- VARIABLES GLOBALES DASHBOARD ---
         let rawData = [];
         let filteredData = [];
         let compChartDataObj = []; 
+        let dashFiles = [];
+        const storageKey = 'mt5_trading_data_v22'; 
 
         let equityChartInstance = null;
         let compoundChartInstance = null; 
+        
         let cTH = null, cTD = null, cTM = null; 
         let cPH = null, cPD = null, cPM = null; 
         let scatterChartInstance = null;
 
-        let calMode = 'YEARS';
+        let calMode = 'YEARS'; // YEARS, MONTHS, DAYS
         let calYear = null;
         let calMonth = null;
+        
         let isDetailedCalendar = false;
 
         const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+        const daysArrFull = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
         const daysArr = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
-        // --- INICIALIZACIÓN Y CARGA DE JSON ---
-        window.onload = async () => {
-            await fetchJsonData();
+        const colorPalette = [
+            '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', 
+            '#ec4899', '#06b6d4', '#f97316', '#84cc16', '#6366f1'
+        ];
+        let nextColorIndex = 0;
+
+        // --- HELPERS BÁSICOS Y DESTRUCTORES DE CHARTJS ---
+        const safeDestroy = (chart) => {
+            if (chart) {
+                try { chart.destroy(); } catch(e) { console.warn("Error destruyendo chart", e); }
+            }
         };
-
-        function showLoader() { document.getElementById('globalLoader').classList.remove('hidden'); document.getElementById('globalLoader').classList.add('flex'); }
-        function hideLoader() { document.getElementById('globalLoader').classList.add('hidden'); document.getElementById('globalLoader').classList.remove('flex'); }
-
-        async function fetchJsonData() {
-            showLoader();
-            try {
-                // Intenta obtener el archivo
-                const response = await fetch('datos_trading.json');
-                if (!response.ok) throw new Error('Network response was not ok');
-                const jsonData = await response.json();
-                processJSONData(jsonData);
-            } catch (err) {
-                console.warn("No se pudo cargar datos_trading.json via fetch. Usando datos de prueba por defecto.", err);
-                // Si falla (por CORS local o porque no existe), cargamos unos datos de prueba (Fallback)
-                const mockData = generateMockData();
-                processJSONData(mockData);
-            }
-        }
-
-        // --- DATOS DE PRUEBA (FALLBACK) ---
-        function generateMockData() {
-            const data = [];
-            const pairs = ['EURUSD', 'GBPUSD', 'XAUUSD', 'US30'];
-            let currentDate = new Date('2023-01-01T08:00:00Z');
-            
-            for(let i=0; i<300; i++) {
-                let dur = Math.random() * 8 + 0.1; // 0.1 a 8 horas
-                let entryTime = new Date(currentDate.getTime());
-                let exitTime = new Date(currentDate.getTime() + dur * 3600000);
-                let isWin = Math.random() > 0.45;
-                let profit = isWin ? (Math.random() * 200 + 10) : -(Math.random() * 150 + 10);
-                
-                data.push({
-                    Symbol: pairs[Math.floor(Math.random() * pairs.length)],
-                    EntryTime: entryTime.toISOString(),
-                    Time: exitTime.toISOString(),
-                    NetProfit: parseFloat(profit.toFixed(2))
-                });
-                
-                // Avanzar tiempo de 2 a 12 horas para el siguiente trade
-                currentDate = new Date(exitTime.getTime() + (Math.random() * 10 + 2) * 3600000);
-            }
-            return data;
-        }
-
-        // --- PROCESAMIENTO DEL JSON ---
-        function processJSONData(data) {
-            if (!Array.isArray(data) || data.length === 0) {
-                alert("El archivo JSON está vacío o tiene un formato incorrecto.");
-                hideLoader();
-                return;
-            }
-
-            rawData = data.map(d => {
-                let exitTime = new Date(d.Time);
-                let entryTime = d.EntryTime ? new Date(d.EntryTime) : exitTime;
-                
-                // Si la fecha es invalida saltamos
-                if (isNaN(exitTime.getTime())) return null;
-
-                let duration = d.DurationHours;
-                if(duration === undefined || duration === null) {
-                    duration = (exitTime - entryTime) / (1000 * 60 * 60);
-                }
-
-                return {
-                    Time: exitTime,
-                    EntryTime: entryTime,
-                    DurationHours: Math.max(0, duration),
-                    Symbol: d.Symbol || 'Desconocido',
-                    NetProfit: Number(d.NetProfit) || 0,
-                    Year: exitTime.getFullYear(),
-                    Month: exitTime.getMonth() + 1,
-                    ExitMonth: exitTime.getMonth(),
-                    DayOfWeek: entryTime.getDay(),
-                    EntryHour: entryTime.getHours(),
-                    DateOnly: exitTime.toISOString().split('T')[0]
-                };
-            }).filter(Boolean); // Remover nulos
-
-            rawData.sort((a, b) => a.Time - b.Time);
-
-            let currentBalance = 10000;
-            rawData.forEach(d => {
-                currentBalance += d.NetProfit;
-                d.BalanceAfter = currentBalance;
-            });
-
-            hideLoader();
-            initDashboard();
-        }
-
-        function initDashboard() {
-            if (rawData.length === 0) return; 
-
-            document.getElementById('dashboardContent').classList.remove('hidden');
-            activeFilters = { symbols: [], years: [], months: [] }; 
-            populateFilters();
-            applyFilters();
-        }
-
-        // --- HELPERS BÁSICOS Y DESTRUCTORES ---
-        const safeDestroy = (chart) => { if (chart) { try { chart.destroy(); } catch(e) {} } };
 
         function fmtMoney(val, decimals = 2) {
             return (val < 0 ? '-' : '') + '$' + Math.abs(parseFloat(val)).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+        }
+
+        function cleanNumber(val) {
+            if (val === undefined || val === null) return 0;
+            if (typeof val === 'number') return val;
+            let str = String(val).replace(/\s/g, '').replace(/,/g, '');
+            let num = parseFloat(str);
+            return isNaN(num) ? 0 : num;
         }
 
         function formatDurationText(hours) {
@@ -560,7 +590,435 @@
             return date.toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'});
         }
 
-        // --- FILTROS Y POBLACIÓN ---
+        // --- INICIALIZACIÓN (FETCH DESDE GITHUB) ---
+        window.onload = async () => {
+            showLoader();
+            try {
+                const response = await fetch('https://jeanbdc602-dot.github.io/MT5/datos_trading.json', { cache: 'no-cache' });
+                
+                if (response.ok) {
+                    const jsonData = await response.json();
+                    
+                    // Comprobamos la estructura del JSON (si es un export de dashFiles o array puro de trades)
+                    if (Array.isArray(jsonData) && jsonData[0] && jsonData[0].data) {
+                        dashFiles = jsonData;
+                    } else {
+                        dashFiles = [{ id: 'github_json', name: 'datos_trading.json (GitHub)', data: jsonData }];
+                    }
+                    
+                    processDashFiles();
+                } else {
+                    console.warn('El JSON remoto no respondió con OK. Intentando recuperar de localStorage...');
+                    loadFromLocalStorageFallback();
+                }
+            } catch (e) {
+                console.error('Error cargando el JSON desde GitHub:', e);
+                loadFromLocalStorageFallback();
+            } finally {
+                hideLoader();
+            }
+        };
+
+        function loadFromLocalStorageFallback() {
+            const savedData = localStorage.getItem(storageKey);
+            if (savedData) {
+                try {
+                    dashFiles = JSON.parse(savedData);
+                    processDashFiles(); 
+                } catch(e) { 
+                    console.error("Error al recuperar datos locales:", e);
+                    document.getElementById('welcomeScreen').classList.remove('hidden');
+                }
+            } else {
+                document.getElementById('welcomeScreen').classList.remove('hidden');
+            }
+        }
+
+        // --- LÓGICA DE PARSEO MT5 CLÁSICO (.XLSX) ---
+        function parseMT5Data(data) {
+            let parsedRows = [];
+            
+            // Intento de detectar el depósito inicial
+            let initialDeposit = 10000;
+            let depositRow = data.find(r => !(r.Symbol || '').trim() && cleanNumber(r.Profit) > 0);
+            if(depositRow) initialDeposit = cleanNumber(depositRow.Profit);
+
+            data.forEach(row => {
+                let dateObj;
+                if (row.Time instanceof Date) dateObj = row.Time;
+                else if (typeof row.Time === 'number') dateObj = new Date(Math.round((row.Time - 25569) * 86400 * 1000));
+                else if (typeof row.Time === 'string') {
+                    let cleanStr = row.Time.replace(/\./g, '-');
+                    if (cleanStr.includes(' ')) {
+                        let parts = cleanStr.split(' ');
+                        cleanStr = parts[0] + 'T' + parts[1];
+                        if (cleanStr.length <= 16) cleanStr += ':00'; // Asegurar segundos
+                    }
+                    dateObj = new Date(cleanStr);
+                }
+                
+                if (dateObj && !isNaN(dateObj.getTime())) {
+                    row.parsedTime = dateObj;
+                    parsedRows.push(row);
+                }
+            });
+            parsedRows.sort((a,b) => a.parsedTime - b.parsedTime);
+
+            let processed = [];
+            let openPositions = {}; 
+
+            parsedRows.forEach(row => {
+                let sym = (row.Symbol || '').trim();
+                if (!sym) return;
+
+                let dirStr = String(row.Direction || '').toLowerCase().trim();
+                let rawProfit = cleanNumber(row.Profit);
+                let comm = cleanNumber(row.Commission);
+                let swap = cleanNumber(row.Swap);
+
+                if (dirStr === 'in') {
+                    if (!openPositions[sym]) openPositions[sym] = [];
+                    // MT5 muchas veces cobra la comisión en el "in". Lo guardamos.
+                    openPositions[sym].push({ time: row.parsedTime, comm: comm, swap: swap });
+                } 
+                else if (dirStr === 'out' || dirStr === 'in/out' || rawProfit !== 0 || comm !== 0 || swap !== 0) {
+                    if (rawProfit === 0 && comm === 0 && swap === 0 && dirStr !== 'out') return; 
+                    
+                    let entryTime = row.parsedTime; 
+                    let entryComm = 0;
+                    let entrySwap = 0;
+                    
+                    if (openPositions[sym] && openPositions[sym].length > 0) {
+                        let entryData = openPositions[sym].shift(); 
+                        entryTime = entryData.time;
+                        entryComm = entryData.comm || 0;
+                        entrySwap = entryData.swap || 0;
+                    }
+
+                    let exitTime = row.parsedTime;
+                    let durationHours = (exitTime.getTime() - entryTime.getTime()) / (1000 * 60 * 60);
+                    if(isNaN(durationHours) || !isFinite(durationHours)) durationHours = 0; 
+                    if(durationHours < 0) durationHours = 0; 
+
+                    // Juntamos los cobros tanto de la apertura (in) como del cierre (out)
+                    let totalComm = comm + entryComm;
+                    let totalSwap = swap + entrySwap;
+                    
+                    // IMPORTANTE: En MT5, el swap y comision vienen como números NEGATIVOS (-5.00). 
+                    // Por lo tanto, si los sumas al profit (Ej: 100 + (-5.00)), los estás restando algebraicamente.
+                    let netProfit = rawProfit + totalComm + totalSwap;
+
+                    processed.push({
+                        Time: exitTime, 
+                        EntryTime: entryTime, 
+                        DurationHours: durationHours,
+                        Symbol: sym,
+                        NetProfit: netProfit,
+                        Year: exitTime.getFullYear(),
+                        Month: exitTime.getMonth() + 1,
+                        ExitMonth: exitTime.getMonth(), 
+                        DayOfWeek: entryTime.getDay(), 
+                        EntryHour: entryTime.getHours(),
+                        DateOnly: exitTime.toISOString().split('T')[0]
+                    });
+                }
+            });
+
+            processed.sort((a, b) => a.Time - b.Time);
+
+            let currentBalance = initialDeposit;
+            processed.forEach(d => {
+                currentBalance += d.NetProfit;
+                d.BalanceAfter = currentBalance;
+            });
+
+            return processed;
+        }
+
+        // =========================================================
+        // --- NUEVO MOTOR DE LECTURA DE TEXTO PURO (.CSV GRAPH) ---
+        // =========================================================
+        function parseRawMT5Graph(csvText, sourceName = 'Estrategia') {
+            let lines = csvText.split(/\r?\n/);
+            if(lines.length < 2) return [];
+
+            let delimiter = '\t'; 
+            let headerLine = lines[0];
+            
+            let headerIdx = 0;
+            for(let i=0; i<Math.min(lines.length, 10); i++) {
+                let upper = lines[i].toUpperCase();
+                if(upper.includes('<DATE>') || upper.includes('DATE') || upper.includes('TIME')) {
+                    headerLine = lines[i];
+                    headerIdx = i;
+                    if(headerLine.includes('\t')) delimiter = '\t';
+                    else if(headerLine.includes(';')) delimiter = ';';
+                    else if(headerLine.includes(',')) delimiter = ',';
+                    break;
+                }
+            }
+
+            let headers = headerLine.split(delimiter).map(h => h.trim().toUpperCase());
+            let dateIdx = headers.findIndex(h => h.includes('DATE') || h.includes('TIME'));
+            let balIdx = headers.findIndex(h => h.includes('BALANCE'));
+
+            if(dateIdx === -1 || balIdx === -1) return []; 
+
+            let processed = [];
+            let prevBalance = null;
+
+            for(let i = headerIdx + 1; i < lines.length; i++) {
+                let rowStr = lines[i].trim();
+                if(!rowStr) continue; 
+                
+                let cols = rowStr.split(delimiter);
+                if(cols.length <= Math.max(dateIdx, balIdx)) continue; 
+
+                let dateStr = cols[dateIdx].trim();
+                let balStr = cols[balIdx].trim();
+                let balance = cleanNumber(balStr);
+
+                let cleanStr = dateStr.replace(/\./g, '-');
+                if (cleanStr.includes(' ')) {
+                    let parts = cleanStr.split(' ');
+                    cleanStr = parts[0] + 'T' + parts[1];
+                    if (cleanStr.length <= 16) cleanStr += ':00'; 
+                }
+                
+                let dateObj = new Date(cleanStr);
+                if (isNaN(dateObj.getTime())) continue;
+
+                if (prevBalance === null) {
+                    prevBalance = balance;
+                    continue; // No considerar la primera línea (depósito inicial)
+                }
+
+                let netProfit = balance - prevBalance;
+                
+                processed.push({
+                    Time: dateObj,
+                    EntryTime: dateObj, 
+                    DurationHours: 0, 
+                    Symbol: sourceName,
+                    NetProfit: netProfit,
+                    Year: dateObj.getFullYear(),
+                    Month: dateObj.getMonth() + 1,
+                    ExitMonth: dateObj.getMonth(),
+                    DayOfWeek: dateObj.getDay(),
+                    EntryHour: dateObj.getHours(),
+                    DateOnly: dateObj.toISOString().split('T')[0],
+                    BalanceAfter: balance
+                });
+                
+                prevBalance = balance;
+            }
+            
+            processed.sort((a, b) => a.Time - b.Time);
+            return processed;
+        }
+
+        // --- FUNCIONES DE CARGA (LOADER) ---
+        function showLoader() { document.getElementById('globalLoader').classList.remove('hidden'); document.getElementById('globalLoader').classList.add('flex'); }
+        function hideLoader() { document.getElementById('globalLoader').classList.add('hidden'); document.getElementById('globalLoader').classList.remove('flex'); }
+
+
+        // --- MANEJADORES GLOBALES DE ARCHIVOS (SUBIDA Y DRAG & DROP) ---
+
+        function handleDashboardClassicFiles(files) {
+            if (files.length === 0) return;
+            showLoader(); 
+            let processedCount = 0;
+
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    setTimeout(() => {
+                        try {
+                            const data = new Uint8Array(event.target.result);
+                            const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+                            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                            
+                            // ==============================================================
+                            // INICIO DEL ALGORITMO CAZADOR DE TABLAS MT5 (TABLE HUNTER)
+                            // ==============================================================
+                            const rawDataLocal = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+                            
+                            let cleanJsonResult = [];
+                            let isReadingDeals = false;
+                            let headers = [];
+
+                            for (let i = 0; i < rawDataLocal.length; i++) {
+                                const row = rawDataLocal[i];
+                                const strRow = row.map(cell => String(cell).trim());
+
+                                if (!isReadingDeals) {
+                                    if (strRow[0] === 'Time' && strRow.includes('Symbol') && (strRow.includes('Deal') || strRow.includes('Direction') || strRow.includes('Profit'))) {
+                                        isReadingDeals = true;
+                                        // LIMPIAMOS LOS ESPACIOS EN BLANCO DE LOS HEADERS ("Commission ", "Swap ")
+                                        headers = strRow.map((h, idx) => (h || `Columna_${idx}`).trim());
+                                        continue; 
+                                    }
+                                } else {
+                                    const timeVal = row[0];
+                                    const isDate = timeVal instanceof Date || String(timeVal).match(/^\d{4}[\.\-\/]\d{2}[\.\-\/]\d{2}/);
+                                    
+                                    if (isDate) {
+                                        let rowData = {};
+                                        headers.forEach((head, index) => {
+                                            rowData[head] = row[index] !== undefined ? row[index] : "";
+                                        });
+                                        cleanJsonResult.push(rowData);
+                                    } else if (cleanJsonResult.length > 0 && String(timeVal).trim() === "") {
+                                        break; 
+                                    }
+                                }
+                            }
+
+                            if (cleanJsonResult.length === 0) {
+                                cleanJsonResult = XLSX.utils.sheet_to_json(worksheet, {defval: ""});
+                            }
+                            // ==============================================================
+                            // FIN DEL ALGORITMO CAZADOR
+                            // ==============================================================
+
+                            const parsedData = parseMT5Data(cleanJsonResult);
+                            
+                            if (parsedData.length > 0) {
+                                dashFiles.push({ id: Date.now() + Math.random(), name: file.name, data: parsedData });
+                            } else {
+                                alert(`No se encontraron operaciones compatibles en el archivo: ${file.name}\n\nAsegúrate de que sea un reporte de MT5 con encabezados en Inglés (Time, Symbol, Profit).`);
+                            }
+                        } catch (err) { alert(`Error al leer el archivo: ${file.name}`); console.error(err); } 
+                        finally { 
+                            processedCount++;
+                            if (processedCount === files.length) {
+                                try { processDashFiles(); } catch (e) { console.error("Error processDashFiles:", e); alert("Error inesperado al procesar las gráficas: " + e.message); }
+                                hideLoader();
+                            }
+                        }
+                    }, 50);
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        function handleDashboardGraphFiles(files) {
+            if (files.length === 0) return;
+            showLoader(); 
+            let processedCount = 0;
+
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    setTimeout(() => {
+                        try {
+                            const text = event.target.result;
+                            const parsedData = parseRawMT5Graph(text, file.name); // Pasamos el nombre para el compound individual
+                            
+                            if (parsedData.length > 0) {
+                                dashFiles.push({ id: Date.now() + Math.random(), name: file.name, data: parsedData });
+                            } else {
+                                alert(`El archivo ${file.name} está vacío o no es un formato de Gráfico válido (.csv/.txt).`);
+                            }
+                        } catch (err) { alert(`Error al leer el archivo de Gráfico: ${file.name}`); console.error(err); } 
+                        finally { 
+                            processedCount++;
+                            if (processedCount === files.length) {
+                                try { processDashFiles(); } catch (e) { console.error("Error processDashFiles:", e); alert("Error inesperado al procesar las gráficas: " + e.message); }
+                                hideLoader();
+                            }
+                        }
+                    }, 50);
+                };
+                reader.readAsText(file); 
+            });
+        }
+
+        // 1. DASHBOARD - HISTORIAL CLASSIC (.XLSX, .CSV MT5 SUCIO)
+        document.getElementById('dashInputClassic').addEventListener('change', function(e) {
+            handleDashboardClassicFiles(Array.from(e.target.files));
+            e.target.value = '';
+        });
+
+        // 2. DASHBOARD - GRÁFICO (.CSV / .TSV)
+        document.getElementById('dashInputGraph').addEventListener('change', function(e) {
+            handleDashboardGraphFiles(Array.from(e.target.files));
+            e.target.value = '';
+        });
+
+        function processDashFiles() {
+            if(dashFiles.length === 0) {
+                document.getElementById('welcomeScreen').classList.remove('hidden');
+                return;
+            }
+
+            rawData = [];
+            dashFiles.forEach(f => {
+                f.data.forEach(d => {
+                    // Reconvertir a Date objects si vienen como strings desde el JSON
+                    if (typeof d.Time === 'string') d.Time = new Date(d.Time);
+                    if (typeof d.EntryTime === 'string') d.EntryTime = new Date(d.EntryTime);
+                });
+                rawData = rawData.concat(f.data);
+            });
+
+            rawData.sort((a, b) => a.Time - b.Time);
+
+            let currentBalance = 10000;
+            rawData.forEach(d => {
+                currentBalance += (d.NetProfit || 0);
+                d.BalanceAfter = currentBalance;
+            });
+
+            try { localStorage.setItem(storageKey, JSON.stringify(dashFiles)); } catch(e) {}
+            
+            renderDashFilesTags();
+            initDashboard();
+        }
+
+        function renderDashFilesTags() {
+            const listDiv = document.getElementById('dashFilesList');
+            if (dashFiles.length === 0) {
+                listDiv.innerHTML = '';
+                return;
+            }
+            listDiv.innerHTML = dashFiles.map(f => `
+                <div class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-600 bg-gray-800 shadow-sm">
+                    <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+                    <span class="text-sm font-semibold truncate max-w-[150px]" title="${f.name}">${f.name}</span>
+                    <button onclick="removeDashFile('${f.id}')" class="ml-1 text-gray-400 hover:text-red-500 font-bold">×</button>
+                </div>
+            `).join('');
+        }
+
+        function removeDashFile(id) {
+            dashFiles = dashFiles.filter(f => String(f.id) !== String(id));
+            
+            if (dashFiles.length === 0) {
+                localStorage.removeItem(storageKey);
+                rawData = [];
+                filteredData = [];
+                document.getElementById('dashboardContent').classList.add('hidden');
+                document.getElementById('welcomeScreen').classList.remove('hidden');
+                document.getElementById('clearBtn').classList.add('hidden');
+                renderDashFilesTags();
+            } else {
+                try { processDashFiles(); } catch (e) { console.error(e); }
+            }
+        }
+
+        function initDashboard() {
+            if (rawData.length === 0) return; 
+
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('dashboardContent').classList.remove('hidden');
+            document.getElementById('clearBtn').classList.remove('hidden');
+
+            activeFilters = { symbols: [], years: [], months: [] }; // Limpiar arrays visuales
+            populateFilters();
+            applyFilters();
+        }
+
         function populateFilters() {
             // Símbolos
             const symbols = [...new Set(rawData.map(d => d.Symbol))].sort();
@@ -588,13 +1046,19 @@
             });
             monthDropdown.innerHTML = moHtml;
 
+            // Set labels to empty
             document.getElementById('labelSymbols').innerText = `Todos`;
             document.getElementById('labelYears').innerText = `Todos`;
             document.getElementById('labelMonths').innerText = `Todos`;
         }
 
+        // ==========================================
+        // MANEJO DE FILTROS: GLOBAL
+        // ==========================================
+
         function clearGlobalFilters() {
             activeFilters = { symbols: [], years: [], months: [] };
+            
             ['symbols', 'years', 'months'].forEach(type => {
                 document.querySelectorAll(`.cb-${type}`).forEach(cb => {
                     if(cb.value === 'ALL') cb.checked = true; else cb.checked = false;
@@ -603,6 +1067,7 @@
                 elLabel.innerText = `Todos`;
                 elLabel.classList.remove('text-blue-400', 'font-bold');
             });
+            
             applyFilters();
         }
 
@@ -612,6 +1077,7 @@
                 let matchYear = (activeFilters.years.length === 0) ? true : (d.Year ? activeFilters.years.includes(d.Year.toString()) : false);
                 let matchMonth = (activeFilters.months.length === 0) ? true : (d.Month ? activeFilters.months.includes(d.Month.toString()) : false);
                 let isNotZero = Math.abs(d.NetProfit || 0) >= 0.00001; 
+                
                 return matchSym && matchYear && matchMonth && isNotZero;
             });
 
@@ -619,10 +1085,14 @@
             updateChart();
             updateSmartCalendar();
             updateAnalyticsCharts(); 
+            
+            // Estas secciones usan SIEMPRE rawData (No son afectadas por filtros)
             updateLeaderboard(); 
         }
 
-        // --- CÁLCULO DE MÉTRICAS GLOBALES ---
+        // ==========================================
+        // CÁLCULO DE MÉTRICAS GLOBALES
+        // ==========================================
         function calculateMetrics(dataArr) {
             let totalProfit = 0; let grossProfit = 0; let grossLoss = 0;
             let winningTrades = 0; let losingTrades = 0;
@@ -647,15 +1117,24 @@
             let dayCounts = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0};
 
             let totalTrades = dataArr.length;
+            
             let minDate = new Date(8640000000000000);
             let maxDate = new Date(-8640000000000000);
 
-            // CALCULAR MAX TRADES SIMULTÁNEOS
+            // CALCULAR MAX TRADES SIMULTÁNEOS (Con salvavidas de fechas)
             let simEvents = [];
             dataArr.forEach(d => {
-                if (d.EntryTime && typeof d.EntryTime.getTime === 'function') simEvents.push({ time: d.EntryTime.getTime(), type: 1 });
-                if (d.Time && typeof d.Time.getTime === 'function') simEvents.push({ time: d.Time.getTime(), type: -1 });
+                if (d.EntryTime && typeof d.EntryTime.getTime === 'function') {
+                    simEvents.push({ time: d.EntryTime.getTime(), type: 1 });
+                } else if (d.Time && typeof d.Time.getTime === 'function') {
+                    simEvents.push({ time: d.Time.getTime(), type: 1 });
+                }
+                
+                if (d.Time && typeof d.Time.getTime === 'function') {
+                    simEvents.push({ time: d.Time.getTime(), type: -1 });
+                }
             });
+            // Si el tiempo es exacto, procesamos apertura antes que cierre
             simEvents.sort((a, b) => a.time === b.time ? b.type - a.type : a.time - b.time);
             
             let currentSimultaneous = 0;
@@ -665,12 +1144,14 @@
                 if(currentSimultaneous > maxSimultaneous) maxSimultaneous = currentSimultaneous;
             });
 
+            // MÉTRICAS PRINCIPALES
             dataArr.forEach(d => {
                 if (d.Time && d.Time < minDate) minDate = d.Time;
                 if (d.Time && d.Time > maxDate) maxDate = d.Time;
 
                 totalProfit += d.NetProfit || 0;
                 cumulative += d.NetProfit || 0;
+
                 if (cumulative > peak) peak = cumulative;
 
                 if (d.DayOfWeek !== undefined) {
@@ -679,14 +1160,22 @@
                 }
 
                 if (d.NetProfit > 0) {
-                    if (currentLossStreak > 0) { lossStreaks.push(currentLossStreak); currentLossStreak = 0; }
+                    if (currentLossStreak > 0) {
+                        lossStreaks.push(currentLossStreak);
+                        currentLossStreak = 0;
+                    }
+
                     winningTrades++;
                     grossProfit += d.NetProfit; 
                     currentWinStreak++;
                     currentConsecutiveLoss = 0; 
                     if(currentWinStreak > maxWinStreak) maxWinStreak = currentWinStreak;
                 } else if (d.NetProfit < 0) {
-                    if (currentWinStreak > 0) { winStreaks.push(currentWinStreak); currentWinStreak = 0; }
+                    if (currentWinStreak > 0) {
+                        winStreaks.push(currentWinStreak);
+                        currentWinStreak = 0;
+                    }
+
                     losingTrades++;
                     grossLoss += d.NetProfit;
                     
@@ -731,7 +1220,11 @@
             const avgLoss = losingTrades > 0 ? absoluteGrossLoss / losingTrades : 0;
             const riskReward = avgLoss > 0 ? (avgWin / avgLoss) : (avgWin > 0 ? 99.99 : 0);
 
-            // CÁLCULO DE INTERÉS COMPUESTO Y DRAWDOWNS
+            // =====================================================
+            // CÁLCULO DE INTERÉS COMPUESTO (1% Riesgo Real Unificado)
+            // =====================================================
+            
+            // PASO 1: Calcular la pérdida promedio real (1R)
             let symTrades = {};
             dataArr.forEach(d => {
                 let sym = d.Symbol || 'Estrategia';
@@ -742,10 +1235,13 @@
 
             let symbolStats = {};
             Object.keys(symTrades).forEach(sym => {
-                let losses = symTrades[sym].losses.sort((a,b) => b - a); 
+                let losses = symTrades[sym].losses.sort((a,b) => b - a); // Ordenar de mayor a menor
                 let wins = symTrades[sym].wins;
+
                 let oneR = 1;
                 if(losses.length > 0) {
+                    // Para encontrar el verdadero "Stop Loss" (1R), promediamos el 25% de las pérdidas más grandes.
+                    // Esto elimina el sesgo de los break-evens y cierres parciales diminutos.
                     let topCount = Math.max(1, Math.ceil(losses.length * 0.25));
                     let sum = 0;
                     for(let i=0; i<topCount; i++) sum += losses[i];
@@ -757,23 +1253,38 @@
                 symbolStats[sym] = { oneR: oneR };
             });
 
+            // Aseguramos orden estrictamente cronológico absoluto
             let sortedDataForComp = [...dataArr].sort((a, b) => a.Time - b.Time);
 
+            // PASO 2: Simulación Cronológica Dinámica en 1 sola cuenta de 10k
             let compBalance = 10000; 
             compChartDataObj = []; 
+            
             let compPeak = 10000;
             let compPeakDate = sortedDataForComp.length > 0 ? sortedDataForComp[0].Time : null;
-            let maxCompDDMoney = 0; let maxCompDDPct = 0;
-            let maxCompDDStartDate = null; let maxCompDDEndDate = null;
-            let compDailyDDs = {}; let prevDateStr = null;
-            let currentDayPeak = 10000; let prevCompBalance = 10000;
+            let maxCompDDMoney = 0;
+            let maxCompDDPct = 0;
+            let maxCompDDStartDate = null;
+            let maxCompDDEndDate = null;
+            
+            let compDailyDDs = {};
+            let prevDateStr = null;
+            let currentDayPeak = 10000;
+            let prevCompBalance = 10000;
 
-            let realBalance = 10000; let realPeak = 10000;
+            // Variables para Drawdowns de Capital Real
+            let realBalance = 10000;
+            let realPeak = 10000;
             let realPeakDate = sortedDataForComp.length > 0 ? sortedDataForComp[0].Time : null;
-            let maxRealDDMoney = 0; let maxRealDDPct = 0;
-            let maxRealDDStartDate = null; let maxRealDDEndDate = null;
-            let realDailyDDs = {}; let prevRealDateStr = null;
-            let currentRealDayPeak = 10000; let prevRealBalance = 10000;
+            let maxRealDDMoney = 0;
+            let maxRealDDPct = 0;
+            let maxRealDDStartDate = null;
+            let maxRealDDEndDate = null;
+            
+            let realDailyDDs = {};
+            let prevRealDateStr = null;
+            let currentRealDayPeak = 10000;
+            let prevRealBalance = 10000;
 
             sortedDataForComp.forEach(d => {
                 let dateStr = d.DateOnly;
@@ -782,93 +1293,144 @@
                     dateStr = isNaN(timeVal.getTime()) ? '1970-01-01' : timeVal.toISOString().split('T')[0];
                 }
 
-                // DRAWDOWN REAL
+                // ========================================================
+                // --- CÁLCULO DE DRAWDOWNS PARA EL CAPITAL REAL (NORMAL) ---
+                // ========================================================
                 realBalance += (d.NetProfit || 0);
+
                 if (realBalance > realPeak) {
-                    realPeak = realBalance; realPeakDate = d.Time;
+                    realPeak = realBalance;
+                    realPeakDate = d.Time;
                 } else {
                     let currentRealDDMoney = realPeak - realBalance;
                     let currentRealDDPct = (currentRealDDMoney / realPeak) * 100;
                     if (currentRealDDPct > maxRealDDPct) {
-                        maxRealDDMoney = currentRealDDMoney; maxRealDDPct = currentRealDDPct;
-                        maxRealDDStartDate = realPeakDate; maxRealDDEndDate = d.Time;
+                        maxRealDDMoney = currentRealDDMoney;
+                        maxRealDDPct = currentRealDDPct;
+                        maxRealDDStartDate = realPeakDate;
+                        maxRealDDEndDate = d.Time;
                     }
                 }
+
                 if (dateStr !== prevRealDateStr) {
                     currentRealDayPeak = prevRealBalance;
                     if (!realDailyDDs[dateStr]) realDailyDDs[dateStr] = { maxPct: 0, maxMoney: 0 };
                     prevRealDateStr = dateStr;
                 }
-                if (realBalance > currentRealDayPeak) currentRealDayPeak = realBalance;
+
+                if (realBalance > currentRealDayPeak) {
+                    currentRealDayPeak = realBalance;
+                }
+
                 let currentRealDailyDDMoney = currentRealDayPeak - realBalance;
                 let currentRealDailyDDPct = currentRealDayPeak > 0 ? (currentRealDailyDDMoney / currentRealDayPeak) * 100 : 0;
+
                 if (currentRealDailyDDPct > realDailyDDs[dateStr].maxPct) {
                     realDailyDDs[dateStr].maxPct = currentRealDailyDDPct;
                     realDailyDDs[dateStr].maxMoney = currentRealDailyDDMoney;
                 }
+
                 prevRealBalance = realBalance;
 
-                // COMPUESTO
+
+                // ========================================================
+                // --- CÁLCULO DE DRAWDOWNS PARA LA PROYECCIÓN COMPUESTA ---
+                // ========================================================
                 let sym = d.Symbol || 'Estrategia';
                 let oneR = symbolStats[sym].oneR;
+                
                 let R = d.NetProfit / oneR;
-                if(R > 30) R = 30; if(R < -15) R = -15;
+                
+                // Límites estrictos para evitar que eventos anómalos rompan la curva exponencial
+                if(R > 30) R = 30;  // Máximo +30R (Ej. un super trend)
+                if(R < -15) R = -15; // Máximo -15R (Ej. flash crash o deslizamiento grave)
 
                 compBalance *= (1 + (R * 0.01));
+                
                 if (compBalance < 0) compBalance = 0; 
                 if (isNaN(compBalance)) compBalance = 10000; 
                 compBalance = Math.min(compBalance, 1000000000000); 
 
                 if (compBalance > compPeak) {
-                    compPeak = compBalance; compPeakDate = d.Time;
+                    compPeak = compBalance;
+                    compPeakDate = d.Time;
                 } else {
                     let currentDDMoney = compPeak - compBalance;
                     let currentDDPct = (currentDDMoney / compPeak) * 100;
                     if (currentDDPct > maxCompDDPct) {
-                        maxCompDDMoney = currentDDMoney; maxCompDDPct = currentDDPct;
-                        maxCompDDStartDate = compPeakDate; maxCompDDEndDate = d.Time;
+                        maxCompDDMoney = currentDDMoney;
+                        maxCompDDPct = currentDDPct;
+                        maxCompDDStartDate = compPeakDate;
+                        maxCompDDEndDate = d.Time;
                     }
                 }
+                
                 if (dateStr !== prevDateStr) {
                     currentDayPeak = prevCompBalance; 
                     if (!compDailyDDs[dateStr]) compDailyDDs[dateStr] = { maxPct: 0, maxMoney: 0 };
                     prevDateStr = dateStr;
                 }
-                if (compBalance > currentDayPeak) currentDayPeak = compBalance;
+
+                if (compBalance > currentDayPeak) {
+                    currentDayPeak = compBalance;
+                }
+
                 let currentDailyDDMoney = currentDayPeak - compBalance;
                 let currentDailyDDPct = currentDayPeak > 0 ? (currentDailyDDMoney / currentDayPeak) * 100 : 0;
+
                 if (currentDailyDDPct > compDailyDDs[dateStr].maxPct) {
                     compDailyDDs[dateStr].maxPct = currentDailyDDPct;
                     compDailyDDs[dateStr].maxMoney = currentDailyDDMoney;
                 }
+
                 prevCompBalance = compBalance;
+                
                 compChartDataObj.push({ time: d.Time, balance: compBalance });
             });
             
-            // ESTADISTICAS
-            let maxRealDailyDDPct = 0; let maxRealDailyDDMoney = 0;
-            let sumRealDailyDDPct = 0; let sumRealDailyDDMoney = 0;
-            let realTradingDaysCount = 0; let maxRealDailyDDDate = null;
+            // Estadísticas diarias de DD Real
+            let maxRealDailyDDPct = 0;
+            let maxRealDailyDDMoney = 0;
+            let sumRealDailyDDPct = 0;
+            let sumRealDailyDDMoney = 0;
+            let realTradingDaysCount = 0;
+            let maxRealDailyDDDate = null;
+
             for (let date in realDailyDDs) {
                 let dayStats = realDailyDDs[date];
                 if (dayStats.maxPct > maxRealDailyDDPct) {
-                    maxRealDailyDDPct = dayStats.maxPct; maxRealDailyDDMoney = dayStats.maxMoney; maxRealDailyDDDate = date;
+                    maxRealDailyDDPct = dayStats.maxPct;
+                    maxRealDailyDDMoney = dayStats.maxMoney;
+                    maxRealDailyDDDate = date;
                 }
-                sumRealDailyDDPct += dayStats.maxPct; sumRealDailyDDMoney += dayStats.maxMoney; realTradingDaysCount++;
+                sumRealDailyDDPct += dayStats.maxPct;
+                sumRealDailyDDMoney += dayStats.maxMoney;
+                realTradingDaysCount++;
             }
+
             let avgRealDailyDDPct = realTradingDaysCount > 0 ? (sumRealDailyDDPct / realTradingDaysCount) : 0;
             let avgRealDailyDDMoney = realTradingDaysCount > 0 ? (sumRealDailyDDMoney / realTradingDaysCount) : 0;
 
-            let maxCompDailyDDPct = 0; let maxCompDailyDDMoney = 0;
-            let sumCompDailyDDPct = 0; let sumCompDailyDDMoney = 0;
-            let tradingDaysCount = 0; let maxCompDailyDDDate = null;
+            // Estadísticas diarias de DD Compuesto
+            let maxCompDailyDDPct = 0;
+            let maxCompDailyDDMoney = 0;
+            let sumCompDailyDDPct = 0;
+            let sumCompDailyDDMoney = 0;
+            let tradingDaysCount = 0;
+            let maxCompDailyDDDate = null;
+
             for (let date in compDailyDDs) {
                 let dayStats = compDailyDDs[date];
                 if (dayStats.maxPct > maxCompDailyDDPct) {
-                    maxCompDailyDDPct = dayStats.maxPct; maxCompDailyDDMoney = dayStats.maxMoney; maxCompDailyDDDate = date;
+                    maxCompDailyDDPct = dayStats.maxPct;
+                    maxCompDailyDDMoney = dayStats.maxMoney;
+                    maxCompDailyDDDate = date;
                 }
-                sumCompDailyDDPct += dayStats.maxPct; sumCompDailyDDMoney += dayStats.maxMoney; tradingDaysCount++;
+                sumCompDailyDDPct += dayStats.maxPct;
+                sumCompDailyDDMoney += dayStats.maxMoney;
+                tradingDaysCount++;
             }
+
             let avgCompDailyDDPct = tradingDaysCount > 0 ? (sumCompDailyDDPct / tradingDaysCount) : 0;
             let avgCompDailyDDMoney = tradingDaysCount > 0 ? (sumCompDailyDDMoney / tradingDaysCount) : 0;
 
@@ -882,11 +1444,24 @@
             }
             const tradesPerMonth = totalTrades > 0 ? (totalTrades / monthsSpan) : 0;
 
+            let maxDayProf = -Infinity; let minDayProf = Infinity;
+            let bestDayIndex = 0; let worstDayIndex = 0;
+            let hasDataDay = false;
+            
+            for(let i=0; i<=6; i++) {
+                if(dayCounts[i] > 0) {
+                    if(dayProfits[i] > maxDayProf) { maxDayProf = dayProfits[i]; bestDayIndex = i; }
+                    if(dayProfits[i] < minDayProf) { minDayProf = dayProfits[i]; worstDayIndex = i; }
+                    hasDataDay = true;
+                }
+            }
+
             return {
                 totalProfit, grossProfit, grossLoss, absoluteGrossLoss,
                 totalTrades, winningTrades, losingTrades, winRate, avgTrade, tradesPerMonth,
                 profitFactor, riskReward, maxConsDrawdownPct, maxConsecutiveLoss, maxConsDate, maxSingleLoss, maxSingleLossPct, maxSingleDate, 
                 maxWinStreak, maxLossStreak, avgWinStreak, avgLossStreak,
+                bestDayIndex, worstDayIndex, hasDataDay,
                 maxSimultaneous, finalCompBalance, compReturnPct,
                 maxRealDDMoney, maxRealDDPct, maxRealDDStartDate, maxRealDDEndDate,
                 maxRealDailyDDPct, maxRealDailyDDMoney, maxRealDailyDDDate, avgRealDailyDDPct, avgRealDailyDDMoney,
@@ -897,6 +1472,7 @@
 
         function updateLeaderboard() {
             const container = document.getElementById('leaderboardContainer');
+            
             let pairData = {};
             rawData.forEach(d => {
                 if(!d.Symbol) return;
@@ -904,31 +1480,41 @@
                 pairData[d.Symbol].profit += d.NetProfit || 0;
                 pairData[d.Symbol].count += 1;
             });
+
             let sortedPairs = Object.keys(pairData).sort((a,b) => pairData[b].profit - pairData[a].profit);
             container.innerHTML = '';
+            
             if (sortedPairs.length === 0) {
-                container.innerHTML = '<div class="text-xs text-gray-500 text-center py-4">Sin operaciones</div>'; return;
+                container.innerHTML = '<div class="text-xs text-gray-500 text-center py-4">Sin operaciones</div>';
+                return;
             }
+
             let html = '';
             sortedPairs.forEach((p, index) => {
-                let prof = pairData[p].profit; let count = pairData[p].count;
+                let prof = pairData[p].profit;
+                let count = pairData[p].count;
                 let colorClass = prof >= 0 ? 'text-green-400' : 'text-red-400';
                 let bgClass = index % 2 === 0 ? 'bg-gray-700/30' : 'bg-transparent';
                 let prefix = prof > 0 ? '+' : '';
-                html += `<div class="flex justify-between items-center text-sm p-3 rounded hover:bg-gray-700 transition-colors ${bgClass}">
-                            <div class="flex items-center gap-2 truncate pr-2">
-                                <span class="text-xs font-bold text-gray-500 w-5 shrink-0">${index + 1}.</span>
-                                <span class="font-semibold text-gray-200 truncate text-sm" title="${p}">${p}</span>
-                                <span class="text-[11px] text-gray-400 shrink-0 ml-1">${count}</span>
-                            </div>
-                            <span class="font-bold font-mono text-sm ${colorClass} shrink-0">${prefix}${fmtMoney(prof, 2)}</span>
-                        </div>`;
+                
+                html += `
+                    <div class="flex justify-between items-center text-sm p-3 rounded hover:bg-gray-700 transition-colors ${bgClass}">
+                        <div class="flex items-center gap-2 truncate pr-2">
+                            <span class="text-xs font-bold text-gray-500 w-5 shrink-0">${index + 1}.</span>
+                            <span class="font-semibold text-gray-200 truncate text-sm" title="${p}">${p}</span>
+                            <span class="text-[11px] text-gray-400 shrink-0 ml-1">${count}</span>
+                        </div>
+                        <span class="font-bold font-mono text-sm ${colorClass} shrink-0">${prefix}${fmtMoney(prof, 2)}</span>
+                    </div>
+                `;
             });
+            
             container.innerHTML = html;
         }
 
         function updateKPIs() {
             const metrics = calculateMetrics(filteredData);
+
             document.getElementById('kpiTotalProfit').innerText = fmtMoney(metrics.totalProfit);
             document.getElementById('kpiTotalProfit').className = `text-2xl lg:text-3xl font-bold mt-1 ${metrics.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}`;
             document.getElementById('kpiGrossProfit').lastElementChild.innerText = fmtMoney(metrics.grossProfit);
@@ -936,6 +1522,7 @@
             
             document.getElementById('kpiTotalTrades').innerText = metrics.totalTrades;
             document.getElementById('kpiSimultaneous').innerText = `Simultáneos: ${metrics.maxSimultaneous}`;
+            
             document.getElementById('kpiWinRate').innerText = `${metrics.winRate.toFixed(1)}%`;
             document.getElementById('kpiWinRateSub').innerText = `${metrics.winningTrades} / ${metrics.totalTrades} Victorias`;
             
@@ -972,7 +1559,9 @@
                 document.getElementById('realDDDailyDiv').title = `Día: ${metrics.maxRealDailyDDDate}`;
                 document.getElementById('kpiRealAvgDailyDDPct').innerText = `-${metrics.avgRealDailyDDPct.toFixed(2)}%`;
                 document.getElementById('kpiRealAvgDailyDDMoney').innerText = `-${fmtMoney(metrics.avgRealDailyDDMoney)}`;
-            } else { realDDContainer.classList.add('hidden'); }
+            } else {
+                realDDContainer.classList.add('hidden');
+            }
 
             let renderComp = isNaN(metrics.finalCompBalance) ? 10000 : metrics.finalCompBalance;
             let renderCompPct = isNaN(metrics.compReturnPct) ? 0 : metrics.compReturnPct;
@@ -992,20 +1581,25 @@
                 document.getElementById('compDDDailyDiv').title = `Día: ${metrics.maxCompDailyDDDate}`;
                 document.getElementById('kpiCompAvgDailyDDPct').innerText = `-${metrics.avgCompDailyDDPct.toFixed(2)}%`;
                 document.getElementById('kpiCompAvgDailyDDMoney').innerText = `-${fmtMoney(metrics.avgCompDailyDDMoney)}`;
-            } else { compDDContainer.classList.add('hidden'); }
+            } else {
+                compDDContainer.classList.add('hidden');
+            }
         }
 
         function updateChart() {
             const ctxEq = document.getElementById('equityChart').getContext('2d');
             let cumulative = 0; let chartLabels = []; let chartData = [];
+
             filteredData.forEach(d => {
                 cumulative += d.NetProfit || 0;
                 let timeVal = d.Time instanceof Date ? d.Time : new Date(d.Time);
                 if(isNaN(timeVal.getTime())) timeVal = new Date();
-                chartLabels.push(timeVal); chartData.push(cumulative);
+                chartLabels.push(timeVal);
+                chartData.push(cumulative);
             });
 
             safeDestroy(equityChartInstance);
+
             equityChartInstance = new Chart(ctxEq, {
                 type: 'line',
                 data: {
@@ -1018,8 +1612,9 @@
                     }]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
-                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => 'Beneficio: ' + fmtMoney(ctx.parsed.y) } } },
+                    responsive: true, maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(context) { return 'Beneficio: ' + fmtMoney(context.parsed.y); } } } },
                     scales: {
                         x: { type: 'time', time: { tooltipFormat: 'dd MMM yyyy, HH:mm' }, grid: { color: '#374151' }, ticks: { color: '#9ca3af' } },
                         y: { grid: { color: '#374151' }, ticks: { color: '#9ca3af', callback: (v) => fmtMoney(v, 0) } }
@@ -1032,9 +1627,11 @@
                 let timeVal = d.time instanceof Date ? d.time : new Date(d.time);
                 return isNaN(timeVal.getTime()) ? new Date() : timeVal;
             });
+            
             let compData = compChartDataObj.map(d => isNaN(d.balance) ? 0 : (d.balance - 10000));
 
             safeDestroy(compoundChartInstance);
+
             compoundChartInstance = new Chart(ctxComp, {
                 type: 'line',
                 data: {
@@ -1047,8 +1644,9 @@
                     }]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
-                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => 'Beneficio: ' + fmtMoney(ctx.parsed.y) } } },
+                    responsive: true, maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(context) { return 'Beneficio: ' + fmtMoney(context.parsed.y); } } } },
                     scales: {
                         x: { type: 'time', time: { tooltipFormat: 'dd MMM yyyy, HH:mm' }, grid: { color: '#374151' }, ticks: { color: '#9ca3af' } },
                         y: { grid: { color: '#374151' }, ticks: { color: '#9ca3af', callback: (v) => fmtMoney(v, 0) } }
@@ -1058,13 +1656,26 @@
         }
 
         function updateAnalyticsCharts() {
-            let tHour = new Array(24).fill(0); let pHourWin = new Array(24).fill(0); let pHourLoss = new Array(24).fill(0);
-            let tDay = new Array(7).fill(0);   let pDayWin = new Array(7).fill(0);  let pDayLoss = new Array(7).fill(0);
-            let tMonth = new Array(12).fill(0);let pMonthWin = new Array(12).fill(0);let pMonthLoss = new Array(12).fill(0);
-            let scatterData = []; let realTradesCount = 0; let totalDur = 0; let maxDur = 0; let minDur = Infinity;
+            let tHour = new Array(24).fill(0); 
+            let pHourWin = new Array(24).fill(0);
+            let pHourLoss = new Array(24).fill(0);
+            
+            let tDay = new Array(7).fill(0);  
+            let pDayWin = new Array(7).fill(0);
+            let pDayLoss = new Array(7).fill(0);
+            
+            let tMonth = new Array(12).fill(0); 
+            let pMonthWin = new Array(12).fill(0);
+            let pMonthLoss = new Array(12).fill(0);
+            
+            let scatterData = [];
+            
+            let realTradesCount = 0;
+            let totalDur = 0; let maxDur = 0; let minDur = Infinity;
 
             filteredData.forEach(d => {
                 realTradesCount++;
+                
                 if (d.EntryHour !== undefined) tHour[d.EntryHour]++;  
                 if (d.DayOfWeek !== undefined) tDay[d.DayOfWeek]++;   
                 if (d.ExitMonth !== undefined) tMonth[d.ExitMonth]++; 
@@ -1082,20 +1693,47 @@
                 let dur = d.DurationHours;
                 if (dur === undefined || isNaN(dur) || !isFinite(dur)) dur = 0;
                 scatterData.push({ x: dur, y: d.NetProfit || 0 });
-                totalDur += dur; if(dur > maxDur) maxDur = dur; if(dur < minDur) minDur = dur;
+                
+                totalDur += dur;
+                if(dur > maxDur) maxDur = dur;
+                if(dur < minDur) minDur = dur;
             });
 
-            if(realTradesCount === 0) { minDur = 0; maxDur = 0; }
+            if(realTradesCount === 0) {
+                minDur = 0; maxDur = 0; avgDur = 0;
+            }
+            
             let avgDur = realTradesCount > 0 ? (totalDur / realTradesCount) : 0;
+
             document.getElementById('statHoldMin').innerText = formatDurationText(minDur);
             document.getElementById('statHoldAvg').innerText = formatDurationText(avgDur);
             document.getElementById('statHoldMax').innerText = formatDurationText(maxDur);
 
-            const barOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: '#9ca3af', font: {size: 10} } }, y: { grid: { color: '#374151', drawBorder: false }, ticks: { color: '#9ca3af', font: {size: 10} } } } };
-            const barOptionsMoneyGrouped = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top', labels: { color: '#9ca3af', boxWidth: 10, font: {size: 10} } }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${fmtMoney(ctx.raw)}` } } }, scales: { x: { grid: { display: false }, ticks: { color: '#9ca3af', font: {size: 10} } }, y: { grid: { color: '#374151', drawBorder: false }, ticks: { color: '#9ca3af', font: {size: 10}, callback: (v) => fmtMoney(v, 0) } } } };
+            const barOptions = {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { 
+                    x: { grid: { display: false }, ticks: { color: '#9ca3af', font: {size: 10} } },
+                    y: { grid: { color: '#374151', drawBorder: false }, ticks: { color: '#9ca3af', font: {size: 10} } }
+                }
+            };
+            
+            const barOptionsMoneyGrouped = {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: true, position: 'top', labels: { color: '#9ca3af', boxWidth: 10, font: {size: 10} } },
+                    tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${fmtMoney(ctx.raw)}` } }
+                },
+                scales: { 
+                    x: { grid: { display: false }, ticks: { color: '#9ca3af', font: {size: 10} } },
+                    y: { grid: { color: '#374151', drawBorder: false }, ticks: { color: '#9ca3af', font: {size: 10}, callback: (v) => fmtMoney(v, 0) } }
+                }
+            };
 
             let hourColors = tHour.map((_, h) => {
-                if (h >= 8 && h < 13) return '#3b82f6'; if (h >= 13 && h < 22) return '#10b981'; return '#8b5cf6';
+                if (h >= 8 && h < 13) return '#3b82f6';
+                if (h >= 13 && h < 22) return '#10b981';
+                return '#8b5cf6';
             });
             let hourLabels = Array.from({length: 24}, (_, i) => i + 'h');
 
@@ -1120,7 +1758,7 @@
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => `Retención: ${formatDurationText(ctx.parsed.x)} | Profit: ${fmtMoney(ctx.parsed.y)}` } } },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) { let timeStr = formatDurationText(ctx.parsed.x); return `Retención: ${timeStr} | Profit: ${fmtMoney(ctx.parsed.y)}`; } } } },
                     scales: {
                         x: { title: { display: true, text: 'Tiempo retenido (Horas)', color: '#9ca3af' }, grid: { color: '#374151' }, ticks: { color: '#9ca3af' } },
                         y: { title: { display: true, text: 'Profit ($)', color: '#9ca3af' }, grid: { color: '#374151' }, ticks: { color: '#9ca3af', callback: (v) => fmtMoney(v, 0) } }
@@ -1129,7 +1767,7 @@
             });
         }
 
-        // --- CALENDARIO ---
+        // --- DASHBOARD: CALENDARIO ---
         function getCellColorClass(profit) {
             if (profit === undefined || profit === null || profit === 0) return "bg-gray-800/50 border-gray-700 text-gray-500 hover:border-gray-500";
             if (profit > 0) return "bg-green-900/40 border-green-600 text-green-400 shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:border-green-400";
@@ -1139,16 +1777,19 @@
         window.calZoomInYear = function(year) { calYear = parseInt(year); calMode = 'MONTHS'; updateSmartCalendar(); };
         window.calZoomInMonth = function(month) { calMonth = parseInt(month); calMode = 'DAYS'; updateSmartCalendar(); };
         window.calZoomOut = function() {
-            if (calMode === 'DAYS') calMode = 'MONTHS'; else if (calMode === 'MONTHS') calMode = 'YEARS';
+            if (calMode === 'DAYS') calMode = 'MONTHS';
+            else if (calMode === 'MONTHS') calMode = 'YEARS';
             updateSmartCalendar();
         };
         window.calZoomIn = function() {
+            let calData = filteredData; 
             if (calMode === 'YEARS') {
-                let years = [...new Set(filteredData.map(d => d.Year).filter(Boolean))].sort((a,b) => b-a);
+                let years = [...new Set(calData.map(d => d.Year).filter(Boolean))].sort((a,b) => b-a);
                 if (years.length > 0) calZoomInYear(years[0]);
             } else if (calMode === 'MONTHS') {
-                let months = [...new Set(filteredData.filter(d => d.Year === calYear).map(d => d.Month).filter(Boolean))].sort((a,b) => b-a);
-                if (months.length > 0) calZoomInMonth(months[0]); else calZoomInMonth(1);
+                let months = [...new Set(calData.filter(d => d.Year === calYear).map(d => d.Month).filter(Boolean))].sort((a,b) => b-a);
+                if (months.length > 0) calZoomInMonth(months[0]);
+                else calZoomInMonth(1);
             }
         };
         window.calNavigate = function(dir) {
@@ -1186,9 +1827,12 @@
             let calData = filteredData; 
             container.innerHTML = ''; 
 
-            btnPrev.disabled = (calMode === 'YEARS'); btnNext.disabled = (calMode === 'YEARS');
-            btnZoomOut.disabled = (calMode === 'YEARS'); if (btnZoomIn) btnZoomIn.disabled = (calMode === 'DAYS');
+            btnPrev.disabled = (calMode === 'YEARS');
+            btnNext.disabled = (calMode === 'YEARS');
+            btnZoomOut.disabled = (calMode === 'YEARS');
+            if (btnZoomIn) btnZoomIn.disabled = (calMode === 'DAYS');
             
+            // Solo habilitar botón de ruta en vista de Días
             if (btnDetail) {
                 btnDetail.disabled = (calMode !== 'DAYS');
                 if (calMode !== 'DAYS') btnDetail.classList.add('opacity-30', 'cursor-not-allowed');
@@ -1201,9 +1845,13 @@
                 return;
             }
 
-            if (calMode === 'YEARS') { indicator.innerText = "Vista: Años"; renderYearsGrid(container, calData); } 
-            else if (calMode === 'MONTHS') { indicator.innerText = `Año ${calYear}`; renderMonthsGrid(container, calData, calYear); } 
-            else if (calMode === 'DAYS') { indicator.innerText = `${monthNames[(calMonth || 1)-1]} ${calYear}`; renderDaysGrid(container, calData, calYear, calMonth); }
+            if (calMode === 'YEARS') {
+                indicator.innerText = "Vista: Años"; renderYearsGrid(container, calData);
+            } else if (calMode === 'MONTHS') {
+                indicator.innerText = `Año ${calYear}`; renderMonthsGrid(container, calData, calYear);
+            } else if (calMode === 'DAYS') {
+                indicator.innerText = `${monthNames[(calMonth || 1)-1]} ${calYear}`; renderDaysGrid(container, calData, calYear, calMonth);
+            }
         }
 
         function renderYearsGrid(container, data) {
@@ -1218,36 +1866,41 @@
             years.forEach(year => {
                 let profit = yearlyData[year];
                 let colorClass = getCellColorClass(profit);
-                html += `<div onclick="calZoomInYear('${year}')" class="h-28 flex flex-col items-center justify-center rounded-xl border ${colorClass} p-4 transition-transform hover:-translate-y-1 cursor-pointer relative group">
-                            <span class="absolute top-2 right-3 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-black/30 px-2 py-1 rounded">Ver Meses 🔍</span>
-                            <span class="text-sm font-semibold mb-2 opacity-75">Año ${year}</span>
-                            <span class="text-2xl font-bold truncate-text w-full text-center">${fmtMoney(profit, 2)}</span>
-                        </div>`;
+                html += `
+                    <div onclick="calZoomInYear('${year}')" class="h-28 flex flex-col items-center justify-center rounded-xl border ${colorClass} p-4 transition-transform hover:-translate-y-1 cursor-pointer relative group">
+                        <span class="absolute top-2 right-3 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-black/30 px-2 py-1 rounded">Ver Meses 🔍</span>
+                        <span class="text-sm font-semibold mb-2 opacity-75">Año ${year}</span>
+                        <span class="text-2xl font-bold truncate-text w-full text-center">${fmtMoney(profit, 2)}</span>
+                    </div>`;
             });
-            container.innerHTML = html + `</div>`;
+            html += `</div>`; container.innerHTML = html;
         }
 
         function renderMonthsGrid(container, data, year) {
-            let monthlyData = {}; let monthlyTrades = {};
+            let monthlyData = {};
+            let monthlyTrades = {};
             data.forEach(d => {
                 if (d.Year === year && d.Month) {
                     if(!monthlyData[d.Month]) { monthlyData[d.Month] = 0; monthlyTrades[d.Month] = 0; }
-                    monthlyData[d.Month] += d.NetProfit || 0; monthlyTrades[d.Month]++;
+                    monthlyData[d.Month] += d.NetProfit || 0;
+                    monthlyTrades[d.Month]++;
                 }
             });
             let html = `<div class="grid grid-cols-3 md:grid-cols-4 gap-4 fade-in">`;
             for(let i = 1; i <= 12; i++) {
-                let profit = monthlyData[i]; let trades = monthlyTrades[i] || 0;
+                let profit = monthlyData[i];
+                let trades = monthlyTrades[i] || 0;
                 let colorClass = getCellColorClass(profit);
                 let displayProfit = profit !== undefined ? fmtMoney(profit, 2) : 'Sin trades';
-                html += `<div onclick="calZoomInMonth('${i}')" class="h-24 flex flex-col items-center justify-center rounded-xl border ${colorClass} p-2 transition-transform hover:-translate-y-1 cursor-pointer relative group">
-                            <span class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-black/30 px-2 py-1 rounded">Ver Días 🔍</span>
-                            <span class="text-xs font-semibold mb-1 opacity-75 uppercase">${monthNames[i-1]}</span>
-                            <span class="text-lg font-bold truncate-text w-full text-center">${displayProfit}</span>
-                            <span class="text-[10px] text-gray-400 mt-1">${trades} trades</span>
-                        </div>`;
+                html += `
+                    <div onclick="calZoomInMonth('${i}')" class="h-24 flex flex-col items-center justify-center rounded-xl border ${colorClass} p-2 transition-transform hover:-translate-y-1 cursor-pointer relative group">
+                        <span class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-black/30 px-2 py-1 rounded">Ver Días 🔍</span>
+                        <span class="text-xs font-semibold mb-1 opacity-75 uppercase">${monthNames[i-1]}</span>
+                        <span class="text-lg font-bold truncate-text w-full text-center">${displayProfit}</span>
+                        <span class="text-[10px] text-gray-400 mt-1">${trades} trades</span>
+                    </div>`;
             }
-            container.innerHTML = html + `</div>`;
+            html += `</div>`; container.innerHTML = html;
         }
 
         function renderDaysGrid(container, data, year, month) {
@@ -1262,13 +1915,21 @@
             for(let i = 0; i < firstDay; i++) { html += `<div class="min-h-[80px] rounded border border-transparent"></div>`; }
 
             if (!isDetailedCalendar) {
+                // ========================================================
+                // VISTA ORIGINAL CON TRADES DETALLADOS (Hora, Simbolo, Profit)
+                // ========================================================
                 let dailyData = {};
                 data.forEach(d => {
                     if (d.Year === year && d.Month === month && d.Time) {
                         let day = d.Time.getDate();
                         if(!dailyData[day]) dailyData[day] = { total: 0, trades: [] };
                         dailyData[day].total += d.NetProfit || 0;
-                        dailyData[day].trades.push({ sym: d.Symbol || '-', prof: d.NetProfit || 0, time: d.EntryTime || d.Time });
+                        
+                        dailyData[day].trades.push({
+                            sym: d.Symbol || '-',
+                            prof: d.NetProfit || 0,
+                            time: d.EntryTime || d.Time 
+                        });
                     }
                 });
 
@@ -1283,90 +1944,184 @@
                         dayData.trades.sort((a,b) => a.time - b.time).forEach(t => {
                             let hh = t.time && t.time.getHours ? t.time.getHours().toString().padStart(2, '0') : '--';
                             let mm = t.time && t.time.getMinutes ? t.time.getMinutes().toString().padStart(2, '0') : '--';
-                            let sColorClass = t.prof >= 0 ? 'text-green-300' : 'text-red-300';
-                            let sPrefix = t.prof > 0 ? '+' : '';
+                            let tProf = t.prof;
+                            let sColorClass = tProf >= 0 ? 'text-green-300' : 'text-red-300';
+                            let sPrefix = tProf > 0 ? '+' : '';
+                            
                             tradesHtml += `<div class="flex justify-between w-full items-center gap-1 border-b border-white/5 pb-[2px] last:border-0 opacity-90 hover:opacity-100">
                                 <span class="text-[8px] text-gray-500 font-mono tracking-tighter shrink-0" title="Hora de entrada">${hh}:${mm}</span>
                                 <span class="truncate max-w-[35px] md:max-w-[45px] text-[8px] text-gray-400" title="${t.sym}">${t.sym}</span>
-                                <span class="${sColorClass} font-mono shrink-0 text-[9px]">${sPrefix}${fmtMoney(t.prof, 0)}</span>
+                                <span class="${sColorClass} font-mono shrink-0 text-[9px]">${sPrefix}${fmtMoney(tProf, 0)}</span>
                             </div>`;
                         });
                     }
-                    html += `<div class="min-h-[85px] max-h-[120px] flex flex-col items-center justify-start rounded-lg border ${colorClass} bg-gray-800/60 p-1 transition-transform hover:scale-105 cursor-default overflow-hidden shadow-sm" title="Día ${i}\nNeto: ${profit !== undefined ? fmtMoney(profit, 2) : '0.00'}">
-                                <div class="text-[10px] md:text-xs font-semibold opacity-90 border-b border-white/20 w-full text-center pb-1 mb-1 flex flex-col">
-                                    <span class="text-gray-300">${i}</span><span class="font-bold text-[10px] md:text-[11px]">${displayProfit}</span>
-                                </div>
-                                <div class="w-full flex flex-col gap-[2px] overflow-y-auto cell-scrollbar px-[2px]">${tradesHtml}</div>
-                            </div>`;
+                    
+                    html += `
+                        <div class="min-h-[85px] max-h-[120px] flex flex-col items-center justify-start rounded-lg border ${colorClass} bg-gray-800/60 p-1 transition-transform hover:scale-105 cursor-default overflow-hidden shadow-sm" title="Día ${i}\nNeto: ${profit !== undefined ? fmtMoney(profit, 2) : '0.00'}">
+                            <div class="text-[10px] md:text-xs font-semibold opacity-90 border-b border-white/20 w-full text-center pb-1 mb-1 flex flex-col">
+                                <span class="text-gray-300">${i}</span>
+                                <span class="font-bold text-[10px] md:text-[11px]">${displayProfit}</span>
+                            </div>
+                            <div class="w-full flex flex-col gap-[2px] overflow-y-auto cell-scrollbar px-[2px]">
+                                ${tradesHtml}
+                            </div>
+                        </div>`;
                 }
             } else {
+                // ========================================================
+                // VISTA DE RUTA DE TRADES (Líneas Multidía)
+                // ========================================================
                 let monthStartMs = new Date(year, month - 1, 1).getTime();
                 let monthEndMs = new Date(year, month, 0, 23, 59, 59).getTime();
 
                 let monthTrades = data.filter(d => {
-                    let st = d.EntryTime || d.Time; let et = d.Time;
+                    let st = d.EntryTime || d.Time;
+                    let et = d.Time;
                     return st.getTime() <= monthEndMs && et.getTime() >= monthStartMs;
                 });
+                
                 monthTrades.sort((a,b) => (a.EntryTime||a.Time) - (b.EntryTime||b.Time));
 
+                // Algoritmo de asignación de pistas (Tracks)
                 let tracks = [];
                 monthTrades.forEach(t => {
-                    let st = t.EntryTime || t.Time; let et = t.Time;
-                    let dStart = 1; if (st.getFullYear() === year && (st.getMonth()+1) === month) dStart = st.getDate();
-                    let dEnd = daysInMonth; if (et.getFullYear() === year && (et.getMonth()+1) === month) dEnd = et.getDate();
+                    let st = t.EntryTime || t.Time;
+                    let et = t.Time;
+                    
+                    let dStart = 1;
+                    if (st.getFullYear() === year && (st.getMonth()+1) === month) dStart = st.getDate();
+                    
+                    let dEnd = daysInMonth;
+                    if (et.getFullYear() === year && (et.getMonth()+1) === month) dEnd = et.getDate();
 
                     let trackIdx = 0;
                     while(true) {
                         if (!tracks[trackIdx]) { tracks[trackIdx] = []; break; }
                         let overlaps = tracks[trackIdx].some(interval => !(dEnd < interval.start || dStart > interval.end));
-                        if (!overlaps) break; trackIdx++;
+                        if (!overlaps) break;
+                        trackIdx++;
                     }
                     tracks[trackIdx].push({ start: dStart, end: dEnd, trade: t });
                 });
 
                 let numTracks = tracks.length;
+
                 for(let i = 1; i <= daysInMonth; i++) {
                     let dayHtml = '';
+                    
                     for(let tr = 0; tr < numTracks; tr++) {
                         let segment = tracks[tr].find(item => item.start <= i && item.end >= i);
+                        
                         if (segment) {
-                            let t = segment.trade; let st = t.EntryTime || t.Time; let et = t.Time;
+                            let t = segment.trade;
+                            let st = t.EntryTime || t.Time;
+                            let et = t.Time;
+
                             let isActualStart = (st.getFullYear() === year && (st.getMonth()+1) === month && st.getDate() === i);
                             let isActualEnd   = (et.getFullYear() === year && (et.getMonth()+1) === month && et.getDate() === i);
-                            let bgBase = t.NetProfit >= 0 ? 'bg-green-600/20 text-green-300 border-green-500/50' : 'bg-red-600/20 text-red-300 border-red-500/50';
+
+                            let isWin = t.NetProfit >= 0;
+                            let bgBase = isWin ? 'bg-green-600/20 text-green-300 border-green-500/50' : 'bg-red-600/20 text-red-300 border-red-500/50';
+
                             let sTime = st ? `${st.getHours().toString().padStart(2,'0')}:${st.getMinutes().toString().padStart(2,'0')}` : '--:--';
                             let eTime = et ? `${et.getHours().toString().padStart(2,'0')}:${et.getMinutes().toString().padStart(2,'0')}` : '--:--';
-                            let symStr = t.Symbol || 'UNK'; if(symStr.length > 8) symStr = symStr.substring(0,8) + '..';
+                            let symStr = t.Symbol || 'UNK';
+                            if(symStr.length > 8) symStr = symStr.substring(0,8) + '..';
 
                             let content = '';
                             let classes = `h-[22px] mb-1 text-[9.5px] font-mono flex items-center px-1 border-y border-x truncate shadow-sm transition-opacity hover:opacity-100 ${isActualStart || isActualEnd ? 'opacity-90' : 'opacity-70'}`;
 
                             if (isActualStart && isActualEnd) {
+                                // Abre y Cierra el mismo día
                                 classes += ` rounded-md ${bgBase} justify-between`;
                                 content = `<span class="truncate pr-1 opacity-80">[${sTime}] ${symStr}</span><span class="font-bold">${fmtMoney(t.NetProfit,0)}</span>`;
-                            } else if (isActualStart) {
+                            } 
+                            else if (isActualStart) {
+                                // Día que Abre (y continúa)
                                 classes += ` rounded-l-md border-r-0 mr-[-6px] ${bgBase} justify-start`;
                                 content = `<span class="font-bold opacity-80">[${sTime}] ${symStr} <span class="text-[8px]">➔</span></span>`;
-                            } else if (isActualEnd) {
+                            } 
+                            else if (isActualEnd) {
+                                // Día que Cierra (venía de antes)
                                 classes += ` rounded-r-md border-l-0 ml-[-6px] ${bgBase} justify-between`;
                                 content = `<span class="opacity-40 text-[8px] mr-1">➔</span><span class="font-bold ml-auto">${fmtMoney(t.NetProfit,0)} <span class="opacity-80">[${eTime}]</span></span>`;
-                            } else {
+                            } 
+                            else {
+                                // Día Intermedio (en tránsito)
                                 classes += ` rounded-none border-x-0 mx-[-6px] ${bgBase} justify-center bg-opacity-10`;
                                 content = `<span class="opacity-50 tracking-widest uppercase">〰️ ${symStr} 〰️</span>`;
                             }
+
                             dayHtml += `<div class="${classes}" title="${t.Symbol}\nApertura: ${sTime}\nCierre: ${eTime}\nDuración: ${formatDurationText(t.DurationHours)}\nGanancia: ${fmtMoney(t.NetProfit)}">${content}</div>`;
                         } else {
+                            // Espaciador para mantener la alineación vertical de las pistas
                             dayHtml += `<div class="h-[22px] mb-1"></div>`; 
                         }
                     }
-                    html += `<div class="min-h-[100px] flex flex-col rounded-lg border border-gray-700 bg-gray-800/40 p-1.5 shadow-sm overflow-hidden group">
-                                <span class="text-xs font-bold opacity-80 mb-1 border-b border-gray-700/50 pb-1 w-full text-center text-gray-400 group-hover:text-blue-400 transition-colors">${i}</span>
-                                <div class="flex flex-col flex-1 overflow-visible">${dayHtml || '<span class="text-[9px] text-gray-600 m-auto italic">Libre</span>'}</div>
-                            </div>`;
+
+                    html += `
+                        <div class="min-h-[100px] flex flex-col rounded-lg border border-gray-700 bg-gray-800/40 p-1.5 shadow-sm overflow-hidden group">
+                            <span class="text-xs font-bold opacity-80 mb-1 border-b border-gray-700/50 pb-1 w-full text-center text-gray-400 group-hover:text-blue-400 transition-colors">${i}</span>
+                            <div class="flex flex-col flex-1 overflow-visible">
+                                ${dayHtml || '<span class="text-[9px] text-gray-600 m-auto italic">Libre</span>'}
+                            </div>
+                        </div>`;
                 }
             }
-            container.innerHTML = html + `</div></div>`;
+            
+            html += `</div></div>`; container.innerHTML = html;
         }
+
+        function clearData() {
+            if(confirm("¿Estás seguro de borrar todos los datos guardados en tu navegador?")) {
+                localStorage.removeItem(storageKey);
+                location.reload();
+            }
+        }
+
+        // ==========================================
+        // DRAG AND DROP GLOBAL
+        // ==========================================
+        const dndOverlay = document.getElementById('dndOverlay');
+        let dragCounter = 0;
+
+        window.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            dragCounter++;
+            if (dragCounter === 1) {
+                dndOverlay.classList.remove('hidden');
+                dndOverlay.classList.add('flex');
+            }
+        });
+
+        window.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dragCounter--;
+            if (dragCounter === 0) {
+                dndOverlay.classList.add('hidden');
+                dndOverlay.classList.remove('flex');
+            }
+        });
+
+        window.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        window.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dragCounter = 0;
+            dndOverlay.classList.add('hidden');
+            dndOverlay.classList.remove('flex');
+
+            const files = Array.from(e.dataTransfer.files);
+            if(files.length === 0) return;
+
+            let xlsxFiles = files.filter(f => f.name.toLowerCase().endsWith('.xlsx') || f.name.toLowerCase().endsWith('.xls'));
+            let csvFiles = files.filter(f => f.name.toLowerCase().endsWith('.csv') || f.name.toLowerCase().endsWith('.txt') || f.name.toLowerCase().endsWith('.tsv'));
+
+            if(xlsxFiles.length > 0) handleDashboardClassicFiles(xlsxFiles);
+            if(csvFiles.length > 0) handleDashboardGraphFiles(csvFiles);
+        });
 
     </script>
 </body>
