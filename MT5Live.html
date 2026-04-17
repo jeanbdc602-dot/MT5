@@ -639,7 +639,7 @@
             let parsedRows = [];
             
             // Intento de detectar el depósito inicial
-            let initialDeposit = 10000;
+            let initialDeposit = 15000;
             let depositRow = data.find(r => !(r.Symbol || '').trim() && cleanNumber(r.Profit) > 0);
             if(depositRow) initialDeposit = cleanNumber(depositRow.Profit);
 
