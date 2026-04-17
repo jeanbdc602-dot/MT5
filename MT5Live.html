@@ -639,7 +639,7 @@
             let parsedRows = [];
             
             // Intento de detectar el depósito inicial
-            let initialDeposit = 15000;
+            let initialDeposit = 10000;
             let depositRow = data.find(r => !(r.Symbol || '').trim() && cleanNumber(r.Profit) > 0);
             if(depositRow) initialDeposit = cleanNumber(depositRow.Profit);
 
@@ -964,7 +964,7 @@
 
             rawData.sort((a, b) => a.Time - b.Time);
 
-            let currentBalance = 15000;
+            let currentBalance = 10000;
             rawData.forEach(d => {
                 currentBalance += (d.NetProfit || 0);
                 d.BalanceAfter = currentBalance;
@@ -1181,14 +1181,14 @@
                     
                     if (d.NetProfit < maxSingleLoss) {
                         maxSingleLoss = d.NetProfit;
-                        let currentBalance = d.BalanceAfter !== undefined ? d.BalanceAfter : (15000 + cumulative);
+                        let currentBalance = d.BalanceAfter !== undefined ? d.BalanceAfter : (10000 + cumulative);
                         let balanceBefore = currentBalance - d.NetProfit;
                         maxSingleLossPct = balanceBefore > 0 ? (d.NetProfit / balanceBefore) * 100 : 0;
                         maxSingleDate = d.Time;
                     }
                     
                     if (currentLossStreak === 0) {
-                        balanceAtStreakStart = d.BalanceAfter !== undefined ? (d.BalanceAfter - d.NetProfit) : (15000 + cumulative - d.NetProfit);
+                        balanceAtStreakStart = d.BalanceAfter !== undefined ? (d.BalanceAfter - d.NetProfit) : (10000 + cumulative - d.NetProfit);
                     }
 
                     currentLossStreak++;
@@ -1199,7 +1199,7 @@
 
                     if(currentConsecutiveLoss > maxConsecutiveLoss) {
                         maxConsecutiveLoss = currentConsecutiveLoss;
-                        let baseCapital = balanceAtStreakStart > 0 ? balanceAtStreakStart : 15000;
+                        let baseCapital = balanceAtStreakStart > 0 ? balanceAtStreakStart : 10000;
                         maxConsDrawdownPct = (maxConsecutiveLoss / baseCapital) * 100;
                         maxConsDate = d.Time;
                     }
@@ -1257,10 +1257,10 @@
             let sortedDataForComp = [...dataArr].sort((a, b) => a.Time - b.Time);
 
             // PASO 2: Simulación Cronológica Dinámica en 1 sola cuenta de 10k
-            let compBalance = 15000; 
+            let compBalance = 10000; 
             compChartDataObj = []; 
             
-            let compPeak = 15000;
+            let compPeak = 10000;
             let compPeakDate = sortedDataForComp.length > 0 ? sortedDataForComp[0].Time : null;
             let maxCompDDMoney = 0;
             let maxCompDDPct = 0;
@@ -1269,12 +1269,12 @@
             
             let compDailyDDs = {};
             let prevDateStr = null;
-            let currentDayPeak = 15000;
-            let prevCompBalance = 15000;
+            let currentDayPeak = 10000;
+            let prevCompBalance = 10000;
 
             // Variables para Drawdowns de Capital Real
-            let realBalance = 15000;
-            let realPeak = 15000;
+            let realBalance = 10000;
+            let realPeak = 10000;
             let realPeakDate = sortedDataForComp.length > 0 ? sortedDataForComp[0].Time : null;
             let maxRealDDMoney = 0;
             let maxRealDDPct = 0;
@@ -1283,8 +1283,8 @@
             
             let realDailyDDs = {};
             let prevRealDateStr = null;
-            let currentRealDayPeak = 15000;
-            let prevRealBalance = 15000;
+            let currentRealDayPeak = 10000;
+            let prevRealBalance = 10000;
 
             sortedDataForComp.forEach(d => {
                 let dateStr = d.DateOnly;
@@ -1348,7 +1348,7 @@
                 compBalance *= (1 + (R * 0.01));
                 
                 if (compBalance < 0) compBalance = 0; 
-                if (isNaN(compBalance)) compBalance = 15000; 
+                if (isNaN(compBalance)) compBalance = 10000; 
                 compBalance = Math.min(compBalance, 1000000000000); 
 
                 if (compBalance > compPeak) {
@@ -1435,7 +1435,7 @@
             let avgCompDailyDDMoney = tradingDaysCount > 0 ? (sumCompDailyDDMoney / tradingDaysCount) : 0;
 
             const finalCompBalance = compBalance;
-            const compReturnPct = ((finalCompBalance - 15000) / 15000) * 100;
+            const compReturnPct = ((finalCompBalance - 10000) / 10000) * 100;
 
             let monthsSpan = 1;
             if(totalTrades > 0 && maxDate > minDate) {
@@ -1539,7 +1539,7 @@
             document.getElementById('kpiAvgWinStreak').innerText = metrics.avgWinStreak.toFixed(0);
             document.getElementById('kpiAvgLossStreak').innerText = metrics.avgLossStreak.toFixed(0);
 
-            const baseCapital = 15000;
+            const baseCapital = 10000;
             document.getElementById('kpiLinearFinal').innerText = fmtMoney(baseCapital + metrics.totalProfit, 0);
 
             let linearReturnPct = (metrics.totalProfit / baseCapital) * 100;
@@ -1563,7 +1563,7 @@
                 realDDContainer.classList.add('hidden');
             }
 
-            let renderComp = isNaN(metrics.finalCompBalance) ? 15000 : metrics.finalCompBalance;
+            let renderComp = isNaN(metrics.finalCompBalance) ? 10000 : metrics.finalCompBalance;
             let renderCompPct = isNaN(metrics.compReturnPct) ? 0 : metrics.compReturnPct;
             document.getElementById('kpiCompFinal').innerText = fmtMoney(renderComp, 0);
             document.getElementById('kpiCompPct').innerText = (renderCompPct > 0 ? '+' : '') + renderCompPct.toFixed(2) + '%';
@@ -1628,7 +1628,7 @@
                 return isNaN(timeVal.getTime()) ? new Date() : timeVal;
             });
             
-            let compData = compChartDataObj.map(d => isNaN(d.balance) ? 0 : (d.balance - 15000));
+            let compData = compChartDataObj.map(d => isNaN(d.balance) ? 0 : (d.balance - 10000));
 
             safeDestroy(compoundChartInstance);
 
