@@ -1,14 +1,16 @@
-name: Actualizar Dashboard de Trading
+name: Update Trading Data
+
 on:
   schedule:
-    - cron: '0 * * * *' # Se ejecuta cada hora
-  workflow_dispatch:      # Botón para ejecutarlo manualmente
+    # Los 5 asteriscos significan "cada minuto de cada hora de cada día"
+    - cron: '* * * * *'
+  
+  # Este comando extra te agrega un botón en GitHub para ejecutarlo manualmente cuando quieras
+  workflow_dispatch: 
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v3
       - name: Configurar Python
