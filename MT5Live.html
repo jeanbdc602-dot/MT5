@@ -964,7 +964,7 @@
 
             rawData.sort((a, b) => a.Time - b.Time);
 
-            let currentBalance = 10000;
+            let currentBalance = 15000;
             rawData.forEach(d => {
                 currentBalance += (d.NetProfit || 0);
                 d.BalanceAfter = currentBalance;
