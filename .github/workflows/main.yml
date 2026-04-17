@@ -8,6 +8,10 @@ on:
   # Botón manual en la pestaña Actions
   workflow_dispatch: 
 
+# AGREGAMOS ESTO: Permiso explícito para que el bot pueda subir archivos al repositorio
+permissions:
+  contents: write
+
 jobs:
   build:
     # Volvemos a Ubuntu porque es más rápido y compatible con llamadas a APIs web
