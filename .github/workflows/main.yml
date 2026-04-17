@@ -2,32 +2,44 @@ name: Update Trading Data
 
 on:
   schedule:
-    # Los 5 asteriscos significan "cada minuto de cada hora de cada día"
+    # Se ejecuta cada 1 minuto
     - cron: '* * * * *'
   
-  # Este comando extra te agrega un botón en GitHub para ejecutarlo manualmente cuando quieras
+  # Botón manual en la pestaña Actions
   workflow_dispatch: 
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v3
+      # 1. Descarga el código de tu repositorio
+      - name: Checkout del repositorio
+        uses: actions/checkout@v3
+      
+      # 2. Instala Python en el servidor de GitHub
       - name: Configurar Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.10'
+          
+      # 3. Instala las librerías necesarias (Modifica esto si usas pandas, requests, etc.)
       - name: Instalar dependencias
-        run: pip install requests
-      - name: Ejecutar Extracción
-        env:
-          MYFXBOOK_EMAIL: ${{ secrets.MYFXBOOK_EMAIL }}
-          MYFXBOOK_PASSWORD: ${{ secrets.MYFXBOOK_PASSWORD }}
+        run: |
+          python -m pip install --upgrade pip
+          # Si tienes un archivo requirements.txt, descomenta la siguiente línea quitando el #:
+          # pip install -r requirements.txt
+          
+      # 4. Ejecuta tu script
+      - name: Ejecutar script update_data.py
         run: python update_data.py
-      - name: Guardar Cambios en el Repo
+        
+      # 5. Guarda el nuevo JSON y lo sube a GitHub
+      - name: Subir cambios a GitHub (Commit & Push)
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add datos_trading.json
-          git commit -m "Actualización automática de datos" || exit 0
+          # Esto evita errores si el script no generó cambios nuevos en el JSON ese minuto
+          git diff --quiet && git diff --staged --quiet || git commit -m "Actualización automática de datos JSON"
           git push
