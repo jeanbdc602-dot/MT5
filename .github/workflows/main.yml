@@ -10,25 +10,25 @@ on:
 
 jobs:
   build:
+    # Volvemos a Ubuntu porque es más rápido y compatible con llamadas a APIs web
     runs-on: ubuntu-latest
     
     steps:
       # 1. Descarga el código de tu repositorio
       - name: Checkout del repositorio
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       # 2. Instala Python en el servidor de GitHub
       - name: Configurar Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
           
-      # 3. Instala las librerías necesarias (Modifica esto si usas pandas, requests, etc.)
+      # 3. Instala las librerías necesarias (json y os ya vienen por defecto en Python)
       - name: Instalar dependencias
         run: |
           python -m pip install --upgrade pip
-          # Si tienes un archivo requirements.txt, descomenta la siguiente línea quitando el #:
-          # pip install -r requirements.txt
+          pip install requests
           
       # 4. Ejecuta tu script
       - name: Ejecutar script update_data.py
@@ -36,6 +36,7 @@ jobs:
         
       # 5. Guarda el nuevo JSON y lo sube a GitHub
       - name: Subir cambios a GitHub (Commit & Push)
+        shell: bash
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
