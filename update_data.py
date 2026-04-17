@@ -2,15 +2,16 @@ import os
 import sys
 import json
 
-# --- TRUCO DE AUTO-INSTALACIÓN ---
-# Instalamos cloudscraper automáticamente desde aquí para que NO tengas que modificar main.yml
+# --- TRUCO DE AUTO-INSTALACIÓN NIVEL DIOS ---
+# Reemplazamos cloudscraper por curl_cffi (Curl Impersonate)
+# Esta librería imita la huella criptográfica exacta de Google Chrome real
 try:
-    import cloudscraper
+    from curl_cffi import requests as c_requests
 except ImportError:
     import subprocess
-    print("Instalando 'cloudscraper' para evadir el muro de seguridad (Cloudflare) de Myfxbook...")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "cloudscraper"])
-    import cloudscraper
+    print("Instalando 'curl_cffi' para evadir la máxima seguridad de Cloudflare...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "curl_cffi"])
+    from curl_cffi import requests as c_requests
 
 # 1. Obtener credenciales de las variables de entorno de GitHub
 EMAIL = os.environ.get("MYFXBOOK_EMAIL")
@@ -20,18 +21,8 @@ if not EMAIL or not PASSWORD:
     print("Error: Faltan credenciales. Asegúrate de configurar MYFXBOOK_EMAIL y MYFXBOOK_PASSWORD en los Secrets de GitHub.")
     sys.exit(1)
 
-# 2. Crear el Scraper (Simula ser un navegador Chrome real a nivel criptográfico para evitar el Error 403)
-print("Configurando el evasor de seguridad...")
-scraper = cloudscraper.create_scraper(
-    browser={
-        'browser': 'chrome',
-        'platform': 'windows',
-        'desktop': True
-    }
-)
-
-# 3. Login en la API de Myfxbook
-print("Iniciando sesión en Myfxbook...")
+# 2. Login en la API de Myfxbook
+print("Iniciando sesión en Myfxbook con simulación criptográfica de Chrome...")
 login_url = "https://www.myfxbook.com/api/login.json"
 login_params = {
     'email': EMAIL,
@@ -39,8 +30,8 @@ login_params = {
 }
 
 try:
-    # Usamos el scraper en lugar del requests normal
-    response = scraper.get(login_url, params=login_params)
+    # impersonate="chrome110" copia el motor interno exacto de Google Chrome
+    response = c_requests.get(login_url, params=login_params, impersonate="chrome110")
     response.raise_for_status() 
     login_response = response.json()
 except Exception as e:
@@ -56,10 +47,10 @@ if login_response.get("error"):
 session_id = login_response.get("session")
 print("Sesión iniciada correctamente.")
 
-# 4. Obtener el ID de la cuenta de trading
+# 3. Obtener el ID de la cuenta de trading
 print("Obteniendo cuentas de trading...")
 accounts_url = "https://www.myfxbook.com/api/get-my-accounts.json"
-accounts_response = scraper.get(accounts_url, params={'session': session_id}).json()
+accounts_response = c_requests.get(accounts_url, params={'session': session_id}, impersonate="chrome110").json()
 
 if accounts_response.get("error") or not accounts_response.get("accounts"):
     print("Error: No se encontraron cuentas asociadas a este perfil.")
@@ -69,14 +60,14 @@ if accounts_response.get("error") or not accounts_response.get("accounts"):
 account_id = accounts_response["accounts"][0]["id"]
 print(f"Cuenta seleccionada ID: {account_id}")
 
-# 5. Obtener el historial de la cuenta
+# 4. Obtener el historial de la cuenta
 print("Descargando historial de operaciones...")
 history_url = "https://www.myfxbook.com/api/get-history.json"
 history_params = {
     'session': session_id,
     'id': account_id
 }
-history_response = scraper.get(history_url, params=history_params).json()
+history_response = c_requests.get(history_url, params=history_params, impersonate="chrome110").json()
 
 if history_response.get("error"):
     print(f"Error al obtener historial: {history_response.get('message')}")
@@ -85,7 +76,7 @@ if history_response.get("error"):
 trades = history_response.get("history", [])
 print(f"Se encontraron {len(trades)} operaciones en Myfxbook.")
 
-# 6. Formatear los datos para el Dashboard HTML
+# 5. Formatear los datos para el Dashboard HTML
 formatted_data = []
 
 for trade in trades:
@@ -109,7 +100,7 @@ for trade in trades:
         "NetProfit": net_profit
     })
 
-# 7. Guardar los datos en el archivo JSON
+# 6. Guardar los datos en el archivo JSON
 print("Guardando datos_trading.json...")
 with open("datos_trading.json", "w", encoding="utf-8") as f:
     json.dump(formatted_data, f, indent=4)
