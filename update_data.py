@@ -10,13 +10,28 @@ if not EMAIL or not PASSWORD:
     print("Error: Faltan credenciales. Asegúrate de configurar MYFXBOOK_EMAIL y MYFXBOOK_PASSWORD en los Secrets de GitHub.")
     exit(1)
 
+# Disfrazamos el bot como si fuera un navegador Google Chrome real para evitar bloqueos
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
+}
+
 # 2. Login en la API de Myfxbook
 print("Iniciando sesión en Myfxbook...")
-# CORRECCIÓN DE URL APLICADA AQUÍ:
-login_url = f"https://www.myfxbook.com/api/login.json?email={EMAIL}&password={PASSWORD}"
+login_url = "https://www.myfxbook.com/api/login.json"
+
+# Pasamos los datos como 'params' para que encripte correctamente símbolos raros (@, #, &, etc)
+login_params = {
+    'email': EMAIL,
+    'password': PASSWORD
+}
 
 try:
-    login_response = requests.get(login_url).json()
+    response = requests.get(login_url, params=login_params, headers=headers)
+    response.raise_for_status() # Verifica si hubo un error 403 (Bloqueo) o 404
+    login_response = response.json()
+except json.decoder.JSONDecodeError:
+    print(f"Error crítico: Myfxbook bloqueó la petición y no devolvió datos legibles. Respuesta del servidor:\n{response.text[:500]}")
+    exit(1)
 except Exception as e:
     print(f"Error de conexión con Myfxbook: {e}")
     exit(1)
@@ -30,8 +45,8 @@ print("Sesión iniciada correctamente.")
 
 # 3. Obtener el ID de la cuenta de trading
 print("Obteniendo cuentas de trading...")
-accounts_url = f"https://www.myfxbook.com/api/get-my-accounts.json?session={session_id}"
-accounts_response = requests.get(accounts_url).json()
+accounts_url = "https://www.myfxbook.com/api/get-my-accounts.json"
+accounts_response = requests.get(accounts_url, params={'session': session_id}, headers=headers).json()
 
 if accounts_response.get("error") or not accounts_response.get("accounts"):
     print("Error: No se encontraron cuentas asociadas a este perfil.")
@@ -43,8 +58,12 @@ print(f"Cuenta seleccionada ID: {account_id}")
 
 # 4. Obtener el historial de la cuenta
 print("Descargando historial de operaciones...")
-history_url = f"https://www.myfxbook.com/api/get-history.json?session={session_id}&id={account_id}"
-history_response = requests.get(history_url).json()
+history_url = "https://www.myfxbook.com/api/get-history.json"
+history_params = {
+    'session': session_id,
+    'id': account_id
+}
+history_response = requests.get(history_url, params=history_params, headers=headers).json()
 
 if history_response.get("error"):
     print(f"Error al obtener historial: {history_response.get('message')}")
