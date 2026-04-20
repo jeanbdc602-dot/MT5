@@ -3,7 +3,7 @@
         "Symbol": "EURGBP",
         "EntryTime": "04/16/2026 17:30",
         "Time": "04/20/2026 00:38",
-        "NetProfit": -181.43
+        "NetProfit": -166.81
     },
     {
         "Symbol": "HK50",
@@ -15,7 +15,7 @@
         "Symbol": "FRA40",
         "EntryTime": "04/16/2026 17:00",
         "Time": "04/17/2026 11:41",
-        "NetProfit": 42.53
+        "NetProfit": 44.85
     },
     {
         "Symbol": "US2000",
@@ -33,7 +33,7 @@
         "Symbol": "USDZAR",
         "EntryTime": "04/15/2026 16:45",
         "Time": "04/16/2026 06:07",
-        "NetProfit": -179.92000000000002
+        "NetProfit": -162.83
     },
     {
         "Symbol": "US30",
@@ -45,19 +45,19 @@
         "Symbol": "XAUUSD",
         "EntryTime": "04/14/2026 13:40",
         "Time": "04/14/2026 16:37",
-        "NetProfit": -132.48000000000002
+        "NetProfit": -132.18
     },
     {
         "Symbol": "HK50",
         "EntryTime": "04/02/2026 17:45",
         "Time": "04/08/2026 04:30",
-        "NetProfit": 158.57999999999998
+        "NetProfit": 166.79
     },
     {
         "Symbol": "CADJPY",
         "EntryTime": "04/08/2026 01:45",
         "Time": "04/08/2026 02:16",
-        "NetProfit": 65.8
+        "NetProfit": 69.45
     },
     {
         "Symbol": "US30",
@@ -75,19 +75,19 @@
         "Symbol": "CADJPY",
         "EntryTime": "04/06/2026 01:15",
         "Time": "04/06/2026 16:37",
-        "NetProfit": 62.120000000000005
+        "NetProfit": 67.62
     },
     {
         "Symbol": "USDCNH",
         "EntryTime": "04/06/2026 06:00",
         "Time": "04/06/2026 10:36",
-        "NetProfit": -159.61999999999998
+        "NetProfit": -153.42
     },
     {
         "Symbol": "AUDCAD",
         "EntryTime": "04/02/2026 04:20",
         "Time": "04/02/2026 17:58",
-        "NetProfit": -146.77
+        "NetProfit": -144.77
     },
     {
         "Symbol": "NDX100",
@@ -99,7 +99,7 @@
         "Symbol": "XAUUSD",
         "EntryTime": "04/02/2026 04:05",
         "Time": "04/02/2026 08:45",
-        "NetProfit": 229.06
+        "NetProfit": 229.21
     },
     {
         "Symbol": "US30",
@@ -117,37 +117,37 @@
         "Symbol": "FRA40",
         "EntryTime": "03/30/2026 21:45",
         "Time": "03/31/2026 10:33",
-        "NetProfit": -148.47
+        "NetProfit": -147.44
     },
     {
         "Symbol": "USOUSD",
         "EntryTime": "03/23/2026 14:15",
         "Time": "03/27/2026 21:32",
-        "NetProfit": -129.44
+        "NetProfit": -127.01
     },
     {
         "Symbol": "FRA40",
         "EntryTime": "03/23/2026 14:15",
         "Time": "03/27/2026 21:32",
-        "NetProfit": -71.73
+        "NetProfit": -68.25
     },
     {
         "Symbol": "EUSTX5",
         "EntryTime": "03/23/2026 14:15",
         "Time": "03/27/2026 21:32",
-        "NetProfit": -89.3
+        "NetProfit": -88.7
     },
     {
         "Symbol": "NDX100",
         "EntryTime": "03/23/2026 14:15",
         "Time": "03/27/2026 12:05",
-        "NetProfit": -98.2
+        "NetProfit": -96.72
     },
     {
         "Symbol": "EUSTX5",
         "EntryTime": "03/26/2026 23:15",
         "Time": "03/27/2026 11:36",
-        "NetProfit": -155.01
+        "NetProfit": -154.12
     },
     {
         "Symbol": "FRA40",
@@ -165,36 +165,36 @@
         "Symbol": "EUSTX5",
         "EntryTime": "03/24/2026 18:00",
         "Time": "03/25/2026 16:50",
-        "NetProfit": 126.36
+        "NetProfit": 127.07
     },
     {
         "Symbol": "USDJPY",
         "EntryTime": "03/23/2026 14:15",
         "Time": "03/23/2026 22:16",
-        "NetProfit": 76.03
+        "NetProfit": 77.28
     },
     {
         "Symbol": "USDCHF",
         "EntryTime": "03/23/2026 14:15",
         "Time": "03/23/2026 16:02",
-        "NetProfit": 108.53
+        "NetProfit": 109.88
     },
     {
         "Symbol": "USDCNH",
         "EntryTime": "03/23/2026 14:15",
         "Time": "03/23/2026 15:46",
-        "NetProfit": 54.32
+        "NetProfit": 56.92
     },
     {
         "Symbol": "GBPJPY",
         "EntryTime": "03/23/2026 14:15",
         "Time": "03/23/2026 15:42",
-        "NetProfit": 123.33
+        "NetProfit": 125.38
     },
     {
         "Symbol": "EURUSD",
         "EntryTime": "03/23/2026 14:15",
         "Time": "03/23/2026 14:45",
-        "NetProfit": 18.0
+        "NetProfit": 18.9
     }
 ]
