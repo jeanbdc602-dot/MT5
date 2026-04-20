@@ -90,12 +90,6 @@
         <p class="text-gray-400 text-sm mt-2 font-medium">Cargando información del servidor...</p>
     </div>
 
-    <div id="dndOverlay" class="fixed inset-0 z-[9998] bg-blue-900/60 backdrop-blur-md hidden flex-col items-center justify-center transition-all border-[6px] border-dashed border-blue-400 pointer-events-none">
-        <svg class="w-24 h-24 text-blue-400 mb-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-        <h2 class="text-4xl font-bold text-white tracking-wide">Suelta tus archivos aquí</h2>
-        <p class="text-blue-200 text-lg mt-4 font-medium">Se procesarán automáticamente.</p>
-    </div>
-
     <nav class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -103,8 +97,12 @@
                     <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012-2h2a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                     <span class="text-xl font-bold tracking-wide">Trading<span class="text-blue-500">Analytics</span></span>
                 </div>
-                <div class="flex gap-4 md:gap-8 items-center">
-                    <button id="nav-dashboard" class="nav-link active font-semibold text-gray-300 hover:text-white pb-1 transition-colors cursor-default">
+                <div class="flex gap-4 md:gap-6 items-center">
+                    <button onclick="forceSync()" class="bg-blue-600/20 text-blue-400 border border-blue-500/50 hover:bg-blue-600 hover:text-white text-xs font-bold py-1.5 px-3 rounded shadow transition-all flex items-center gap-1" title="Forzar descarga directa desde GitHub ignorando el caché">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        Refrescar
+                    </button>
+                    <button id="nav-dashboard" class="nav-link active font-semibold text-gray-300 hover:text-white pb-1 transition-colors cursor-default hidden sm:block">
                         Dashboard
                     </button>
                     <a href="Optimizador" target="_blank" rel="noopener noreferrer" class="font-semibold text-gray-300 hover:text-white pb-1 transition-colors flex items-center gap-1">
@@ -122,30 +120,13 @@
             
             <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-gray-800 py-3 px-5 rounded-xl shadow-lg border border-gray-700">
                 <div>
-                    <h1 class="text-2xl font-bold text-blue-400">📊 Trading Performance</h1>
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-2xl font-bold text-blue-400">📊 Trading Performance</h1>
+                        <span id="debugTradeCount" class="bg-gray-900 border border-gray-700 text-gray-400 text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full font-mono mt-1">Cargando...</span>
+                    </div>
                     <p class="text-gray-400 text-xs mt-0.5">Analizador de Historial MT5</p>
                 </div>
-                <div class="mt-3 md:mt-0 flex flex-wrap gap-3">
-                    <input type="file" id="dashInputClassic" accept=".xlsx, .xls, .csv, .htm, .html" multiple class="hidden" />
-                    <input type="file" id="dashInputGraph" accept=".csv, .tsv, .txt" multiple class="hidden" />
-                    
-                    <button onclick="document.getElementById('dashInputClassic').click()" class="bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold py-1.5 px-4 rounded-lg shadow-md transition-all flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        Historial (MT5)
-                    </button>
-                    
-                    <button onclick="document.getElementById('dashInputGraph').click()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold py-1.5 px-4 rounded-lg shadow-md transition-all flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
-                        Gráfico (.csv)
-                    </button>
-
-                    <button onclick="clearData()" id="clearBtn" class="hidden bg-red-600 hover:bg-red-500 text-white text-sm font-semibold py-1.5 px-4 rounded-lg shadow-md transition-all">
-                        Borrar
-                    </button>
-                </div>
             </div>
-
-            <div id="dashFilesList" class="flex flex-wrap gap-3 mb-4"></div>
 
             <div id="dashboardContent" class="hidden fade-in flex flex-col lg:flex-row gap-4 items-stretch">
                 
@@ -412,19 +393,9 @@
 
             <div id="welcomeScreen" class="flex flex-col items-center justify-center mt-20 text-center hidden">
                 <div class="bg-gray-800 p-10 rounded-2xl border border-gray-700 max-w-2xl shadow-2xl">
-                    <svg class="w-20 h-20 text-green-500 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                    <h2 class="text-2xl font-bold text-white mb-4">Elige tu tipo de archivo MT5</h2>
-                    <p class="text-gray-400 mb-6">Selecciona el botón que corresponda a lo que deseas analizar:</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-                        <div class="bg-gray-900 border border-gray-700 p-4 rounded-lg">
-                            <span class="text-blue-400 font-bold mb-2 block">📂 Historial (.xlsx, .csv MT5)</span>
-                            <p class="text-xs text-gray-500">Reporte clásico de historial (o el bruto) con columnas Time, Deal, Symbol, Profit. Lo limpiamos por ti.</p>
-                        </div>
-                        <div class="bg-gray-900 border border-gray-700 p-4 rounded-lg">
-                            <span class="text-indigo-400 font-bold mb-2 block">📈 Gráfico (.csv)</span>
-                            <p class="text-xs text-gray-500">Reporte tabulado con estructura &lt;DATE&gt;, &lt;BALANCE&gt;, &lt;EQUITY&gt;.</p>
-                        </div>
-                    </div>
+                    <svg class="w-20 h-20 text-blue-500 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h2 class="text-2xl font-bold text-white mb-4">No se encontraron datos</h2>
+                    <p class="text-gray-400 mb-6">No se pudo cargar el archivo datos_trading.json o está vacío.</p>
                 </div>
             </div>
 
@@ -558,58 +529,109 @@
             if (!dateVal) return null;
             if (dateVal instanceof Date) return isNaN(dateVal.getTime()) ? null : dateVal;
             
+            // 1. Intentar el parseo nativo.
             let d = new Date(dateVal);
             if (!isNaN(d.getTime())) return d;
 
-            // Manejo de fechas tipo string raros (ej: MM/DD/YYYY HH:mm o YYYY.MM.DD HH:mm)
+            // 2. Parseo manual estricto para "MM/DD/YYYY HH:mm" o "YYYY-MM-DD HH:mm"
             if (typeof dateVal === 'string') {
-                let cleanStr = dateVal.replace(/\./g, '-');
+                let cleanStr = dateVal.replace(/\./g, '-').replace(/\//g, '-');
                 let parts = cleanStr.split(' ');
-                if(parts.length >= 2) {
-                    let dParts = parts[0].split(/[-/]/);
-                    if(dParts.length === 3) {
-                        // Si el año está al final (DD/MM/YYYY o MM/DD/YYYY)
-                        if(dParts[2].length === 4) {
-                            // Asumimos MM/DD/YYYY por estandar MT5 a menos que el mes > 12
-                            if (parseInt(dParts[0]) > 12) {
-                                // Era DD/MM/YYYY
-                                d = new Date(`${dParts[2]}-${dParts[1].padStart(2,'0')}-${dParts[0].padStart(2,'0')}T${parts[1]}:00`);
-                            } else {
-                                d = new Date(`${dParts[2]}-${dParts[0].padStart(2,'0')}-${dParts[1].padStart(2,'0')}T${parts[1]}:00`);
-                            }
-                        } else if(dParts[0].length === 4) {
-                            // YYYY-MM-DD
-                            d = new Date(`${dParts[0]}-${dParts[1].padStart(2,'0')}-${dParts[2].padStart(2,'0')}T${parts[1]}:00`);
-                        }
+                let datePart = parts[0];
+                let timePart = parts.length > 1 ? parts[1] : '00:00:00';
+                
+                let dParts = datePart.split('-');
+                if (dParts.length === 3) {
+                    let y, m, day;
+                    if (dParts[2].length === 4) {
+                        y = dParts[2];
+                        m = dParts[0];
+                        day = dParts[1];
+                        if (parseInt(m) > 12) { m = dParts[1]; day = dParts[0]; }
+                    } else {
+                        y = dParts[0]; m = dParts[1]; day = dParts[2];
                     }
+                    
+                    let isoStr = `${y}-${m.padStart(2,'0')}-${day.padStart(2,'0')}T${timePart}`;
+                    if (isoStr.split(':').length === 2) isoStr += ':00'; 
+                    
+                    let manualDate = new Date(isoStr);
+                    if (!isNaN(manualDate.getTime())) return manualDate;
                 }
             }
-            return isNaN(d.getTime()) ? null : d;
+            return null;
         }
 
         // --- INICIALIZACIÓN (FETCH DESDE GITHUB) ---
         window.onload = async () => {
             showLoader();
             try {
-                const response = await fetch('https://jeanbdc602-dot.github.io/MT5/datos_trading.json', { cache: 'no-cache' });
+                // 🔴 CAMBIO CLAVE: Usamos raw.githubusercontent en lugar de github.io 
+                // Esto se salta la caché de GitHub Pages y lee directamente tu código fuente al instante.
+                const url = 'https://raw.githubusercontent.com/jeanbdc602-dot/MT5/main/datos_trading.json?t=' + Date.now();
                 
-                if (response.ok) {
-                    const jsonData = await response.json();
-                    
-                    if (Array.isArray(jsonData) && jsonData[0] && jsonData[0].data) {
-                        dashFiles = jsonData;
-                    } else {
-                        dashFiles = [{ id: 'github_json', name: 'datos_trading.json (GitHub)', data: jsonData }];
-                    }
-                    
-                    processDashFiles();
-                } else {
-                    console.warn('El JSON remoto no respondió con OK. Intentando recuperar de localStorage...');
-                    loadFromLocalStorageFallback();
+                const response = await fetch(url, { 
+                    cache: 'no-store'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error HTTP ${response.status}: No se encontró el archivo. ¿Está bien escrito el enlace o sigue cargando GitHub Pages?`);
                 }
+
+                const textData = await response.text();
+                let jsonData;
+                try {
+                    jsonData = JSON.parse(textData);
+                } catch (err) {
+                    throw new Error(`El archivo se descargó, pero no es un JSON válido. Revisa que no tenga errores de sintaxis.`);
+                }
+                
+                let dataArray = Array.isArray(jsonData) ? jsonData : [];
+                if (!Array.isArray(jsonData)) {
+                    for (let key in jsonData) {
+                        if (Array.isArray(jsonData[key])) {
+                            dataArray = jsonData[key];
+                            break;
+                        }
+                    }
+                }
+
+                if (dataArray.length > 0) {
+                    // Mapeo seguro a prueba de balas para TODAS las filas
+                    let cleanData = dataArray.map(rawRow => {
+                        let row = { ...rawRow };
+                        for (let key in rawRow) {
+                            let k = String(key).toLowerCase().trim();
+                            if (k === 'time' || k === 'date') row.Time = rawRow[key];
+                            else if (k === 'entrytime' || k === 'entry_time') row.EntryTime = rawRow[key];
+                            else if (k === 'symbol' || k === 'par') row.Symbol = rawRow[key];
+                            else if (k === 'netprofit' || k === 'net_profit') row.NetProfit = parseFloat(rawRow[key]);
+                            else if (k === 'profit') row.Profit = parseFloat(rawRow[key]);
+                            else if (k === 'commission') row.Commission = parseFloat(rawRow[key]);
+                            else if (k === 'swap') row.Swap = parseFloat(rawRow[key]);
+                            else if (k === 'direction' || k === 'type') row.Direction = rawRow[key];
+                        }
+                        return row;
+                    });
+
+                    // Si alguna fila NO tiene NetProfit, significa que es formato crudo de MT5 y requiere cálculo
+                    let needsCalc = cleanData.some(d => d.NetProfit === undefined && (d.Profit !== undefined || d.Direction !== undefined));
+                    
+                    if (needsCalc) {
+                        dashFiles = [{ id: 'github_json', name: 'Historial', data: parseMT5Data(cleanData) }];
+                    } else {
+                        dashFiles = [{ id: 'github_json', name: 'Historial', data: cleanData }];
+                    }
+                } else {
+                    dashFiles = [];
+                }
+                
+                processDashFiles();
             } catch (e) {
-                console.error('Error cargando el JSON desde GitHub:', e);
-                loadFromLocalStorageFallback();
+                console.error('Error FETCH:', e);
+                document.getElementById('welcomeScreen').classList.remove('hidden');
+                document.querySelector('#welcomeScreen h2').innerText = "Error de Lectura";
+                document.querySelector('#welcomeScreen p').innerHTML = `Detalle del problema:<br><span class="text-red-400 font-mono text-sm bg-red-900/30 p-3 rounded block mt-4 border border-red-800">${e.message}</span>`;
             } finally {
                 hideLoader();
             }
@@ -622,7 +644,6 @@
                     dashFiles = JSON.parse(savedData);
                     processDashFiles(); 
                 } catch(e) { 
-                    console.error("Error al recuperar datos locales:", e);
                     document.getElementById('welcomeScreen').classList.remove('hidden');
                 }
             } else {
@@ -630,40 +651,69 @@
             }
         }
 
-        // --- LÓGICA DE PARSEO MT5 CLÁSICO (.XLSX) ---
+        // --- LÓGICA DE PARSEO MT5 CLÁSICO (.XLSX / JSON) ---
         function parseMT5Data(data) {
             let parsedRows = [];
             
-            data.forEach(row => {
+            data.forEach(rawRow => {
+                let row = { Profit: 0, Commission: 0, Swap: 0 };
+                
+                // Mapeo exhaustivo de claves ignorando mayúsculas/minúsculas
+                for(let key in rawRow) {
+                    let k = key.toLowerCase().trim();
+                    if (k === 'time' || k === 'date' || k === 'tiempo' || k === 'fecha') row.Time = rawRow[key];
+                    else if (k === 'symbol' || k === 'par' || k === 'símbolo') row.Symbol = rawRow[key];
+                    else if (k === 'profit' || k === 'beneficio' || k === 'ganancia') row.Profit = rawRow[key];
+                    else if (k === 'commission' || k === 'comisión' || k === 'comission') row.Commission = rawRow[key];
+                    else if (k === 'swap') row.Swap = rawRow[key];
+                    else if (k === 'direction' || k === 'type' || k === 'tipo' || k === 'dirección') row.Direction = rawRow[key];
+                    else if (k === 'netprofit' || k === 'net_profit' || k === 'neto') row.NetProfit = rawRow[key];
+                }
+
+                if (!row.Time && rawRow.EntryTime) row.Time = rawRow.EntryTime; 
+
                 let dateObj = parseRobustDate(row.Time);
                 if (dateObj) {
                     row.parsedTime = dateObj;
                     parsedRows.push(row);
                 }
             });
+            
             parsedRows.sort((a,b) => a.parsedTime - b.parsedTime);
 
             let processed = [];
             let openPositions = {}; 
 
             parsedRows.forEach(row => {
-                let sym = (row.Symbol || '').trim();
-                if (!sym) return;
-
+                let sym = (row.Symbol || 'Desconocido').trim();
                 let dirStr = String(row.Direction || '').toLowerCase().trim();
                 let rawProfit = cleanNumber(row.Profit);
                 let comm = cleanNumber(row.Commission);
                 let swap = cleanNumber(row.Swap);
 
-                if (dirStr === 'in') {
+                // Si el trade ya venía con NetProfit precalculado desde el JSON
+                if (row.NetProfit !== undefined) {
+                    processed.push({
+                        Time: row.parsedTime, 
+                        EntryTime: row.parsedTime, 
+                        DurationHours: 0,
+                        Symbol: sym, 
+                        NetProfit: cleanNumber(row.NetProfit)
+                    });
+                    return;
+                }
+
+                // Lógica de apertura
+                if (dirStr === 'in' || dirStr === '0' || dirStr === 'buy' || dirStr === 'sell') {
                     if (!openPositions[sym]) openPositions[sym] = [];
                     openPositions[sym].push({ time: row.parsedTime, comm: comm, swap: swap });
                 } 
-                else if (dirStr === 'out' || dirStr === 'in/out' || rawProfit !== 0 || comm !== 0 || swap !== 0) {
+                // Lógica de cierre
+                else if (dirStr === 'out' || dirStr === 'in/out' || dirStr === '1' || rawProfit !== 0 || comm !== 0 || swap !== 0) {
                     if (rawProfit === 0 && comm === 0 && swap === 0 && dirStr !== 'out') return; 
                     
                     let entryTime = row.parsedTime; 
-                    let entryComm = 0;
+                    let entryComm = 0; 
                     let entrySwap = 0;
                     
                     if (openPositions[sym] && openPositions[sym].length > 0) {
@@ -673,32 +723,19 @@
                         entrySwap = entryData.swap || 0;
                     }
 
-                    let exitTime = row.parsedTime;
-                    let durationHours = (exitTime.getTime() - entryTime.getTime()) / (1000 * 60 * 60);
-                    if(isNaN(durationHours) || !isFinite(durationHours)) durationHours = 0; 
-                    if(durationHours < 0) durationHours = 0; 
-
-                    let totalComm = comm + entryComm;
-                    let totalSwap = swap + entrySwap;
-                    let netProfit = rawProfit + totalComm + totalSwap;
+                    let durationHours = (row.parsedTime.getTime() - entryTime.getTime()) / (1000 * 60 * 60);
+                    if(isNaN(durationHours) || !isFinite(durationHours) || durationHours < 0) durationHours = 0; 
 
                     processed.push({
-                        Time: exitTime, 
+                        Time: row.parsedTime, 
                         EntryTime: entryTime, 
                         DurationHours: durationHours,
-                        Symbol: sym,
-                        NetProfit: netProfit,
-                        Year: exitTime.getFullYear(),
-                        Month: exitTime.getMonth() + 1,
-                        ExitMonth: exitTime.getMonth(), 
-                        DayOfWeek: entryTime.getDay(), 
-                        EntryHour: entryTime.getHours(),
-                        DateOnly: exitTime.toISOString().split('T')[0]
+                        Symbol: sym, 
+                        NetProfit: rawProfit + comm + entryComm + swap + entrySwap
                     });
                 }
             });
 
-            processed.sort((a, b) => a.Time - b.Time);
             return processed;
         }
 
@@ -777,118 +814,6 @@
         function showLoader() { document.getElementById('globalLoader').classList.remove('hidden'); document.getElementById('globalLoader').classList.add('flex'); }
         function hideLoader() { document.getElementById('globalLoader').classList.add('hidden'); document.getElementById('globalLoader').classList.remove('flex'); }
 
-
-        // --- MANEJADORES GLOBALES DE ARCHIVOS (SUBIDA Y DRAG & DROP) ---
-        function handleDashboardClassicFiles(files) {
-            if (files.length === 0) return;
-            showLoader(); 
-            let processedCount = 0;
-
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    setTimeout(() => {
-                        try {
-                            const data = new Uint8Array(event.target.result);
-                            const workbook = XLSX.read(data, { type: 'array', cellDates: true });
-                            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                            
-                            const rawDataLocal = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
-                            
-                            let cleanJsonResult = [];
-                            let isReadingDeals = false;
-                            let headers = [];
-
-                            for (let i = 0; i < rawDataLocal.length; i++) {
-                                const row = rawDataLocal[i];
-                                const strRow = row.map(cell => String(cell).trim());
-
-                                if (!isReadingDeals) {
-                                    if (strRow[0] === 'Time' && strRow.includes('Symbol') && (strRow.includes('Deal') || strRow.includes('Direction') || strRow.includes('Profit'))) {
-                                        isReadingDeals = true;
-                                        headers = strRow.map((h, idx) => (h || `Columna_${idx}`).trim());
-                                        continue; 
-                                    }
-                                } else {
-                                    const timeVal = row[0];
-                                    const isDate = timeVal instanceof Date || String(timeVal).match(/^\d{4}[\.\-\/]\d{2}[\.\-\/]\d{2}/) || String(timeVal).match(/^\d{2}[\.\-\/]\d{2}[\.\-\/]\d{4}/);
-                                    
-                                    if (isDate) {
-                                        let rowData = {};
-                                        headers.forEach((head, index) => {
-                                            rowData[head] = row[index] !== undefined ? row[index] : "";
-                                        });
-                                        cleanJsonResult.push(rowData);
-                                    } else if (cleanJsonResult.length > 0 && String(timeVal).trim() === "") {
-                                        break; 
-                                    }
-                                }
-                            }
-
-                            if (cleanJsonResult.length === 0) {
-                                cleanJsonResult = XLSX.utils.sheet_to_json(worksheet, {defval: ""});
-                            }
-
-                            const parsedData = parseMT5Data(cleanJsonResult);
-                            
-                            if (parsedData.length > 0) {
-                                dashFiles.push({ id: Date.now() + Math.random(), name: file.name, data: parsedData });
-                            } else {
-                                alert(`No se encontraron operaciones compatibles en el archivo: ${file.name}`);
-                            }
-                        } catch (err) { alert(`Error al leer el archivo: ${file.name}`); console.error(err); } 
-                        finally { 
-                            processedCount++;
-                            if (processedCount === files.length) {
-                                try { processDashFiles(); } catch (e) { console.error("Error processDashFiles:", e); alert("Error inesperado al procesar las gráficas: " + e.message); }
-                                hideLoader();
-                            }
-                        }
-                    }, 50);
-                };
-                reader.readAsArrayBuffer(file);
-            });
-        }
-
-        function handleDashboardGraphFiles(files) {
-            if (files.length === 0) return;
-            showLoader(); 
-            let processedCount = 0;
-
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    setTimeout(() => {
-                        try {
-                            const text = event.target.result;
-                            const parsedData = parseRawMT5Graph(text, file.name); 
-                            
-                            if (parsedData.length > 0) {
-                                dashFiles.push({ id: Date.now() + Math.random(), name: file.name, data: parsedData });
-                            } else {
-                                alert(`El archivo ${file.name} está vacío o no es un formato de Gráfico válido (.csv/.txt).`);
-                            }
-                        } catch (err) { alert(`Error al leer el archivo de Gráfico: ${file.name}`); console.error(err); } 
-                        finally { 
-                            processedCount++;
-                            if (processedCount === files.length) {
-                                try { processDashFiles(); } catch (e) { console.error("Error processDashFiles:", e); alert("Error inesperado al procesar las gráficas: " + e.message); }
-                                hideLoader();
-                            }
-                        }
-                    }, 50);
-                };
-                reader.readAsText(file); 
-            });
-        }
-
-        document.getElementById('dashInputClassic').addEventListener('change', function(e) {
-            handleDashboardClassicFiles(Array.from(e.target.files)); e.target.value = '';
-        });
-        document.getElementById('dashInputGraph').addEventListener('change', function(e) {
-            handleDashboardGraphFiles(Array.from(e.target.files)); e.target.value = '';
-        });
-
         // -------------------------------------------------------------
         // MOTOR DE PROCESAMIENTO GENERAL PARA UNIFICAR JSON Y ARCHIVOS
         // -------------------------------------------------------------
@@ -914,6 +839,8 @@
                         d.Month = d.Time.getMonth() + 1;
                         d.ExitMonth = d.Time.getMonth();
                         d.DateOnly = d.Time.toISOString().split('T')[0];
+                    } else {
+                        return; // Se descarta sólo si es matemáticamente imposible leer su fecha
                     }
 
                     if (parsedEntry && !isNaN(parsedEntry.getTime())) {
@@ -929,7 +856,7 @@
                         d.DurationHours = 0;
                     }
 
-                    if (d.Time && typeof d.NetProfit === 'number') {
+                    if (typeof d.NetProfit === 'number' && !isNaN(d.NetProfit)) {
                         rawData.push(d);
                     }
                 });
@@ -939,39 +866,7 @@
 
             try { localStorage.setItem(storageKey, JSON.stringify(dashFiles)); } catch(e) {}
             
-            renderDashFilesTags();
             initDashboard();
-        }
-
-        function renderDashFilesTags() {
-            const listDiv = document.getElementById('dashFilesList');
-            if (dashFiles.length === 0) {
-                listDiv.innerHTML = '';
-                return;
-            }
-            listDiv.innerHTML = dashFiles.map(f => `
-                <div class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-600 bg-gray-800 shadow-sm">
-                    <span class="w-3 h-3 rounded-full bg-blue-500"></span>
-                    <span class="text-sm font-semibold truncate max-w-[150px]" title="${f.name}">${f.name}</span>
-                    <button onclick="removeDashFile('${f.id}')" class="ml-1 text-gray-400 hover:text-red-500 font-bold">×</button>
-                </div>
-            `).join('');
-        }
-
-        function removeDashFile(id) {
-            dashFiles = dashFiles.filter(f => String(f.id) !== String(id));
-            
-            if (dashFiles.length === 0) {
-                localStorage.removeItem(storageKey);
-                rawData = [];
-                filteredData = [];
-                document.getElementById('dashboardContent').classList.add('hidden');
-                document.getElementById('welcomeScreen').classList.remove('hidden');
-                document.getElementById('clearBtn').classList.add('hidden');
-                renderDashFilesTags();
-            } else {
-                try { processDashFiles(); } catch (e) { console.error(e); }
-            }
         }
 
         function initDashboard() {
@@ -979,7 +874,6 @@
 
             document.getElementById('welcomeScreen').classList.add('hidden');
             document.getElementById('dashboardContent').classList.remove('hidden');
-            document.getElementById('clearBtn').classList.remove('hidden');
 
             activeFilters = { symbols: [], years: [], months: [] };
             
@@ -1061,13 +955,12 @@
                 let matchSym = (activeFilters.symbols.length === 0) ? true : activeFilters.symbols.includes(d.Symbol);
                 let matchYear = (activeFilters.years.length === 0) ? true : (d.Year ? activeFilters.years.includes(d.Year.toString()) : false);
                 let matchMonth = (activeFilters.months.length === 0) ? true : (d.Month ? activeFilters.months.includes(d.Month.toString()) : false);
-                let isNotZero = Math.abs(d.NetProfit || 0) >= 0.00001; 
                 
                 let matchDate = true;
                 if (startDate && d.Time < startDate) matchDate = false;
                 if (endDate && d.Time > endDate) matchDate = false;
                 
-                return matchSym && matchYear && matchMonth && isNotZero && matchDate;
+                return matchSym && matchYear && matchMonth && matchDate;
             });
 
             updateKPIs();
@@ -1334,6 +1227,9 @@
         function updateKPIs() {
             const metrics = calculateMetrics(filteredData);
             const baseCapital = getInitialBalance();
+
+            // Mostrar diagnóstico visual
+            document.getElementById('debugTradeCount').innerText = `${rawData.length} Trades Extraídos`;
 
             document.getElementById('kpiTotalProfit').innerText = fmtMoney(metrics.totalProfit);
             document.getElementById('kpiTotalProfit').className = `text-2xl lg:text-3xl font-bold mt-1 ${metrics.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}`;
@@ -1837,56 +1733,12 @@
             html += `</div></div>`; container.innerHTML = html;
         }
 
-        function clearData() {
-            if(confirm("¿Estás seguro de borrar todos los datos guardados en tu navegador?")) {
-                localStorage.removeItem(storageKey);
-                location.reload();
-            }
-        }
-
-        // ==========================================
-        // DRAG AND DROP GLOBAL
-        // ==========================================
-        const dndOverlay = document.getElementById('dndOverlay');
-        let dragCounter = 0;
-
-        window.addEventListener('dragenter', (e) => {
-            e.preventDefault();
-            dragCounter++;
-            if (dragCounter === 1) {
-                dndOverlay.classList.remove('hidden');
-                dndOverlay.classList.add('flex');
-            }
-        });
-
-        window.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            dragCounter--;
-            if (dragCounter === 0) {
-                dndOverlay.classList.add('hidden');
-                dndOverlay.classList.remove('flex');
-            }
-        });
-
-        window.addEventListener('dragover', (e) => {
-            e.preventDefault();
-        });
-
-        window.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dragCounter = 0;
-            dndOverlay.classList.add('hidden');
-            dndOverlay.classList.remove('flex');
-
-            const files = Array.from(e.dataTransfer.files);
-            if(files.length === 0) return;
-
-            let xlsxFiles = files.filter(f => f.name.toLowerCase().endsWith('.xlsx') || f.name.toLowerCase().endsWith('.xls'));
-            let csvFiles = files.filter(f => f.name.toLowerCase().endsWith('.csv') || f.name.toLowerCase().endsWith('.txt') || f.name.toLowerCase().endsWith('.tsv'));
-
-            if(xlsxFiles.length > 0) handleDashboardClassicFiles(xlsxFiles);
-            if(csvFiles.length > 0) handleDashboardGraphFiles(csvFiles);
-        });
+        // --- FUNCIÓN DE REFRESCO FORZADO ---
+        window.forceSync = function() {
+            // Borra la memoria caché de la app para que obligue sí o sí a traer la versión web
+            localStorage.removeItem(storageKey); 
+            window.location.reload(true); 
+        };
 
     </script>
 </body>
