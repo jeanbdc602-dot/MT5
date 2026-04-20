@@ -97,7 +97,7 @@ formatted_data = []
 for trade in trades:
     symbol = trade.get("symbol", "").strip()
     if not symbol: continue
-    net_profit = float(trade.get("profit", 0)) + float(trade.get("commission", 0)) + float(trade.get("interest", 0))
+    net_profit = float(trade.get("profit", 0))
     formatted_data.append({
         "Symbol": symbol,
         "EntryTime": trade.get("openTime"),
