@@ -1,5 +1,47 @@
 [
     {
+        "Symbol": "EUSTX5",
+        "EntryTime": "04/20/2026 16:20",
+        "Time": "04/21/2026 14:02",
+        "NetProfit": 15.69
+    },
+    {
+        "Symbol": "USDZAR",
+        "EntryTime": "04/20/2026 10:00",
+        "Time": "04/21/2026 13:00",
+        "NetProfit": -1.79
+    },
+    {
+        "Symbol": "EUSTX5",
+        "EntryTime": "04/20/2026 20:40",
+        "Time": "04/21/2026 12:58",
+        "NetProfit": 32.45
+    },
+    {
+        "Symbol": "SPX500",
+        "EntryTime": "04/20/2026 18:00",
+        "Time": "04/21/2026 11:00",
+        "NetProfit": -35.18
+    },
+    {
+        "Symbol": "FRA40",
+        "EntryTime": "04/20/2026 18:20",
+        "Time": "04/21/2026 10:15",
+        "NetProfit": -11.03
+    },
+    {
+        "Symbol": "HK50",
+        "EntryTime": "04/20/2026 18:00",
+        "Time": "04/21/2026 08:44",
+        "NetProfit": -39.28
+    },
+    {
+        "Symbol": "HK50",
+        "EntryTime": "04/21/2026 04:45",
+        "Time": "04/21/2026 08:41",
+        "NetProfit": -39.32
+    },
+    {
         "Symbol": "EURGBP",
         "EntryTime": "04/16/2026 17:30",
         "Time": "04/20/2026 00:38",
