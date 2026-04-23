@@ -1,5 +1,17 @@
 [
     {
+        "Symbol": "USDJPY",
+        "EntryTime": "04/22/2026 10:00",
+        "Time": "04/22/2026 18:40",
+        "NetProfit": -28.37
+    },
+    {
+        "Symbol": "GBPJPY",
+        "EntryTime": "04/22/2026 10:00",
+        "Time": "04/22/2026 11:16",
+        "NetProfit": -19.99
+    },
+    {
         "Symbol": "EUSTX5",
         "EntryTime": "04/20/2026 16:20",
         "Time": "04/21/2026 14:02",
@@ -226,17 +238,5 @@
         "EntryTime": "03/23/2026 14:15",
         "Time": "03/23/2026 15:46",
         "NetProfit": 56.92
-    },
-    {
-        "Symbol": "GBPJPY",
-        "EntryTime": "03/23/2026 14:15",
-        "Time": "03/23/2026 15:42",
-        "NetProfit": 125.38
-    },
-    {
-        "Symbol": "EURUSD",
-        "EntryTime": "03/23/2026 14:15",
-        "Time": "03/23/2026 14:45",
-        "NetProfit": 18.9
     }
 ]
