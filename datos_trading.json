@@ -1,5 +1,17 @@
 [
     {
+        "Symbol": "FRA40",
+        "EntryTime": "04/27/2026 12:15",
+        "Time": "04/27/2026 12:45",
+        "NetProfit": 8.67
+    },
+    {
+        "Symbol": "GER30",
+        "EntryTime": "04/27/2026 10:30",
+        "Time": "04/27/2026 12:00",
+        "NetProfit": 7.55
+    },
+    {
         "Symbol": "EURAUD",
         "EntryTime": "04/27/2026 04:00",
         "Time": "04/27/2026 05:00",
@@ -226,17 +238,5 @@
         "EntryTime": "04/23/2026 04:00",
         "Time": "04/23/2026 10:01",
         "NetProfit": -6.9
-    },
-    {
-        "Symbol": "USDJPY",
-        "EntryTime": "04/22/2026 10:00",
-        "Time": "04/22/2026 18:40",
-        "NetProfit": -28.37
-    },
-    {
-        "Symbol": "GBPJPY",
-        "EntryTime": "04/22/2026 10:00",
-        "Time": "04/22/2026 11:16",
-        "NetProfit": -19.99
     }
 ]
