@@ -1,5 +1,41 @@
 [
     {
+        "Symbol": "HK50",
+        "EntryTime": "04/27/2026 04:30",
+        "Time": "04/27/2026 19:01",
+        "NetProfit": 6.01
+    },
+    {
+        "Symbol": "USDJPY",
+        "EntryTime": "04/27/2026 09:00",
+        "Time": "04/27/2026 19:01",
+        "NetProfit": -6.38
+    },
+    {
+        "Symbol": "CADJPY",
+        "EntryTime": "04/27/2026 09:00",
+        "Time": "04/27/2026 18:01",
+        "NetProfit": 32.46
+    },
+    {
+        "Symbol": "EURJPY",
+        "EntryTime": "04/27/2026 11:00",
+        "Time": "04/27/2026 18:00",
+        "NetProfit": -35.78
+    },
+    {
+        "Symbol": "GER30",
+        "EntryTime": "04/27/2026 16:30",
+        "Time": "04/27/2026 17:30",
+        "NetProfit": 13.03
+    },
+    {
+        "Symbol": "US30",
+        "EntryTime": "04/27/2026 15:30",
+        "Time": "04/27/2026 16:33",
+        "NetProfit": -130.45
+    },
+    {
         "Symbol": "FRA40",
         "EntryTime": "04/27/2026 12:15",
         "Time": "04/27/2026 12:45",
@@ -202,41 +238,5 @@
         "EntryTime": "04/23/2026 17:09",
         "Time": "04/23/2026 18:56",
         "NetProfit": 8.18
-    },
-    {
-        "Symbol": "GER30",
-        "EntryTime": "04/22/2026 20:00",
-        "Time": "04/23/2026 18:56",
-        "NetProfit": -7.47
-    },
-    {
-        "Symbol": "GER30",
-        "EntryTime": "04/22/2026 22:00",
-        "Time": "04/23/2026 18:56",
-        "NetProfit": -7.46
-    },
-    {
-        "Symbol": "USDZAR",
-        "EntryTime": "04/22/2026 12:00",
-        "Time": "04/23/2026 18:56",
-        "NetProfit": 1.96
-    },
-    {
-        "Symbol": "EURJPY",
-        "EntryTime": "04/22/2026 02:26",
-        "Time": "04/23/2026 15:29",
-        "NetProfit": -20.0
-    },
-    {
-        "Symbol": "EURJPY",
-        "EntryTime": "04/22/2026 02:26",
-        "Time": "04/23/2026 15:29",
-        "NetProfit": -20.23
-    },
-    {
-        "Symbol": "USDZAR",
-        "EntryTime": "04/23/2026 04:00",
-        "Time": "04/23/2026 10:01",
-        "NetProfit": -6.9
     }
 ]
