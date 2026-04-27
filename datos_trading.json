@@ -1,5 +1,11 @@
 [
     {
+        "Symbol": "EURAUD",
+        "EntryTime": "04/27/2026 04:00",
+        "Time": "04/27/2026 05:00",
+        "NetProfit": 12.65
+    },
+    {
         "Symbol": "EURJPY",
         "EntryTime": "04/23/2026 20:31",
         "Time": "04/23/2026 20:31",
@@ -232,11 +238,5 @@
         "EntryTime": "04/22/2026 10:00",
         "Time": "04/22/2026 11:16",
         "NetProfit": -19.99
-    },
-    {
-        "Symbol": "EUSTX5",
-        "EntryTime": "04/20/2026 16:20",
-        "Time": "04/21/2026 14:02",
-        "NetProfit": 15.69
     }
 ]
