@@ -5,8 +5,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.9,
-        "Swap": 0.0,
-        "NetProfit": -0.9
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-23 10:15:00",
@@ -14,8 +13,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-23 10:15:00",
@@ -23,8 +21,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -2.05,
-        "Swap": 0.0,
-        "NetProfit": -2.05
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-23 10:15:00",
@@ -32,8 +29,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -1.35,
-        "Swap": 0.0,
-        "NetProfit": -1.35
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-23 10:15:00",
@@ -41,8 +37,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-23 10:15:00",
@@ -50,8 +45,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.55,
-        "Swap": 0.0,
-        "NetProfit": -0.55
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-23 10:15:00",
@@ -59,8 +53,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -1.25,
-        "Swap": 0.0,
-        "NetProfit": -1.25
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-23 10:15:00",
@@ -68,8 +61,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -2.6,
-        "Swap": 0.0,
-        "NetProfit": -2.6
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-23 10:15:00",
@@ -77,8 +69,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-23 10:45:42",
@@ -86,8 +77,7 @@
         "Direction": "out",
         "Profit": 19.8,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 19.8
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-23 11:42:30",
@@ -95,8 +85,7 @@
         "Direction": "out",
         "Profit": 127.43,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 127.43
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-23 11:46:36",
@@ -104,8 +93,7 @@
         "Direction": "out",
         "Profit": 59.52,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 59.52
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-23 12:02:04",
@@ -113,8 +101,7 @@
         "Direction": "out",
         "Profit": 111.23,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 111.23
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-23 18:16:35",
@@ -122,8 +109,7 @@
         "Direction": "out",
         "Profit": 78.53,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 78.53
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-24 14:00:01",
@@ -131,8 +117,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-25 11:30:00",
@@ -140,8 +125,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-25 11:30:01",
@@ -149,8 +133,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-25 12:50:33",
@@ -158,8 +141,7 @@
         "Direction": "out",
         "Profit": 127.78,
         "Commission": 0.0,
-        "Swap": -0.71,
-        "NetProfit": 127.07000000000001
+        "Swap": -0.71
     },
     {
         "Time": "2026-03-25 12:55:18",
@@ -167,8 +149,7 @@
         "Direction": "out",
         "Profit": 17.65,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 17.65
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-25 12:55:37",
@@ -176,8 +157,7 @@
         "Direction": "out",
         "Profit": 13.97,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 13.97
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-25 13:04:22",
@@ -185,8 +165,7 @@
         "Direction": "out",
         "Profit": 8.99,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 8.99
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-25 14:09:53",
@@ -194,8 +173,7 @@
         "Direction": "out",
         "Profit": 38.94,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 38.94
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-26 19:15:00",
@@ -203,8 +181,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-27 07:36:19",
@@ -212,8 +189,7 @@
         "Direction": "out",
         "Profit": -153.23,
         "Commission": 0.0,
-        "Swap": -0.89,
-        "NetProfit": -154.11999999999998
+        "Swap": -0.89
     },
     {
         "Time": "2026-03-27 08:05:35",
@@ -221,8 +197,7 @@
         "Direction": "out",
         "Profit": -95.24,
         "Commission": 0.0,
-        "Swap": -1.48,
-        "NetProfit": -96.72
+        "Swap": -1.48
     },
     {
         "Time": "2026-03-27 17:32:33",
@@ -230,8 +205,7 @@
         "Direction": "out",
         "Profit": -88.1,
         "Commission": 0.0,
-        "Swap": -0.6,
-        "NetProfit": -88.69999999999999
+        "Swap": -0.6
     },
     {
         "Time": "2026-03-27 17:32:33",
@@ -239,8 +213,7 @@
         "Direction": "out",
         "Profit": -64.77,
         "Commission": 0.0,
-        "Swap": -3.48,
-        "NetProfit": -68.25
+        "Swap": -3.48
     },
     {
         "Time": "2026-03-27 17:32:33",
@@ -248,8 +221,7 @@
         "Direction": "out",
         "Profit": -124.58,
         "Commission": 0.0,
-        "Swap": -1.88,
-        "NetProfit": -126.46
+        "Swap": -1.88
     },
     {
         "Time": "2026-03-30 17:45:00",
@@ -257,8 +229,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-03-31 06:33:31",
@@ -266,8 +237,7 @@
         "Direction": "out",
         "Profit": -146.41,
         "Commission": 0.0,
-        "Swap": -1.03,
-        "NetProfit": -147.44
+        "Swap": -1.03
     },
     {
         "Time": "2026-04-01 11:45:00",
@@ -275,8 +245,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-01 11:49:11",
@@ -284,8 +253,7 @@
         "Direction": "out",
         "Profit": -135.28,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -135.28
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-01 11:50:00",
@@ -293,8 +261,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-01 14:37:17",
@@ -302,8 +269,7 @@
         "Direction": "out",
         "Profit": -148.23,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -148.23
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-02 00:05:00",
@@ -311,8 +277,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.15,
-        "Swap": 0.0,
-        "NetProfit": -0.15
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-02 00:20:00",
@@ -320,8 +285,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -2.0,
-        "Swap": 0.0,
-        "NetProfit": -2.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-02 04:45:23",
@@ -329,8 +293,7 @@
         "Direction": "out",
         "Profit": 229.36,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 229.36
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-02 13:00:00",
@@ -338,8 +301,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-02 13:21:56",
@@ -347,8 +309,7 @@
         "Direction": "out",
         "Profit": 71.37,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 71.37
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-02 13:45:00",
@@ -356,8 +317,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-02 13:58:24",
@@ -365,8 +325,7 @@
         "Direction": "out",
         "Profit": -142.77,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -142.77
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-05 21:15:01",
@@ -374,8 +333,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -5.5,
-        "Swap": 0.0,
-        "NetProfit": -5.5
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-06 02:00:00",
@@ -383,8 +341,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -6.2,
-        "Swap": 0.0,
-        "NetProfit": -6.2
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-06 06:36:33",
@@ -392,8 +349,7 @@
         "Direction": "out",
         "Profit": -147.22,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -147.22
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-06 12:35:00",
@@ -401,8 +357,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-06 12:37:00",
@@ -410,8 +365,7 @@
         "Direction": "out",
         "Profit": 73.12,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 73.12
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-06 12:59:59",
@@ -419,8 +373,7 @@
         "Direction": "out",
         "Profit": 66.44,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 66.44
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-06 13:05:00",
@@ -428,8 +381,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-06 13:21:22",
@@ -437,8 +389,7 @@
         "Direction": "out",
         "Profit": -104.27,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -104.27
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-07 21:45:00",
@@ -446,8 +397,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -3.65,
-        "Swap": 0.0,
-        "NetProfit": -3.65
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-07 22:16:53",
@@ -455,8 +405,7 @@
         "Direction": "out",
         "Profit": 73.1,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 73.1
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-08 00:30:20",
@@ -464,8 +413,7 @@
         "Direction": "out",
         "Profit": 175.0,
         "Commission": 0.0,
-        "Swap": -8.21,
-        "NetProfit": 166.79
+        "Swap": -8.21
     },
     {
         "Time": "2026-04-14 09:40:07",
@@ -473,8 +421,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.3,
-        "Swap": 0.0,
-        "NetProfit": -0.3
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-14 12:37:42",
@@ -482,8 +429,7 @@
         "Direction": "out",
         "Profit": -131.88,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -131.88
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-15 12:45:00",
@@ -491,8 +437,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -1.15,
-        "Swap": 0.0,
-        "NetProfit": -1.15
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-15 12:45:00",
@@ -500,8 +445,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-15 13:39:01",
@@ -509,8 +453,7 @@
         "Direction": "out",
         "Profit": 71.02,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 71.02
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-16 02:07:27",
@@ -518,8 +461,7 @@
         "Direction": "out",
         "Profit": -145.74,
         "Commission": 0.0,
-        "Swap": -15.94,
-        "NetProfit": -161.68
+        "Swap": -15.94
     },
     {
         "Time": "2026-04-16 13:00:00",
@@ -527,8 +469,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-16 13:00:00",
@@ -536,8 +477,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-16 13:00:01",
@@ -545,8 +485,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-16 13:30:00",
@@ -554,8 +493,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -3.0,
-        "Swap": 0.0,
-        "NetProfit": -3.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-16 14:09:18",
@@ -563,8 +501,7 @@
         "Direction": "out",
         "Profit": -140.56,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -140.56
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-16 19:18:28",
@@ -572,8 +509,7 @@
         "Direction": "out",
         "Profit": -147.2,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -147.2
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-17 02:00:02",
@@ -581,8 +517,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-17 07:41:52",
@@ -590,8 +525,7 @@
         "Direction": "out",
         "Profit": 47.17,
         "Commission": 0.0,
-        "Swap": -2.32,
-        "NetProfit": 44.85
+        "Swap": -2.32
     },
     {
         "Time": "2026-04-17 11:49:54",
@@ -599,8 +533,7 @@
         "Direction": "out",
         "Profit": -143.54,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -143.54
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-19 20:38:03",
@@ -608,8 +541,7 @@
         "Direction": "out",
         "Profit": -152.19,
         "Commission": 0.0,
-        "Swap": -11.62,
-        "NetProfit": -163.81
+        "Swap": -11.62
     },
     {
         "Time": "2026-04-20 06:00:01",
@@ -617,8 +549,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.05,
-        "Swap": 0.0,
-        "NetProfit": -0.05
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-20 12:20:07",
@@ -626,8 +557,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-20 14:00:00",
@@ -635,8 +565,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-20 14:00:00",
@@ -644,8 +573,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-20 14:20:00",
@@ -653,8 +581,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-20 16:40:00",
@@ -662,8 +589,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-21 00:45:00",
@@ -671,8 +597,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-21 04:41:32",
@@ -680,8 +605,7 @@
         "Direction": "out",
         "Profit": -39.32,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -39.32
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-21 04:44:21",
@@ -689,8 +613,7 @@
         "Direction": "out",
         "Profit": -39.38,
         "Commission": 0.0,
-        "Swap": 0.1,
-        "NetProfit": -39.28
+        "Swap": 0.1
     },
     {
         "Time": "2026-04-21 06:15:00",
@@ -698,8 +621,7 @@
         "Direction": "out",
         "Profit": -7.48,
         "Commission": 0.0,
-        "Swap": -3.55,
-        "NetProfit": -11.030000000000001
+        "Swap": -3.55
     },
     {
         "Time": "2026-04-21 07:00:00",
@@ -707,8 +629,7 @@
         "Direction": "out",
         "Profit": -34.7,
         "Commission": 0.0,
-        "Swap": -0.48,
-        "NetProfit": -35.18
+        "Swap": -0.48
     },
     {
         "Time": "2026-04-21 08:58:45",
@@ -716,8 +637,7 @@
         "Direction": "out",
         "Profit": 32.98,
         "Commission": 0.0,
-        "Swap": -0.53,
-        "NetProfit": 32.449999999999996
+        "Swap": -0.53
     },
     {
         "Time": "2026-04-21 09:00:00",
@@ -725,8 +645,7 @@
         "Direction": "out",
         "Profit": -1.75,
         "Commission": 0.0,
-        "Swap": 0.01,
-        "NetProfit": -1.74
+        "Swap": 0.01
     },
     {
         "Time": "2026-04-21 10:02:26",
@@ -734,8 +653,7 @@
         "Direction": "out",
         "Profit": 15.96,
         "Commission": 0.0,
-        "Swap": -0.27,
-        "NetProfit": 15.690000000000001
+        "Swap": -0.27
     },
     {
         "Time": "2026-04-21 22:26:19",
@@ -743,8 +661,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.2,
-        "Swap": 0.0,
-        "NetProfit": -0.2
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-21 22:26:41",
@@ -752,8 +669,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.2,
-        "Swap": 0.0,
-        "NetProfit": -0.2
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-22 06:00:00",
@@ -761,8 +677,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.4,
-        "Swap": 0.0,
-        "NetProfit": -0.4
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-22 06:00:00",
@@ -770,8 +685,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.65,
-        "Swap": 0.0,
-        "NetProfit": -0.65
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-22 07:16:14",
@@ -779,8 +693,7 @@
         "Direction": "out",
         "Profit": -19.59,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -19.59
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-22 08:00:00",
@@ -788,8 +701,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.1,
-        "Swap": 0.0,
-        "NetProfit": -0.1
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-22 14:40:24",
@@ -797,8 +709,7 @@
         "Direction": "out",
         "Profit": -27.72,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -27.72
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-22 16:00:01",
@@ -806,8 +717,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-22 18:00:00",
@@ -815,8 +725,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-22 23:39:00",
@@ -824,8 +733,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.15,
-        "Swap": 0.0,
-        "NetProfit": -0.15
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-22 23:39:33",
@@ -833,8 +741,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.15,
-        "Swap": 0.0,
-        "NetProfit": -0.15
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 00:00:00",
@@ -842,8 +749,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.05,
-        "Swap": 0.0,
-        "NetProfit": -0.05
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 00:30:00",
@@ -851,8 +757,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 06:01:49",
@@ -860,8 +765,7 @@
         "Direction": "out",
         "Profit": -6.85,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -6.85
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 11:29:50",
@@ -869,8 +773,7 @@
         "Direction": "out",
         "Profit": -18.78,
         "Commission": 0.0,
-        "Swap": -1.25,
-        "NetProfit": -20.03
+        "Swap": -1.25
     },
     {
         "Time": "2026-04-23 11:29:50",
@@ -878,8 +781,7 @@
         "Direction": "out",
         "Profit": -18.55,
         "Commission": 0.0,
-        "Swap": -1.25,
-        "NetProfit": -19.8
+        "Swap": -1.25
     },
     {
         "Time": "2026-04-23 12:59:55",
@@ -887,8 +789,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.05,
-        "Swap": 0.0,
-        "NetProfit": -0.05
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 13:03:44",
@@ -896,8 +797,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.35,
-        "Swap": 0.0,
-        "NetProfit": -0.35
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 13:09:26",
@@ -905,8 +805,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 13:09:26",
@@ -914,8 +813,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.25,
-        "Swap": 0.0,
-        "NetProfit": -0.25
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 13:09:55",
@@ -923,8 +821,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 13:09:55",
@@ -932,8 +829,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.25,
-        "Swap": 0.0,
-        "NetProfit": -0.25
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 13:10:29",
@@ -941,8 +837,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 13:10:29",
@@ -950,8 +845,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.25,
-        "Swap": 0.0,
-        "NetProfit": -0.25
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 13:20:04",
@@ -959,8 +853,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:00:00",
@@ -968,8 +861,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:20:00",
@@ -977,8 +869,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:53:16",
@@ -986,8 +877,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.3,
-        "Swap": 0.0,
-        "NetProfit": -0.3
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:53:17",
@@ -995,8 +885,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:53:17",
@@ -1004,8 +893,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:53:38",
@@ -1013,8 +901,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:53:38",
@@ -1022,8 +909,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:53:38",
@@ -1031,8 +917,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.3,
-        "Swap": 0.0,
-        "NetProfit": -0.3
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:54:10",
@@ -1040,8 +925,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:54:11",
@@ -1049,8 +933,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:54:23",
@@ -1058,8 +941,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:54:23",
@@ -1067,8 +949,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:54:23",
@@ -1076,8 +957,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.3,
-        "Swap": 0.0,
-        "NetProfit": -0.3
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:36",
@@ -1085,8 +965,7 @@
         "Direction": "out",
         "Profit": 3.44,
         "Commission": 0.0,
-        "Swap": -1.38,
-        "NetProfit": 2.06
+        "Swap": -1.38
     },
     {
         "Time": "2026-04-23 14:56:36",
@@ -1094,8 +973,7 @@
         "Direction": "out",
         "Profit": -7.33,
         "Commission": 0.0,
-        "Swap": -0.13,
-        "NetProfit": -7.46
+        "Swap": -0.13
     },
     {
         "Time": "2026-04-23 14:56:37",
@@ -1103,8 +981,7 @@
         "Direction": "out",
         "Profit": -7.34,
         "Commission": 0.0,
-        "Swap": -0.13,
-        "NetProfit": -7.47
+        "Swap": -0.13
     },
     {
         "Time": "2026-04-23 14:56:40",
@@ -1112,8 +989,7 @@
         "Direction": "out",
         "Profit": -1.17,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -1.17
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:40",
@@ -1121,8 +997,7 @@
         "Direction": "out",
         "Profit": 16.8,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 16.8
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:40",
@@ -1130,8 +1005,7 @@
         "Direction": "out",
         "Profit": 8.18,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 8.18
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:40",
@@ -1139,8 +1013,7 @@
         "Direction": "out",
         "Profit": 0.64,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.64
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:40",
@@ -1148,8 +1021,7 @@
         "Direction": "out",
         "Profit": 0.59,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.59
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:40",
@@ -1157,8 +1029,7 @@
         "Direction": "out",
         "Profit": -1.13,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -1.13
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:40",
@@ -1166,8 +1037,7 @@
         "Direction": "out",
         "Profit": -1.94,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -1.94
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1175,8 +1045,7 @@
         "Direction": "out",
         "Profit": 16.92,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 16.92
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1184,8 +1053,7 @@
         "Direction": "out",
         "Profit": 0.52,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.52
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1193,8 +1061,7 @@
         "Direction": "out",
         "Profit": -2.09,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -2.09
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1202,8 +1069,7 @@
         "Direction": "out",
         "Profit": 8.48,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 8.48
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1211,8 +1077,7 @@
         "Direction": "out",
         "Profit": 0.5,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.5
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1220,8 +1085,7 @@
         "Direction": "out",
         "Profit": -1.81,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -1.81
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1229,8 +1093,7 @@
         "Direction": "out",
         "Profit": 1.33,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 1.33
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1238,8 +1101,7 @@
         "Direction": "out",
         "Profit": 0.62,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.62
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1247,8 +1109,7 @@
         "Direction": "out",
         "Profit": -0.98,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -0.98
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1256,8 +1117,7 @@
         "Direction": "out",
         "Profit": 3.09,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 3.09
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1265,8 +1125,7 @@
         "Direction": "out",
         "Profit": -2.13,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -2.13
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1274,8 +1133,7 @@
         "Direction": "out",
         "Profit": 8.3,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 8.3
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1283,8 +1141,7 @@
         "Direction": "out",
         "Profit": -2.49,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -2.49
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1292,8 +1149,7 @@
         "Direction": "out",
         "Profit": 16.93,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 16.93
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1301,8 +1157,7 @@
         "Direction": "out",
         "Profit": -0.21,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -0.21
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1310,8 +1165,7 @@
         "Direction": "out",
         "Profit": -2.38,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -2.38
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1319,8 +1173,7 @@
         "Direction": "out",
         "Profit": 1.8399999999999999,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 1.8399999999999999
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 14:56:41",
@@ -1328,8 +1181,7 @@
         "Direction": "out",
         "Profit": 16.58,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 16.58
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 16:22:37",
@@ -1337,8 +1189,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.05,
-        "Swap": 0.0,
-        "NetProfit": -0.05
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 16:22:37",
@@ -1346,8 +1197,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 16:30:27",
@@ -1355,8 +1205,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.05,
-        "Swap": 0.0,
-        "NetProfit": -0.05
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 16:30:27",
@@ -1364,8 +1213,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 16:31:21",
@@ -1373,8 +1221,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.05,
-        "Swap": 0.0,
-        "NetProfit": -0.05
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 16:31:21",
@@ -1382,8 +1229,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 16:31:29",
@@ -1391,8 +1237,7 @@
         "Direction": "out",
         "Profit": -2.16,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -2.16
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 16:31:29",
@@ -1400,8 +1245,7 @@
         "Direction": "out",
         "Profit": -0.48,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -0.48
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 16:31:29",
@@ -1409,8 +1253,7 @@
         "Direction": "out",
         "Profit": -0.29,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -0.29
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 16:31:29",
@@ -1418,8 +1261,7 @@
         "Direction": "out",
         "Profit": -0.2,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -0.2
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 16:31:29",
@@ -1427,8 +1269,7 @@
         "Direction": "out",
         "Profit": -0.12,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -0.12
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-23 16:31:29",
@@ -1436,8 +1277,7 @@
         "Direction": "out",
         "Profit": -1.71,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -1.71
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 00:00:00",
@@ -1445,8 +1285,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.9,
-        "Swap": 0.0,
-        "NetProfit": -0.9
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 00:30:00",
@@ -1454,8 +1293,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 01:00:00",
@@ -1463,8 +1301,7 @@
         "Direction": "out",
         "Profit": 13.55,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 13.55
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 05:00:00",
@@ -1472,8 +1309,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.4,
-        "Swap": 0.0,
-        "NetProfit": -0.4
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 05:00:00",
@@ -1481,8 +1317,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.95,
-        "Swap": 0.0,
-        "NetProfit": -0.95
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 06:30:00",
@@ -1490,8 +1325,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 07:00:00",
@@ -1499,8 +1333,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -1.85,
-        "Swap": 0.0,
-        "NetProfit": -1.85
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 08:00:00",
@@ -1508,8 +1341,7 @@
         "Direction": "out",
         "Profit": 7.55,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 7.55
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 08:15:03",
@@ -1517,8 +1349,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 08:45:01",
@@ -1526,8 +1357,7 @@
         "Direction": "out",
         "Profit": 8.67,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 8.67
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 11:30:00",
@@ -1535,8 +1365,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 12:30:00",
@@ -1544,8 +1373,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 12:33:06",
@@ -1553,8 +1381,7 @@
         "Direction": "out",
         "Profit": -130.45,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -130.45
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 13:30:00",
@@ -1562,8 +1389,7 @@
         "Direction": "out",
         "Profit": 13.03,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 13.03
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 14:00:00",
@@ -1571,8 +1397,7 @@
         "Direction": "out",
         "Profit": -33.93,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -33.93
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 14:01:08",
@@ -1580,8 +1405,7 @@
         "Direction": "out",
         "Profit": 33.41,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 33.41
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 15:01:57",
@@ -1589,8 +1413,7 @@
         "Direction": "out",
         "Profit": -5.98,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": -5.98
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-27 15:01:57",
@@ -1598,8 +1421,7 @@
         "Direction": "out",
         "Profit": 6.01,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 6.01
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-28 22:00:00",
@@ -1607,8 +1429,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -1.65,
-        "Swap": 0.0,
-        "NetProfit": -1.65
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-29 02:00:02",
@@ -1616,8 +1437,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -0.55,
-        "Swap": 0.0,
-        "NetProfit": -0.55
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-29 07:00:00",
@@ -1625,8 +1445,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-29 08:00:01",
@@ -1634,8 +1453,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": -2.75,
-        "Swap": 0.0,
-        "NetProfit": -2.75
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-29 09:00:00",
@@ -1643,8 +1461,7 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-29 09:00:00",
@@ -1652,8 +1469,7 @@
         "Direction": "out",
         "Profit": 35.13,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 35.13
+        "Swap": 0.0
     },
     {
         "Time": "2026-04-29 09:30:00",
@@ -1661,7 +1477,6 @@
         "Direction": "in",
         "Profit": 0.0,
         "Commission": 0.0,
-        "Swap": 0.0,
-        "NetProfit": 0.0
+        "Swap": 0.0
     }
 ]
