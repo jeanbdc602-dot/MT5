@@ -1,129 +1,119 @@
 import os
 import sys
 import json
-import time
 import subprocess
 from datetime import datetime
 
 # --- AUTO-INSTALACIÓN ---
 try:
-    import requests
-    from dotenv import load_dotenv
+    import MetaTrader5 as mt5
 except ImportError:
-    print("Instalando librerías necesarias en tu PC...")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "requests", "python-dotenv"])
-    import requests
-    from dotenv import load_dotenv
+    print("Instalando MetaTrader5...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "MetaTrader5"])
+    import MetaTrader5 as mt5
 
-# 1. Cargar credenciales del archivo local .env
-load_dotenv()
-EMAIL = os.getenv("MYFXBOOK_EMAIL")
-PASSWORD = os.getenv("MYFXBOOK_PASSWORD")
+def main():
+    print("========================================")
+    print("   SISTEMA DE ACTUALIZACIÓN MT5 V3.0   ")
+    print("========================================\n")
 
-if not EMAIL or not PASSWORD:
-    print("Error: Faltan credenciales. Asegúrate de crear el archivo .env con MYFXBOOK_EMAIL y MYFXBOOK_PASSWORD.")
-    sys.exit(1)
+    print(">> Conectando con la terminal MT5...")
+    if not mt5.initialize():
+        print("❌ ERROR: No se pudo conectar a MT5. Verifica que esté abierto.")
+        sys.exit(1)
 
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/115.0.0.0 Safari/537.36'
-}
+    print(">> Extrayendo historial crudo...")
+    fecha_inicio = datetime(2020, 1, 1)
+    fecha_fin = datetime.now()
+    deals = mt5.history_deals_get(fecha_inicio, fecha_fin)
 
-# 2. Login en Myfxbook
-print("Iniciando sesión en Myfxbook...")
-login_url = "https://www.myfxbook.com/api/login.json"
-login_params = {'email': EMAIL, 'password': PASSWORD}
+    if not deals:
+        print("⚠️ No hay operaciones en el historial.")
+        mt5.shutdown()
+        sys.exit(1)
 
-try:
-    response = requests.get(login_url, params=login_params, headers=headers)
-    response.raise_for_status() 
-    login_response = response.json()
-except Exception as e:
-    print(f"Error de conexión con Myfxbook: {e}")
-    sys.exit(1)
-
-if login_response.get("error"):
-    print(f"Error de Login: {login_response.get('message')}")
-    sys.exit(1)
-
-session_id = login_response.get("session")
-if not session_id:
-    print("Error crítico: Myfxbook no arrojó error, pero no entregó un Session ID.")
-    sys.exit(1)
-
-print(f"¡Login exitoso! Sesión obtenida: {session_id[:5]}... (oculto por seguridad)")
-
-# --- TRUCO 1: LA PAUSA ---
-# Damos 3 segundos para que los servidores de Myfxbook registren la sesión internamente
-print("Esperando 3 segundos para que Myfxbook valide la llave...")
-time.sleep(3)
-
-# 3. Obtener el ID de la cuenta
-print("Obteniendo cuenta de trading...")
-
-# --- TRUCO 2: INYECCIÓN DIRECTA DE URL ---
-# Pegamos la sesión directo en el link para evitar que Python cambie los símbolos
-accounts_url = f"https://www.myfxbook.com/api/get-my-accounts.json?session={session_id}"
-accounts_response = requests.get(accounts_url, headers=headers).json()
-
-# --- DETECTOR DE ERRORES ---
-if accounts_response.get("error"):
-    print(f"\n❌ Myfxbook denegó el acceso a las cuentas. Mensaje oficial: {accounts_response.get('message')}")
-    sys.exit(1)
-
-if not accounts_response.get("accounts") or len(accounts_response.get("accounts")) == 0:
-    print("\n⚠️ Myfxbook no arrojó error, pero dice que tienes CERO cuentas vinculadas.")
-    print("Verifica que tu cuenta de MetaTrader esté correctamente enlazada en la web de Myfxbook.")
-    sys.exit(1)
-# ----------------------------------
-
-account_id = accounts_response["accounts"][0]["id"]
-print(f"Cuenta detectada con éxito. ID: {account_id}")
-
-# 4. Obtener historial
-print("Descargando historial de operaciones...")
-# Truco 2 aplicado al historial también
-history_url = f"https://www.myfxbook.com/api/get-history.json?session={session_id}&id={account_id}"
-history_response = requests.get(history_url, headers=headers).json()
-
-if history_response.get("error"):
-    print(f"Error al obtener historial: {history_response.get('message')}")
-    sys.exit(1)
-
-trades = history_response.get("history", [])
-print(f"Se encontraron {len(trades)} operaciones.")
-
-# 5. Formatear y guardar JSON
-formatted_data = []
-for trade in trades:
-    symbol = trade.get("symbol", "").strip()
-    if not symbol: continue
-    net_profit = float(trade.get("profit", 0))
-    formatted_data.append({
-        "Symbol": symbol,
-        "EntryTime": trade.get("openTime"),
-        "Time": trade.get("closeTime"),
-        "NetProfit": net_profit
-    })
-
-with open("datos_trading.json", "w", encoding="utf-8") as f:
-    json.dump(formatted_data, f, indent=4)
-
-# 6. --- SUBIDA A GITHUB AUTOMÁTICA ---
-print("Iniciando subida automática a GitHub...")
-try:
-    # --- NUEVO: Configurar identidad de Git automáticamente ---
-    subprocess.run(["git", "config", "--local", "user.email", "bot@trading.pc"], check=False)
-    subprocess.run(["git", "config", "--local", "user.name", "Bot de Trading"], check=False)
+    # --- EL MOTOR INTELIGENTE: AGRUPACIÓN POR POSITION ID ---
+    print(">> Reconstruyendo operaciones mediante Position ID...")
+    positions = {}
     
-    subprocess.run(["git", "add", "datos_trading.json"], check=True)
-    status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
-    
-    if "datos_trading.json" in status.stdout:
-        fecha_hora = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        subprocess.run(["git", "commit", "-m", f"Actualización automática PC: {fecha_hora}"], check=True)
-        subprocess.run(["git", "push"], check=True)
-        print(f"¡ÉXITO! Archivo subido a GitHub correctamente a las {fecha_hora}")
-    else:
-        print("No hay trades nuevos. No se subió nada para ahorrar recursos.")
-except Exception as e:
-    print(f"Error al subir a GitHub: {e}")
+    for d in deals:
+        # Ignorar depósitos, retiros o filas vacías
+        if d.type == 2 or d.symbol == "":
+            continue
+            
+        pid = d.position_id
+        if pid not in positions:
+            positions[pid] = {
+                "symbol": d.symbol,
+                "entry_time": None,
+                "exit_time": None,
+                "net_profit": 0.0
+            }
+        
+        # Sumar todos los fragmentos de la misma operación
+        positions[pid]["net_profit"] += float(d.profit) + float(d.commission) + float(d.swap)
+        
+        # Identificar las fechas correctas de apertura y cierre
+        if d.entry == 0:  # Entrada (IN)
+            if positions[pid]["entry_time"] is None or d.time < positions[pid]["entry_time"]:
+                positions[pid]["entry_time"] = d.time
+        elif d.entry == 1 or d.entry == 2:  # Salida (OUT o IN/OUT)
+            if positions[pid]["exit_time"] is None or d.time > positions[pid]["exit_time"]:
+                positions[pid]["exit_time"] = d.time
+
+    # --- FORMATEO PARA LA WEB ---
+    formatted_data = []
+    for pid, pos in positions.items():
+        # Asegurarnos de que el trade ya está cerrado
+        if pos["exit_time"] is not None:
+            # Si por algún motivo MT5 no arrojó la entrada, usamos la de salida como respaldo
+            ent = pos["entry_time"] if pos["entry_time"] is not None else pos["exit_time"]
+            
+            formatted_data.append({
+                "Symbol": pos["symbol"],
+                "EntryTime": datetime.fromtimestamp(ent).strftime("%Y-%m-%d %H:%M:%S"),
+                "Time": datetime.fromtimestamp(pos["exit_time"]).strftime("%Y-%m-%d %H:%M:%S"),
+                "NetProfit": round(pos["net_profit"], 2)
+            })
+
+    # Ordenar cronológicamente
+    formatted_data.sort(key=lambda x: x["Time"])
+
+    mt5.shutdown()
+    print(f"✅ Se reconstruyeron {len(formatted_data)} operaciones perfectas.")
+
+    # --- GUARDAR Y SUBIR ---
+    json_file = "datos_trading.json"
+    with open(json_file, "w", encoding="utf-8") as f:
+        json.dump(formatted_data, f, indent=4)
+    print(f"💾 Archivo '{json_file}' generado con éxito.")
+
+    print("\n>> Sincronizando con GitHub...")
+    try:
+        subprocess.run(["git", "config", "--local", "user.email", "bot@trading.pc"], check=False)
+        subprocess.run(["git", "config", "--local", "user.name", "Bot MT5"], check=False)
+        
+        print("   - Descargando cambios de la web...")
+        subprocess.run(["git", "pull", "origin", "main", "--no-edit"], check=False)
+        
+        subprocess.run(["git", "add", json_file], check=True)
+        status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
+        
+        if json_file in status.stdout or "M  datos_trading.json" in status.stdout:
+            fecha_hora = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            subprocess.run(["git", "commit", "-m", f"Trades reconstruidos y subidos: {fecha_hora}"], check=True)
+            print("   - Empujando a los servidores de GitHub...")
+            
+            result = subprocess.run(["git", "push", "origin", "HEAD:main"], capture_output=True, text=True)
+            if result.returncode == 0:
+                print(f"\n🚀 ¡ÉXITO! JSON subido correctamente.")
+            else:
+                print(f"\n❌ Error al subir: {result.stderr}")
+        else:
+            print("\n✨ El historial ya estaba idéntico en la nube.")
+
+    except Exception as e:
+        print(f"\n❌ Fallo en la subida automática: {e}")
+
+if __name__ == "__main__":
+    main()
