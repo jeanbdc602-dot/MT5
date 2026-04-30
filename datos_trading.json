@@ -1478,5 +1478,93 @@
         "Profit": 0.0,
         "Commission": 0.0,
         "Swap": 0.0
+    },
+    {
+        "Time": "2026-04-29 14:00:00",
+        "Symbol": "CHFJPY",
+        "Direction": "in",
+        "Profit": 0.0,
+        "Commission": -0.65,
+        "Swap": 0.0
+    },
+    {
+        "Time": "2026-04-29 21:30:00",
+        "Symbol": "SPX500",
+        "Direction": "in",
+        "Profit": 0.0,
+        "Commission": 0.0,
+        "Swap": 0.0
+    },
+    {
+        "Time": "2026-04-30 00:00:00",
+        "Symbol": "SPX500",
+        "Direction": "out",
+        "Profit": 7.9,
+        "Commission": 0.0,
+        "Swap": 0.0
+    },
+    {
+        "Time": "2026-04-30 03:00:01",
+        "Symbol": "SPX500",
+        "Direction": "in",
+        "Profit": 0.0,
+        "Commission": 0.0,
+        "Swap": 0.0
+    },
+    {
+        "Time": "2026-04-30 03:30:00",
+        "Symbol": "SPX500",
+        "Direction": "out",
+        "Profit": 122.51,
+        "Commission": 0.0,
+        "Swap": 0.0
+    },
+    {
+        "Time": "2026-04-30 05:09:53",
+        "Symbol": "CHFJPY",
+        "Direction": "out",
+        "Profit": 20.88,
+        "Commission": 0.0,
+        "Swap": -1.49
+    },
+    {
+        "Time": "2026-04-30 05:09:53",
+        "Symbol": "AUDJPY",
+        "Direction": "out",
+        "Profit": -0.62,
+        "Commission": 0.0,
+        "Swap": -4.08
+    },
+    {
+        "Time": "2026-04-30 05:09:53",
+        "Symbol": "HK50",
+        "Direction": "out",
+        "Profit": 55.66,
+        "Commission": 0.0,
+        "Swap": 0.12
+    },
+    {
+        "Time": "2026-04-30 05:09:53",
+        "Symbol": "EURJPY",
+        "Direction": "out",
+        "Profit": 104.96,
+        "Commission": 0.0,
+        "Swap": -10.25
+    },
+    {
+        "Time": "2026-04-30 05:09:53",
+        "Symbol": "CADJPY",
+        "Direction": "out",
+        "Profit": 224.92,
+        "Commission": 0.0,
+        "Swap": -15.75
+    },
+    {
+        "Time": "2026-04-30 05:50:34",
+        "Symbol": "GER30",
+        "Direction": "out",
+        "Profit": -186.94,
+        "Commission": 0.0,
+        "Swap": -2.63
     }
 ]
