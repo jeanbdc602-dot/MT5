@@ -1,5 +1,17 @@
 [
     {
+        "Symbol": "SPX500",
+        "EntryTime": "04/30/2026 07:00",
+        "Time": "04/30/2026 07:30",
+        "NetProfit": 122.51
+    },
+    {
+        "Symbol": "SPX500",
+        "EntryTime": "04/30/2026 01:30",
+        "Time": "04/30/2026 04:00",
+        "NetProfit": 7.9
+    },
+    {
         "Symbol": "US30",
         "EntryTime": "04/29/2026 11:00",
         "Time": "04/29/2026 13:00",
@@ -226,17 +238,5 @@
         "EntryTime": "04/23/2026 18:54",
         "Time": "04/23/2026 18:56",
         "NetProfit": 0.64
-    },
-    {
-        "Symbol": "EURJPY",
-        "EntryTime": "04/23/2026 18:53",
-        "Time": "04/23/2026 18:56",
-        "NetProfit": -1.47
-    },
-    {
-        "Symbol": "EURJPY",
-        "EntryTime": "04/23/2026 17:10",
-        "Time": "04/23/2026 18:56",
-        "NetProfit": -2.19
     }
 ]
