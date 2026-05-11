@@ -754,5 +754,95 @@
         "EntryTime": "2026-05-07 23:00:00",
         "Time": "2026-05-08 07:30:00",
         "NetProfit": 49.24
+    },
+    {
+        "Symbol": "AUDJPY",
+        "EntryTime": "2026-05-06 04:00:00",
+        "Time": "2026-05-08 11:00:00",
+        "NetProfit": -18.25
+    },
+    {
+        "Symbol": "GBPUSD",
+        "EntryTime": "2026-05-10 22:00:00",
+        "Time": "2026-05-11 00:00:00",
+        "NetProfit": 12.92
+    },
+    {
+        "Symbol": "XAUUSD",
+        "EntryTime": "2026-05-11 01:00:00",
+        "Time": "2026-05-11 01:03:24",
+        "NetProfit": 5.23
+    },
+    {
+        "Symbol": "EURUSD",
+        "EntryTime": "2026-05-10 21:00:01",
+        "Time": "2026-05-11 01:08:18",
+        "NetProfit": -5.04
+    },
+    {
+        "Symbol": "AUDJPY",
+        "EntryTime": "2026-05-10 21:30:01",
+        "Time": "2026-05-11 01:08:18",
+        "NetProfit": 17.68
+    },
+    {
+        "Symbol": "CHFJPY",
+        "EntryTime": "2026-05-10 22:00:00",
+        "Time": "2026-05-11 01:08:18",
+        "NetProfit": 2.6
+    },
+    {
+        "Symbol": "EURJPY",
+        "EntryTime": "2026-05-10 22:00:01",
+        "Time": "2026-05-11 01:08:18",
+        "NetProfit": 20.22
+    },
+    {
+        "Symbol": "US2000",
+        "EntryTime": "2026-05-11 00:00:00",
+        "Time": "2026-05-11 01:08:18",
+        "NetProfit": -12.42
+    },
+    {
+        "Symbol": "JP225",
+        "EntryTime": "2026-05-11 00:30:00",
+        "Time": "2026-05-11 01:08:18",
+        "NetProfit": 21.17
+    },
+    {
+        "Symbol": "XAUUSD",
+        "EntryTime": "2026-05-11 01:00:00",
+        "Time": "2026-05-11 01:08:18",
+        "NetProfit": -4.0
+    },
+    {
+        "Symbol": "XAUUSD",
+        "EntryTime": "2026-05-11 01:03:24",
+        "Time": "2026-05-11 01:08:18",
+        "NetProfit": -10.13
+    },
+    {
+        "Symbol": "US2000",
+        "EntryTime": "2026-05-11 01:03:27",
+        "Time": "2026-05-11 01:08:18",
+        "NetProfit": 0.27
+    },
+    {
+        "Symbol": "XAUUSD",
+        "EntryTime": "2026-05-11 01:04:24",
+        "Time": "2026-05-11 01:08:18",
+        "NetProfit": -7.92
+    },
+    {
+        "Symbol": "US2000",
+        "EntryTime": "2026-05-11 01:04:30",
+        "Time": "2026-05-11 01:08:18",
+        "NetProfit": -1.62
+    },
+    {
+        "Symbol": "CADJPY",
+        "EntryTime": "2026-05-11 04:00:00",
+        "Time": "2026-05-11 08:00:00",
+        "NetProfit": -71.37
     }
 ]
