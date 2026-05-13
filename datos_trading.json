@@ -916,5 +916,95 @@
         "EntryTime": "2026-05-11 06:00:03",
         "Time": "2026-05-12 08:00:00",
         "NetProfit": -42.58
+    },
+    {
+        "Symbol": "JP225",
+        "EntryTime": "2026-05-12 00:30:01",
+        "Time": "2026-05-12 11:00:05",
+        "NetProfit": 23.47
+    },
+    {
+        "Symbol": "US30",
+        "EntryTime": "2026-05-12 07:15:00",
+        "Time": "2026-05-12 12:00:00",
+        "NetProfit": 18.84
+    },
+    {
+        "Symbol": "USOUSD",
+        "EntryTime": "2026-05-11 08:00:00",
+        "Time": "2026-05-12 13:00:00",
+        "NetProfit": -42.14
+    },
+    {
+        "Symbol": "XAUUSD",
+        "EntryTime": "2026-05-12 07:00:00",
+        "Time": "2026-05-12 13:00:00",
+        "NetProfit": -21.82
+    },
+    {
+        "Symbol": "EURGBP",
+        "EntryTime": "2026-05-11 14:00:00",
+        "Time": "2026-05-12 14:00:00",
+        "NetProfit": -143.24
+    },
+    {
+        "Symbol": "GBPCAD",
+        "EntryTime": "2026-05-12 06:00:00",
+        "Time": "2026-05-12 15:00:00",
+        "NetProfit": -4.03
+    },
+    {
+        "Symbol": "JP225",
+        "EntryTime": "2026-05-12 22:30:00",
+        "Time": "2026-05-12 23:30:00",
+        "NetProfit": -26.82
+    },
+    {
+        "Symbol": "XAUUSD",
+        "EntryTime": "2026-05-13 01:06:20",
+        "Time": "2026-05-13 01:06:58",
+        "NetProfit": -0.21
+    },
+    {
+        "Symbol": "XAUUSD",
+        "EntryTime": "2026-05-13 01:06:44",
+        "Time": "2026-05-13 01:07:28",
+        "NetProfit": 2.43
+    },
+    {
+        "Symbol": "XAUUSD",
+        "EntryTime": "2026-05-13 01:07:31",
+        "Time": "2026-05-13 01:07:42",
+        "NetProfit": 0.97
+    },
+    {
+        "Symbol": "USOUSD",
+        "EntryTime": "2026-05-13 01:07:01",
+        "Time": "2026-05-13 01:07:48",
+        "NetProfit": -5.27
+    },
+    {
+        "Symbol": "USOUSD",
+        "EntryTime": "2026-05-13 01:07:32",
+        "Time": "2026-05-13 01:07:53",
+        "NetProfit": -2.97
+    },
+    {
+        "Symbol": "GER30",
+        "EntryTime": "2026-05-13 06:15:00",
+        "Time": "2026-05-13 07:15:00",
+        "NetProfit": -64.49
+    },
+    {
+        "Symbol": "GBPUSD",
+        "EntryTime": "2026-05-13 06:00:00",
+        "Time": "2026-05-13 08:00:00",
+        "NetProfit": 7.2
+    },
+    {
+        "Symbol": "US30",
+        "EntryTime": "2026-05-13 07:15:00",
+        "Time": "2026-05-13 08:15:00",
+        "NetProfit": 52.56
     }
 ]
