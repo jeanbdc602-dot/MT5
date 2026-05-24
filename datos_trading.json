@@ -1006,5 +1006,359 @@
         "EntryTime": "2026-05-13 07:15:00",
         "Time": "2026-05-13 08:15:00",
         "NetProfit": 52.56
+    },
+    {
+        "Symbol": "HK50",
+        "EntryTime": "2026-05-13 11:30:00",
+        "Time": "2026-05-13 13:00:00",
+        "NetProfit": -128.51
+    },
+    {
+        "Symbol": "XAUUSD",
+        "EntryTime": "2026-05-13 01:00:00",
+        "Time": "2026-05-13 13:23:15",
+        "NetProfit": 47.35
+    },
+    {
+        "Symbol": "EURJPY",
+        "EntryTime": "2026-05-12 21:00:00",
+        "Time": "2026-05-13 13:23:19",
+        "NetProfit": 24.73
+    },
+    {
+        "Symbol": "NDX100",
+        "EntryTime": "2026-05-13 11:45:00",
+        "Time": "2026-05-13 13:45:00",
+        "NetProfit": -7.97
+    },
+    {
+        "Symbol": "US30",
+        "EntryTime": "2026-05-13 14:15:00",
+        "Time": "2026-05-13 17:15:00",
+        "NetProfit": -84.77
+    },
+    {
+        "Symbol": "GBPJPY",
+        "EntryTime": "2026-05-13 08:00:00",
+        "Time": "2026-05-13 18:00:00",
+        "NetProfit": -6.5
+    },
+    {
+        "Symbol": "JP225",
+        "EntryTime": "2026-05-14 04:00:01",
+        "Time": "2026-05-14 05:30:00",
+        "NetProfit": 67.8
+    },
+    {
+        "Symbol": "FRA40",
+        "EntryTime": "2026-05-14 07:00:00",
+        "Time": "2026-05-14 08:00:01",
+        "NetProfit": -23.42
+    },
+    {
+        "Symbol": "US30",
+        "EntryTime": "2026-05-14 07:15:00",
+        "Time": "2026-05-14 08:00:01",
+        "NetProfit": 27.5
+    },
+    {
+        "Symbol": "HK50",
+        "EntryTime": "2026-05-14 11:30:02",
+        "Time": "2026-05-14 13:30:00",
+        "NetProfit": 1.9
+    },
+    {
+        "Symbol": "EURUSD",
+        "EntryTime": "2026-05-13 06:00:00",
+        "Time": "2026-05-14 14:00:00",
+        "NetProfit": 77.77
+    },
+    {
+        "Symbol": "CADJPY",
+        "EntryTime": "2026-05-14 12:00:00",
+        "Time": "2026-05-14 14:00:01",
+        "NetProfit": -36.5
+    },
+    {
+        "Symbol": "GBPCAD",
+        "EntryTime": "2026-05-13 10:00:00",
+        "Time": "2026-05-14 16:00:00",
+        "NetProfit": 55.7
+    },
+    {
+        "Symbol": "NDX100",
+        "EntryTime": "2026-05-14 12:45:00",
+        "Time": "2026-05-14 16:15:00",
+        "NetProfit": 13.98
+    },
+    {
+        "Symbol": "GBPJPY",
+        "EntryTime": "2026-05-14 10:00:00",
+        "Time": "2026-05-14 18:00:00",
+        "NetProfit": 239.98
+    },
+    {
+        "Symbol": "EUSTX50",
+        "EntryTime": "2026-05-13 06:30:00",
+        "Time": "2026-05-14 18:03:42",
+        "NetProfit": -92.43
+    },
+    {
+        "Symbol": "EURGBP",
+        "EntryTime": "2026-05-13 08:00:00",
+        "Time": "2026-05-14 18:03:42",
+        "NetProfit": -186.42
+    },
+    {
+        "Symbol": "UK100",
+        "EntryTime": "2026-05-13 09:30:00",
+        "Time": "2026-05-14 18:03:42",
+        "NetProfit": -165.61
+    },
+    {
+        "Symbol": "XAGUSD",
+        "EntryTime": "2026-05-13 10:00:00",
+        "Time": "2026-05-14 18:03:42",
+        "NetProfit": -125.2
+    },
+    {
+        "Symbol": "EURJPY",
+        "EntryTime": "2026-05-13 21:00:00",
+        "Time": "2026-05-14 18:03:42",
+        "NetProfit": -37.4
+    },
+    {
+        "Symbol": "EURCAD",
+        "EntryTime": "2026-05-14 11:30:00",
+        "Time": "2026-05-14 18:03:42",
+        "NetProfit": -107.83
+    },
+    {
+        "Symbol": "AUDJPY",
+        "EntryTime": "2026-05-14 13:00:00",
+        "Time": "2026-05-14 18:03:42",
+        "NetProfit": -22.76
+    },
+    {
+        "Symbol": "US30",
+        "EntryTime": "2026-05-14 16:00:00",
+        "Time": "2026-05-14 18:03:42",
+        "NetProfit": -14.33
+    },
+    {
+        "Symbol": "FRA40",
+        "EntryTime": "2026-05-14 17:00:00",
+        "Time": "2026-05-14 18:03:42",
+        "NetProfit": -13.66
+    },
+    {
+        "Symbol": "UK100",
+        "EntryTime": "2026-05-14 07:00:00",
+        "Time": "2026-05-14 18:03:43",
+        "NetProfit": -122.46
+    },
+    {
+        "Symbol": "USOUSD",
+        "EntryTime": "2026-05-13 01:06:22",
+        "Time": "2026-05-14 18:03:45",
+        "NetProfit": 1.05
+    },
+    {
+        "Symbol": "US2000",
+        "EntryTime": "2026-05-13 08:00:00",
+        "Time": "2026-05-14 18:03:45",
+        "NetProfit": 30.85
+    },
+    {
+        "Symbol": "CHFJPY",
+        "EntryTime": "2026-05-13 14:00:00",
+        "Time": "2026-05-14 18:03:45",
+        "NetProfit": 41.48
+    },
+    {
+        "Symbol": "XAUUSD",
+        "EntryTime": "2026-05-14 07:00:00",
+        "Time": "2026-05-14 18:03:45",
+        "NetProfit": 22.95
+    },
+    {
+        "Symbol": "AUDUSD",
+        "EntryTime": "2026-05-14 07:00:00",
+        "Time": "2026-05-14 18:03:45",
+        "NetProfit": 37.03
+    },
+    {
+        "Symbol": "US2000",
+        "EntryTime": "2026-05-14 12:00:00",
+        "Time": "2026-05-14 18:03:45",
+        "NetProfit": 13.76
+    },
+    {
+        "Symbol": "FRA40",
+        "EntryTime": "2026-05-14 12:00:00",
+        "Time": "2026-05-14 18:03:45",
+        "NetProfit": 27.45
+    },
+    {
+        "Symbol": "GBPCHF",
+        "EntryTime": "2026-05-14 16:00:00",
+        "Time": "2026-05-14 18:03:45",
+        "NetProfit": 44.69
+    },
+    {
+        "Symbol": "HK50",
+        "EntryTime": "2026-05-14 15:30:00",
+        "Time": "2026-05-15 00:30:33",
+        "NetProfit": 31.39
+    },
+    {
+        "Symbol": "UK100",
+        "EntryTime": "2026-05-20 02:09:31",
+        "Time": "2026-05-20 02:10:26",
+        "NetProfit": -1.91
+    },
+    {
+        "Symbol": "US30",
+        "EntryTime": "2026-05-20 02:09:31",
+        "Time": "2026-05-20 02:10:26",
+        "NetProfit": -0.48
+    },
+    {
+        "Symbol": "US30",
+        "EntryTime": "2026-05-20 02:09:54",
+        "Time": "2026-05-20 02:10:26",
+        "NetProfit": 0.71
+    },
+    {
+        "Symbol": "UK100",
+        "EntryTime": "2026-05-20 02:09:54",
+        "Time": "2026-05-20 02:10:26",
+        "NetProfit": -0.63
+    },
+    {
+        "Symbol": "GER30",
+        "EntryTime": "2026-05-20 05:30:00",
+        "Time": "2026-05-20 06:30:00",
+        "NetProfit": 6.66
+    },
+    {
+        "Symbol": "FRA40",
+        "EntryTime": "2026-05-20 06:30:00",
+        "Time": "2026-05-20 09:00:00",
+        "NetProfit": 15.28
+    },
+    {
+        "Symbol": "EURCHF",
+        "EntryTime": "2026-05-20 08:00:00",
+        "Time": "2026-05-20 14:00:00",
+        "NetProfit": 17.61
+    },
+    {
+        "Symbol": "EURAUD",
+        "EntryTime": "2026-05-20 11:00:00",
+        "Time": "2026-05-20 14:00:00",
+        "NetProfit": 53.47
+    },
+    {
+        "Symbol": "NDX100",
+        "EntryTime": "2026-05-20 13:00:00",
+        "Time": "2026-05-20 19:00:00",
+        "NetProfit": -59.49
+    },
+    {
+        "Symbol": "EURJPY",
+        "EntryTime": "2026-05-21 02:00:02",
+        "Time": "2026-05-21 07:00:04",
+        "NetProfit": 27.86
+    },
+    {
+        "Symbol": "US30",
+        "EntryTime": "2026-05-21 11:00:00",
+        "Time": "2026-05-21 13:00:00",
+        "NetProfit": 13.14
+    },
+    {
+        "Symbol": "EURJPY",
+        "EntryTime": "2026-05-21 07:00:05",
+        "Time": "2026-05-21 14:00:00",
+        "NetProfit": 5.0
+    },
+    {
+        "Symbol": "EURAUD",
+        "EntryTime": "2026-05-21 11:00:00",
+        "Time": "2026-05-21 14:00:00",
+        "NetProfit": 47.88
+    },
+    {
+        "Symbol": "SPX500",
+        "EntryTime": "2026-05-20 13:00:00",
+        "Time": "2026-05-21 17:00:00",
+        "NetProfit": -52.98
+    },
+    {
+        "Symbol": "SPX500",
+        "EntryTime": "2026-05-21 08:00:00",
+        "Time": "2026-05-21 17:00:00",
+        "NetProfit": 14.65
+    },
+    {
+        "Symbol": "SPX500",
+        "EntryTime": "2026-05-21 13:00:00",
+        "Time": "2026-05-21 17:00:00",
+        "NetProfit": 30.18
+    },
+    {
+        "Symbol": "NDX100",
+        "EntryTime": "2026-05-21 15:00:00",
+        "Time": "2026-05-21 17:00:00",
+        "NetProfit": 45.29
+    },
+    {
+        "Symbol": "CHFJPY",
+        "EntryTime": "2026-05-21 18:00:00",
+        "Time": "2026-05-22 00:00:00",
+        "NetProfit": 6.56
+    },
+    {
+        "Symbol": "SPX500",
+        "EntryTime": "2026-05-21 17:00:00",
+        "Time": "2026-05-22 03:00:02",
+        "NetProfit": 4.62
+    },
+    {
+        "Symbol": "CHFJPY",
+        "EntryTime": "2026-05-20 16:00:00",
+        "Time": "2026-05-22 04:00:00",
+        "NetProfit": -72.56
+    },
+    {
+        "Symbol": "AUDUSD",
+        "EntryTime": "2026-05-22 00:00:00",
+        "Time": "2026-05-22 08:00:00",
+        "NetProfit": 14.0
+    },
+    {
+        "Symbol": "EURUSD",
+        "EntryTime": "2026-05-20 16:00:00",
+        "Time": "2026-05-22 09:00:00",
+        "NetProfit": -35.21
+    },
+    {
+        "Symbol": "XAUUSD",
+        "EntryTime": "2026-05-21 01:00:00",
+        "Time": "2026-05-22 09:00:00",
+        "NetProfit": -30.53
+    },
+    {
+        "Symbol": "FRA40",
+        "EntryTime": "2026-05-21 10:00:00",
+        "Time": "2026-05-22 09:00:00",
+        "NetProfit": -33.1
+    },
+    {
+        "Symbol": "EURJPY",
+        "EntryTime": "2026-05-22 08:00:00",
+        "Time": "2026-05-22 09:00:00",
+        "NetProfit": 7.01
     }
 ]
